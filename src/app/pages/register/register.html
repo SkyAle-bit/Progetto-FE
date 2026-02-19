@@ -1,0 +1,58 @@
+<div class="login-container">
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="login-card">
+
+    <h2>Crea un Account</h2>
+
+    <div *ngIf="errorMessage" class="error-banner">
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="success-banner">
+      {{ successMessage }}
+    </div>
+
+    <div class="form-group">
+      <label for="firstName">Nome</label>
+      <input id="firstName" type="text" formControlName="firstName" placeholder="es. Mario"
+             [ngClass]="{'is-invalid': registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched}">
+      <div class="error-text" *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched">
+        Il nome è obbligatorio.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="lastName">Cognome</label>
+      <input id="lastName" type="text" formControlName="lastName" placeholder="es. Rossi"
+             [ngClass]="{'is-invalid': registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched}">
+      <div class="error-text" *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched">
+        Il cognome è obbligatorio.
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" placeholder="es. mario.rossi@example.com"
+             [ngClass]="{'is-invalid': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}">
+      <div class="error-text" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+        <span *ngIf="registerForm.get('email')?.errors?.['required']">L'email è obbligatoria.</span>
+        <span *ngIf="registerForm.get('email')?.errors?.['email']">Inserisci un'email valida.</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password" type="password" formControlName="password" placeholder="Minimo 6 caratteri"
+             [ngClass]="{'is-invalid': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}">
+      <div class="error-text" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+        <span *ngIf="registerForm.get('password')?.errors?.['required']">La password è obbligatoria.</span>
+        <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Deve avere almeno 6 caratteri.</span>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-primary" [disabled]="successMessage !== ''">Registrati</button>
+
+    <div class="form-footer">
+      <p>Hai già un account? <a routerLink="/login">Accedi qui</a></p>
+    </div>
+
+  </form>
+</div>
