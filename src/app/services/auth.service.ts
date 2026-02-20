@@ -19,48 +19,45 @@ export interface AuthResponse {
 export class AuthService {
   private http = inject(HttpClient);
 
-  // URL del tuo backend Spring Boot
   private baseUrl = 'http://localhost:8080/api/auth';
 
-  // Chiamata di Login
   login(credentials: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, credentials).pipe(
       tap(response => {
-        // Salva il token e i dati utente per mantenerlo connesso
         localStorage.setItem('token', response.token);
         localStorage.setItem('user', JSON.stringify(response));
       })
     );
   }
 
-  // Chiamata di Registrazione
   register(userData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/register`, userData);
   }
 
-  // Verifica se l'utente è loggato
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
   }
 
-  // Logout (cancella i dati)
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   }
 
-  // Recupera tutti i piani dal backend
   getPlans(): Observable<any> {
     return this.http.get('http://localhost:8080/api/plans');
   }
 
-  // Recupera i professionisti in base al ruolo
   getProfessionals(role: string): Observable<any> {
     return this.http.get(`http://localhost:8080/api/professionals?role=${role}`);
   }
 
-  // Recupera i dati completi della Dashboard
+  /**
+   * Recupera tutti i dati della dashboard per l'utente con il dato id.
+   * GET /api/dashboard/{userId}
+   * Risposta attesa: { profile, subscription, followingProfessionals, upcomingBookings }
+   */
   getDashboard(userId: number): Observable<any> {
+    // Corretto: aggiungi /users/ nel path
     return this.http.get(`http://localhost:8080/api/users/dashboard/${userId}`);
   }
 }

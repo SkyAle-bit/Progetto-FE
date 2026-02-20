@@ -1,91 +1,183 @@
 <div class="dashboard-page">
 
-  <!-- Sidebar / Navbar top -->
+  <!-- ── TOPBAR ── -->
   <header class="topbar">
     <div class="topbar-brand">
-      <span class="brand-icon">✦</span>
+      <span class="brand-star">✦</span>
       <span class="brand-name">Gestionale Tesi</span>
     </div>
 
+    <div class="topbar-center">
+      <button class="nav-btn" (click)="prevWeek()">‹</button>
+      <span class="week-label">{{ getWeekLabel() }}</span>
+      <button class="nav-btn" (click)="nextWeek()">›</button>
+      <button class="today-btn" (click)="goToToday()">Oggi</button>
+    </div>
+
     <div class="topbar-right">
-      <div class="user-chip">
-        <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar" class="chip-avatar">
-        <div *ngIf="!currentUser?.profilePicture" class="chip-avatar-fallback">
-          {{ currentUser?.firstName?.charAt(0) | uppercase }}{{ currentUser?.lastName?.charAt(0) | uppercase }}
-        </div>
-        <span class="chip-name">{{ currentUser?.firstName }}</span>
+      <div class="week-stat" *ngIf="!isLoading">
+        <span class="week-stat-num">{{ countWeekBookings() }}</span>
+        <span class="week-stat-label">questa settimana</span>
       </div>
-      <button class="btn-logout" (click)="logout()">
-        <span>Esci</span>
-        <span class="logout-icon">→</span>
+      <button class="profile-btn" (click)="toggleProfile()" [class.active]="isProfileOpen">
+        <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar" class="profile-btn-img">
+        <span *ngIf="!currentUser?.profilePicture" class="profile-btn-initials">{{ getInitials() }}</span>
       </button>
     </div>
   </header>
 
-  <!-- Main content -->
-  <main class="main-content">
+  <!-- ── CALENDARIO ── -->
+  <div class="calendar-wrapper">
 
-    <!-- Decorazioni sfondo -->
-    <div class="bg-shapes">
-      <div class="shape shape-1"></div>
-      <div class="shape shape-2"></div>
+    <div class="loading-overlay" *ngIf="isLoading">
+      <div class="loading-spinner"></div>
+      <span class="loading-text">Caricamento in corso...</span>
     </div>
 
-    <div class="content-wrapper">
+    <!-- Intestazione giorni -->
+    <div class="calendar-header">
+      <div class="time-gutter"></div>
+      <div class="day-header" *ngFor="let day of weekDays" [class.today]="isToday(day)">
+        <span class="day-name">{{ getDayName(day) }}</span>
+        <span class="day-number" [class.today-circle]="isToday(day)">{{ getDayNumber(day) }}</span>
+      </div>
+    </div>
 
-      <!-- Profilo card -->
-      <div class="profile-card">
+    <!-- Griglia -->
+    <div class="calendar-grid-scroll">
+      <div class="calendar-grid">
 
-        <!-- Avatar grande -->
-        <div class="profile-avatar-wrap">
-          <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Profilo" class="profile-avatar">
-          <div *ngIf="!currentUser?.profilePicture" class="profile-avatar-fallback">
-            {{ currentUser?.firstName?.charAt(0) | uppercase }}{{ currentUser?.lastName?.charAt(0) | uppercase }}
+        <!-- Colonna ore -->
+        <div class="time-col">
+          <div
+            class="time-slot-label"
+            *ngFor="let slot of timeSlots"
+            [class.full-hour]="isFullHour(slot)"
+            [class.half-hour]="!isFullHour(slot)"
+          >
+            {{ slot }}
           </div>
-          <div class="avatar-ring"></div>
         </div>
 
-        <div class="profile-name">
-          {{ currentUser?.firstName }} {{ currentUser?.lastName }}
-        </div>
-
-        <div class="profile-role-badge">
-          {{ currentUser?.role }}
-        </div>
-
-        <div class="profile-divider"></div>
-
-        <!-- Dettagli -->
-        <div class="profile-details">
-          <div class="detail-row">
-            <span class="detail-icon">✉</span>
-            <div class="detail-content">
-              <span class="detail-label">Email</span>
-              <span class="detail-value">{{ currentUser?.email }}</span>
-            </div>
-          </div>
-
-          <div class="detail-row">
-            <span class="detail-icon">◈</span>
-            <div class="detail-content">
-              <span class="detail-label">Nome</span>
-              <span class="detail-value">{{ currentUser?.firstName }}</span>
-            </div>
-          </div>
-
-          <div class="detail-row">
-            <span class="detail-icon">◈</span>
-            <div class="detail-content">
-              <span class="detail-label">Cognome</span>
-              <span class="detail-value">{{ currentUser?.lastName }}</span>
+        <!-- Colonne giorni -->
+        <div class="day-col" *ngFor="let day of weekDays" [class.today-col]="isToday(day)">
+          <div
+            class="hour-cell"
+            *ngFor="let slot of timeSlots"
+            [class.full-hour]="isFullHour(slot)"
+            [class.half-hour]="!isFullHour(slot)"
+          >
+            <div
+              class="booking-card"
+              *ngFor="let b of getBookingsForSlot(day, slot)"
+              [class]="'booking-card ' + getBookingClass(b)"
+            >
+              <div class="booking-time">{{ b.startTime }} – {{ b.endTime }}</div>
+              <div class="booking-name">{{ getBookingLabel(b) }}</div>
+              <div class="booking-status" [class]="'status-' + b.status?.toLowerCase()">
+                {{ b.status === 'CONFIRMED' ? '● Confermata' : b.status === 'PENDING' ? '○ In attesa' : '✕ Annullata' }}
+              </div>
             </div>
           </div>
         </div>
 
       </div>
-
     </div>
 
-  </main>
+    <!-- Stato vuoto -->
+    <div class="empty-state" *ngIf="!isLoading && bookings.length === 0">
+      <div class="empty-icon">📅</div>
+      <p class="empty-title">Nessuna prenotazione</p>
+      <p class="empty-sub" *ngIf="isClient()">Non hai ancora prenotazioni con i tuoi professionisti.</p>
+      <p class="empty-sub" *ngIf="isProfessional()">Nessun cliente ha ancora prenotato con te.</p>
+    </div>
+
+  </div>
+
+  <!-- ── OVERLAY ── -->
+  <div class="panel-overlay" *ngIf="isProfileOpen" (click)="closeProfile()"></div>
+
+  <!-- ── PANNELLO PROFILO ── -->
+  <aside class="profile-panel" [class.open]="isProfileOpen">
+
+    <div class="panel-header">
+      <span class="panel-title">Il tuo Profilo</span>
+      <button class="panel-close" (click)="closeProfile()">✕</button>
+    </div>
+
+    <div class="panel-body">
+
+      <ng-container *ngIf="isLoading">
+        <div class="skeleton-avatar"></div>
+        <div class="skeleton-line wide"></div>
+        <div class="skeleton-line narrow"></div>
+      </ng-container>
+
+      <ng-container *ngIf="!isLoading && dashboardData">
+
+        <div class="panel-avatar-wrap">
+          <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar" class="panel-avatar">
+          <div *ngIf="!currentUser?.profilePicture" class="panel-avatar-fallback">{{ getInitials() }}</div>
+          <div class="panel-avatar-ring"></div>
+        </div>
+
+        <div class="panel-name">{{ profile?.firstName }} {{ profile?.lastName }}</div>
+        <div class="panel-role-badge">{{ profile?.role }}</div>
+
+        <div class="panel-section-title">Dati Personali</div>
+        <div class="panel-details">
+          <div class="detail-row">
+            <span class="detail-icon">✉</span>
+            <div class="detail-content">
+              <span class="detail-label">Email</span>
+              <span class="detail-value">{{ profile?.email }}</span>
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="isClient() && subscription">
+          <div class="panel-section-title">Abbonamento</div>
+          <div class="subscription-card" [class.inactive]="!subscription.isActive">
+            <div class="sub-plan-name">{{ subscription.planName }}</div>
+            <div class="sub-status">
+              <span class="sub-dot" [class.active]="subscription.isActive"></span>
+              {{ subscription.isActive ? 'Attivo' : 'Scaduto' }}
+            </div>
+            <div class="sub-dates">Scade il {{ subscription.endDate | date:'d MMMM yyyy':'':'it' }}</div>
+            <div class="sub-days-left" *ngIf="subscription.isActive">{{ getSubscriptionDaysLeft() }} giorni rimanenti</div>
+            <div class="sub-credits">
+              <div class="credit-item">
+                <span class="credit-icon">💪</span>
+                <span class="credit-label">PT</span>
+                <span class="credit-num">{{ subscription.remainingPtCredits }}</span>
+              </div>
+              <div class="credit-item">
+                <span class="credit-icon">🥗</span>
+                <span class="credit-label">Nutrizione</span>
+                <span class="credit-num">{{ subscription.remainingNutritionistCredits }}</span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="isClient() && professionals.length > 0">
+          <div class="panel-section-title">I tuoi Professionisti</div>
+          <div class="panel-details">
+            <div class="detail-row" *ngFor="let p of professionals">
+              <span class="detail-icon">{{ p.role === 'PERSONAL_TRAINER' ? '💪' : '🥗' }}</span>
+              <div class="detail-content">
+                <span class="detail-label">{{ p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</span>
+                <span class="detail-value">{{ p.fullName }}</span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+      </ng-container>
+
+      <button class="btn-logout" (click)="logout()">Esci dall'account →</button>
+
+    </div>
+  </aside>
 
 </div>
