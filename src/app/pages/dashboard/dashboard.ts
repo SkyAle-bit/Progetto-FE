@@ -33,3 +33,5 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/login']); // Torna alla schermata iniziale
   }
 }
+
+

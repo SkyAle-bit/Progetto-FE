@@ -8,20 +8,22 @@ import { AuthService } from '../../services/auth.service';
   selector: 'app-register',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  templateUrl: './register.html', // Assicurati che si chiami register.html
-  styleUrls: ['./register.css']   // Assicurati che si chiami register.css
+  templateUrl: './register.html',
+  styleUrls: ['./register.css']
 })
 export class RegisterComponent {
   registerForm: FormGroup;
   errorMessage: string = '';
   successMessage: string = '';
 
+  // Variabile per salvare l'immagine convertita in testo
+  profilePictureBase64: string | null = null;
+
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
 
   constructor() {
-    // Configurazione del form con i campi obbligatori
     this.registerForm = this.fb.group({
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
@@ -30,29 +32,38 @@ export class RegisterComponent {
     });
   }
 
+  // NUOVO METODO: Cattura il file quando l'utente lo seleziona
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        // Salva il risultato (una lunga stringa tipo "data:image/png;base64,iVBORw0KG...")
+        this.profilePictureBase64 = e.target.result;
+      };
+      reader.readAsDataURL(file); // Avvia la conversione
+    }
+  }
+
   onSubmit(): void {
     if (this.registerForm.valid) {
 
-      // Prepariamo i dati unendo il form agli ID dei professionisti (richiesti dal backend)
       const userData = {
         ...this.registerForm.value,
-        selectedPtId: 1,              // ID di default per il test
-        selectedNutritionistId: 2     // ID di default per il test
+        profilePicture: this.profilePictureBase64, // <-- INVIA L'IMMAGINE AL BACKEND
+        selectedPtId: 1,
+        selectedNutritionistId: 2
       };
 
       this.authService.register(userData).subscribe({
         next: (response: any) => {
-          this.successMessage = 'Registrazione completata! Ti stiamo reindirizzando al login...';
+          this.successMessage = 'Registrazione completata! Ti stiamo reindirizzando...';
           this.errorMessage = '';
-
-          // Aspetta 2 secondi e poi manda l'utente alla pagina di login
           setTimeout(() => {
             this.router.navigate(['/login']).then();
           }, 2000);
         },
         error: (err: any) => {
-          console.error('Errore di registrazione:', err);
-          // Mostra il messaggio di errore che arriva da Spring Boot (es. "Email già registrata")
           this.errorMessage = err.error?.message || 'Errore durante la registrazione. Riprova.';
           this.successMessage = '';
         }

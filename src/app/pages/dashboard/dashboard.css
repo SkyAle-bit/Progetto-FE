@@ -76,3 +76,69 @@
   font-size: 0.9rem;
   font-weight: bold;
 }
+
+.navbar-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+.navbar-avatar-fallback {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: white;
+  color: #007bff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* 2. Avatar grande nella Card Centrale */
+.profile-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 2px solid #f4f7f6;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.profile-avatar-container {
+  margin-bottom: 1rem;
+}
+
+.profile-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #007bff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.profile-avatar-fallback {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* Modifica al welcome-card h3 esistente per rimuovere il bordo che abbiamo spostato */
+.welcome-card h3 {
+  margin-top: 0;
+  margin-bottom: 0; /* Modificato */
+  border-bottom: none; /* Modificato */
+  color: #333;
+}

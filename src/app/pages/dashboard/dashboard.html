@@ -5,20 +5,37 @@
       <h2>Gestionale Tesi</h2>
     </div>
     <div class="user-info">
-      <span>Benvenuto/a, <strong>{{ currentUser?.firstName }} {{ currentUser?.lastName }}</strong>!</span>
+
+      <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar" class="navbar-avatar">
+      <div *ngIf="!currentUser?.profilePicture" class="navbar-avatar-fallback">
+        {{ currentUser?.firstName?.charAt(0) | uppercase }}{{ currentUser?.lastName?.charAt(0) | uppercase }}
+      </div>
+
+      <span>Benvenuto/a, <strong>{{ currentUser?.firstName }}</strong>!</span>
       <button class="btn-logout" (click)="logout()">Esci</button>
     </div>
   </nav>
 
   <div class="content">
     <div class="welcome-card">
-      <h3>Il tuo Profilo</h3>
+
+      <div class="profile-header">
+        <div class="profile-avatar-container">
+          <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Foto Profilo" class="profile-avatar">
+          <div *ngIf="!currentUser?.profilePicture" class="profile-avatar-fallback">
+            {{ currentUser?.firstName?.charAt(0) | uppercase }}{{ currentUser?.lastName?.charAt(0) | uppercase }}
+          </div>
+        </div>
+        <h3>Il tuo Profilo</h3>
+      </div>
+
       <div class="profile-details">
         <p><strong>Nome:</strong> {{ currentUser?.firstName }}</p>
         <p><strong>Cognome:</strong> {{ currentUser?.lastName }}</p>
         <p><strong>Email:</strong> {{ currentUser?.email }}</p>
         <p><strong>Ruolo:</strong> <span class="badge">{{ currentUser?.role }}</span></p>
       </div>
+
     </div>
   </div>
 

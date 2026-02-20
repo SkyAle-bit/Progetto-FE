@@ -10,6 +10,7 @@ export interface AuthResponse {
   lastName: string;
   email: string;
   role: string;
+  profilePicture?: string;
 }
 
 @Injectable({
