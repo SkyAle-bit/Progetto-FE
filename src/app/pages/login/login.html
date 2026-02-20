@@ -1,6 +1,5 @@
 <div class="login-page">
 
-  <!-- Sfondo animato -->
   <div class="bg-shapes">
     <div class="shape shape-1"></div>
     <div class="shape shape-2"></div>
@@ -9,14 +8,12 @@
 
   <div class="login-wrapper">
 
-    <!-- Brand -->
     <div class="brand">
       <div class="brand-icon">✦</div>
       <h1 class="brand-name">Gestionale Tesi</h1>
       <p class="brand-tagline">Accedi al tuo spazio accademico</p>
     </div>
 
-    <!-- Card -->
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="glass-card">
 
       <div *ngIf="errorMessage" class="error-banner">
@@ -28,9 +25,7 @@
         <div class="input-wrapper">
           <span class="input-icon">@</span>
           <input
-            id="email"
-            type="email"
-            formControlName="email"
+            id="email" type="email" formControlName="email"
             placeholder="mario.rossi@example.com"
             [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
           >
@@ -46,9 +41,7 @@
         <div class="input-wrapper">
           <span class="input-icon">◉</span>
           <input
-            id="password"
-            type="password"
-            formControlName="password"
+            id="password" type="password" formControlName="password"
             placeholder="La tua password"
             [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
           >
