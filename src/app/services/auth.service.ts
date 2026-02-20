@@ -48,4 +48,19 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   }
+
+  // Recupera tutti i piani dal backend
+  getPlans(): Observable<any> {
+    return this.http.get('http://localhost:8080/api/plans');
+  }
+
+  // Recupera i professionisti in base al ruolo
+  getProfessionals(role: string): Observable<any> {
+    return this.http.get(`http://localhost:8080/api/professionals?role=${role}`);
+  }
+
+  // Recupera i dati completi della Dashboard
+  getDashboard(userId: number): Observable<any> {
+    return this.http.get(`http://localhost:8080/api/users/dashboard/${userId}`);
+  }
 }

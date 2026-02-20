@@ -1,85 +1,170 @@
-<div class="login-container">
-  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="login-card">
+<div class="register-page">
 
-    <h2>Crea un Account</h2>
+  <!-- Sfondo animato -->
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
 
-    <div *ngIf="errorMessage" class="error-banner">
-      {{ errorMessage }}
+  <div class="register-wrapper">
+
+    <!-- Brand -->
+    <div class="brand">
+      <div class="brand-icon">✦</div>
+      <h1 class="brand-name">Gestionale Tesi</h1>
     </div>
-    <div *ngIf="successMessage" class="success-banner">
-      {{ successMessage }}
-    </div>
 
-    <div class="form-group profile-upload-section">
-      <label class="field-label">Foto Profilo (Opzionale)</label>
+    <form [formGroup]="registerForm" class="glass-card">
 
-      <div class="profile-pic-wrapper">
-        <input type="file" id="actual-btn" (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/jpg" hidden/>
-
-        <label for="actual-btn" class="profile-pic-label">
-
-          <ng-container *ngIf="profilePictureBase64">
-            <img [src]="profilePictureBase64" alt="Anteprima" class="profile-image-preview">
-            <div class="overlay-change">
-              <span>📷 Cambia</span>
+      <!-- Header step -->
+      <ng-container *ngIf="currentStep !== 3">
+        <div class="card-header">
+          <h2 class="card-title">Crea il tuo Account</h2>
+          <div class="step-track">
+            <div class="step-pill" [class.active]="currentStep === 1" [class.done]="currentStep > 1">
+              <span class="step-num">1</span>
+              <span class="step-label">Dati Personali</span>
             </div>
-          </ng-container>
-
-          <ng-container *ngIf="!profilePictureBase64">
-            <div class="placeholder-content">
-              <span class="plus-icon">+</span>
-              <span class="add-text">Aggiungi foto</span>
+            <div class="step-line" [class.done]="currentStep > 1"></div>
+            <div class="step-pill" [class.active]="currentStep === 2">
+              <span class="step-num">2</span>
+              <span class="step-label">Piano</span>
             </div>
-          </ng-container>
+          </div>
+        </div>
+      </ng-container>
 
-        </label>
+      <!-- STEP 1 -->
+      <div *ngIf="currentStep === 1" class="step-body">
+
+        <!-- Avatar upload -->
+        <div class="avatar-upload">
+          <input type="file" id="actual-btn" (change)="onFileSelected($event)" accept="image/*" hidden/>
+          <label for="actual-btn" class="avatar-label">
+            <ng-container *ngIf="profilePictureBase64">
+              <img [src]="profilePictureBase64" alt="Anteprima" class="avatar-preview">
+              <div class="avatar-overlay">📷</div>
+            </ng-container>
+            <ng-container *ngIf="!profilePictureBase64">
+              <div class="avatar-placeholder">
+                <span class="avatar-plus">+</span>
+                <span class="avatar-text">Foto</span>
+              </div>
+            </ng-container>
+          </label>
+          <p class="avatar-hint">Opzionale</p>
+        </div>
+
+        <!-- Campi in griglia -->
+        <div class="fields-grid">
+          <div class="field-group">
+            <label class="field-label">Nome</label>
+            <input type="text" formControlName="firstName" placeholder="Mario" class="field-input">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Cognome</label>
+            <input type="text" formControlName="lastName" placeholder="Rossi" class="field-input">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Email</label>
+          <div class="input-wrapper">
+            <span class="input-icon">@</span>
+            <input type="email" formControlName="email" placeholder="mario@example.com" class="field-input with-icon">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">◉</span>
+            <input type="password" formControlName="password" placeholder="Minimo 6 caratteri" class="field-input with-icon">
+          </div>
+        </div>
+
+        <button type="button" class="btn-primary" (click)="goToStep2()">
+          <span>Avanti</span><span class="btn-arrow">→</span>
+        </button>
+
+        <div class="card-footer">
+          Hai già un account? <a routerLink="/login" class="link">Accedi</a>
+        </div>
       </div>
-    </div>
 
-    <div class="form-group">
-      <label for="firstName">Nome</label>
-      <input id="firstName" type="text" formControlName="firstName" placeholder="es. Mario"
-             [ngClass]="{'is-invalid': registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched}">
-      <div class="error-text" *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched">
-        Il nome è obbligatorio.
+      <!-- STEP 2 -->
+      <div *ngIf="currentStep === 2" class="step-body">
+
+        <div class="field-group">
+          <label class="field-label">Piano</label>
+          <select formControlName="selectedPlanId" class="field-select">
+            <option value="" disabled selected>Seleziona un piano...</option>
+            <option *ngFor="let plan of plans" [value]="plan.id">
+              {{ plan.name }} — {{ plan.duration }} mesi — {{ plan.fullPrice }}€
+            </option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Metodo di pagamento</label>
+          <select formControlName="paymentFrequency" class="field-select">
+            <option value="UNICA_SOLUZIONE">Pagamento Unico (Risparmia)</option>
+            <option value="RATE_MENSILI">Rate Mensili</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Personal Trainer</label>
+          <select formControlName="selectedPtId" class="field-select">
+            <option value="" disabled selected>Seleziona il PT...</option>
+            <option *ngFor="let pt of personalTrainers" [value]="pt.id" [disabled]="pt.isSoldOut">
+              {{ pt.fullName }} ⭐ {{ pt.averageRating }}<span *ngIf="pt.isSoldOut"> — AL COMPLETO</span>
+            </option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Nutrizionista</label>
+          <select formControlName="selectedNutritionistId" class="field-select">
+            <option value="" disabled selected>Seleziona il Nutrizionista...</option>
+            <option *ngFor="let nut of nutritionists" [value]="nut.id" [disabled]="nut.isSoldOut">
+              {{ nut.fullName }} ⭐ {{ nut.averageRating }}<span *ngIf="nut.isSoldOut"> — AL COMPLETO</span>
+            </option>
+          </select>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn-secondary" (click)="goToStep1()" [disabled]="isLoading">
+            ← Indietro
+          </button>
+          <button type="button" class="btn-primary btn-submit" (click)="onSubmit()" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Completa →</span>
+            <span *ngIf="isLoading" class="loading-dots">Invio<span>.</span><span>.</span><span>.</span></span>
+          </button>
+        </div>
+
       </div>
-    </div>
 
-    <div class="form-group">
-      <label for="lastName">Cognome</label>
-      <input id="lastName" type="text" formControlName="lastName" placeholder="es. Rossi"
-             [ngClass]="{'is-invalid': registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched}">
-      <div class="error-text" *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched">
-        Il cognome è obbligatorio.
+      <!-- STEP 3: Successo -->
+      <div *ngIf="currentStep === 3" class="success-body">
+        <div class="success-ring">
+          <div class="success-check">✓</div>
+        </div>
+        <h3 class="success-title">Benvenuto/a!</h3>
+        <p class="success-text">Il tuo account è stato creato con successo.</p>
+        <p class="success-redirect">Reindirizzamento al login in corso...</p>
+        <button type="button" class="btn-primary" routerLink="/login">Vai al Login →</button>
       </div>
-    </div>
 
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" placeholder="es. mario.rossi@example.com"
-             [ngClass]="{'is-invalid': registerForm.get('email')?.invalid && registerForm.get('email')?.touched}">
-      <div class="error-text" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-        <span *ngIf="registerForm.get('email')?.errors?.['required']">L'email è obbligatoria.</span>
-        <span *ngIf="registerForm.get('email')?.errors?.['email']">Inserisci un'email valida.</span>
-      </div>
-    </div>
+    </form>
+  </div>
 
-    <div class="form-group">
-      <label for="password">Password</label>
-      <input id="password" type="password" formControlName="password" placeholder="Minimo 6 caratteri"
-             [ngClass]="{'is-invalid': registerForm.get('password')?.invalid && registerForm.get('password')?.touched}">
-      <div class="error-text" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-        <span *ngIf="registerForm.get('password')?.errors?.['required']">La password è obbligatoria.</span>
-        <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Deve avere almeno 6 caratteri.</span>
-      </div>
-    </div>
+</div>
 
-    <button type="submit" class="btn-primary" [disabled]="successMessage !== ''">Registrati</button>
-
-    <div class="form-footer">
-      <p>Hai già un account? <a routerLink="/login">Accedi qui</a></p>
-    </div>
-
-
-  </form>
+<!-- TOAST -->
+<div class="toast-wrapper" *ngIf="toast" [class.toast-success]="toast.type === 'success'" [class.toast-error]="toast.type === 'error'">
+  <div class="toast-icon-wrap">{{ toast.type === 'success' ? '✓' : '!' }}</div>
+  <span class="toast-message">{{ toast.message }}</span>
+  <button class="toast-close" (click)="dismissToast()">✕</button>
 </div>

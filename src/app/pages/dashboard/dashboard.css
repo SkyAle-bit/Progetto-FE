@@ -1,115 +1,188 @@
-.dashboard-container {
-  background-color: #f4f7f6;
-  min-height: 100vh;
-}
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-.navbar {
-  background-color: #007bff;
-  color: white;
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.navbar h2 {
+*, *::before, *::after {
+  box-sizing: border-box;
   margin: 0;
-  font-size: 1.5rem;
+  padding: 0;
 }
 
-.user-info {
+.dashboard-page {
+  min-height: 100vh;
+  background: #080e1c;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =====================
+   TOPBAR
+   ===================== */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  justify-content: space-between;
+  padding: 1rem 2.5rem;
+  background: rgba(8, 14, 28, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.brand-icon {
+  font-size: 1.2rem;
+  color: #c8923a;
+  animation: spin 20s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.brand-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #f0e6d3;
+  letter-spacing: 0.02em;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* User chip */
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 50px;
+  padding: 0.35rem 0.9rem 0.35rem 0.35rem;
+}
+
+.chip-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid #c8923a;
+}
+
+.chip-avatar-fallback {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c8923a, #e0a94a);
+  color: #1a0f00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.chip-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #c8d4f0;
+}
+
+/* Logout button */
 .btn-logout {
-  background-color: #dc3545;
-  color: white;
-  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
   padding: 0.5rem 1rem;
-  border-radius: 4px;
+  background: rgba(200, 146, 58, 0.1);
+  border: 1px solid rgba(200, 146, 58, 0.3);
+  border-radius: 8px;
+  color: #c8923a;
+  font-size: 0.85rem;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
 }
 
 .btn-logout:hover {
-  background-color: #c82333;
+  background: rgba(200, 146, 58, 0.2);
+  border-color: #c8923a;
+  transform: translateY(-1px);
 }
 
-.content {
-  padding: 2rem;
+.logout-icon { transition: transform 0.2s; }
+.btn-logout:hover .logout-icon { transform: translateX(3px); }
+
+/* =====================
+   MAIN CONTENT
+   ===================== */
+.main-content {
+  flex: 1;
   display: flex;
-  justify-content: center;
-}
-
-.welcome-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  width: 100%;
-  max-width: 600px;
-}
-
-.welcome-card h3 {
-  margin-top: 0;
-  border-bottom: 2px solid #f4f7f6;
-  padding-bottom: 1rem;
-  margin-bottom: 1.5rem;
-  color: #333;
-}
-
-.profile-details p {
-  font-size: 1.1rem;
-  margin-bottom: 0.8rem;
-  color: #555;
-}
-
-.badge {
-  background-color: #17a2b8;
-  color: white;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: bold;
-}
-
-.navbar-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid white;
-}
-
-.navbar-avatar-fallback {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: white;
-  color: #007bff;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  font-weight: bold;
-  font-size: 1.1rem;
+  justify-content: center;
+  padding: 3rem 2rem;
+  position: relative;
+  overflow: hidden;
 }
 
-/* 2. Avatar grande nella Card Centrale */
-.profile-header {
+/* Sfondo */
+.bg-shapes { position: absolute; inset: 0; pointer-events: none; }
+.shape { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.1; animation: drift 20s ease-in-out infinite; }
+.shape-1 { width: 500px; height: 500px; background: #c8923a; top: -100px; right: -100px; animation-delay: 0s; }
+.shape-2 { width: 400px; height: 400px; background: #1a3a6e; bottom: -80px; left: -80px; animation-delay: -10s; }
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(20px, -20px); }
+}
+
+.content-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =====================
+   PROFILE CARD
+   ===================== */
+.profile-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 2.5rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-bottom: 2px solid #f4f7f6;
-  padding-bottom: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 1rem;
 }
 
-.profile-avatar-container {
-  margin-bottom: 1rem;
+/* Avatar */
+.profile-avatar-wrap {
+  position: relative;
+  margin-bottom: 0.25rem;
 }
 
 .profile-avatar {
@@ -117,28 +190,116 @@
   height: 110px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #007bff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  border: 3px solid #c8923a;
+  position: relative;
+  z-index: 1;
 }
 
 .profile-avatar-fallback {
   width: 110px;
   height: 110px;
   border-radius: 50%;
-  background-color: #007bff;
-  color: white;
+  background: linear-gradient(135deg, #c8923a, #e0a94a);
+  color: #1a0f00;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 3rem;
-  font-weight: bold;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
 }
 
-/* Modifica al welcome-card h3 esistente per rimuovere il bordo che abbiamo spostato */
-.welcome-card h3 {
-  margin-top: 0;
-  margin-bottom: 0; /* Modificato */
-  border-bottom: none; /* Modificato */
-  color: #333;
+.avatar-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(200, 146, 58, 0.25);
+  animation: ringPulse 3s ease infinite;
+}
+
+@keyframes ringPulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.06); opacity: 1; }
+}
+
+/* Name & role */
+.profile-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #f0e6d3;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.profile-role-badge {
+  background: rgba(200, 146, 58, 0.15);
+  border: 1px solid rgba(200, 146, 58, 0.3);
+  color: #c8923a;
+  padding: 0.3rem 1rem;
+  border-radius: 50px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.profile-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 0.25rem 0;
+}
+
+/* Details */
+.profile-details {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.detail-row:hover {
+  background: rgba(200, 146, 58, 0.05);
+  border-color: rgba(200, 146, 58, 0.15);
+}
+
+.detail-icon {
+  font-size: 1rem;
+  color: #c8923a;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.detail-label {
+  font-size: 0.7rem;
+  color: #4a5878;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 0.95rem;
+  color: #c8d4f0;
+  font-weight: 400;
 }

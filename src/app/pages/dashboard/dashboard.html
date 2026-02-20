@@ -1,42 +1,91 @@
-<div class="dashboard-container">
+<div class="dashboard-page">
 
-  <nav class="navbar">
-    <div class="logo">
-      <h2>Gestionale Tesi</h2>
+  <!-- Sidebar / Navbar top -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="brand-icon">✦</span>
+      <span class="brand-name">Gestionale Tesi</span>
     </div>
-    <div class="user-info">
 
-      <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar" class="navbar-avatar">
-      <div *ngIf="!currentUser?.profilePicture" class="navbar-avatar-fallback">
-        {{ currentUser?.firstName?.charAt(0) | uppercase }}{{ currentUser?.lastName?.charAt(0) | uppercase }}
+    <div class="topbar-right">
+      <div class="user-chip">
+        <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar" class="chip-avatar">
+        <div *ngIf="!currentUser?.profilePicture" class="chip-avatar-fallback">
+          {{ currentUser?.firstName?.charAt(0) | uppercase }}{{ currentUser?.lastName?.charAt(0) | uppercase }}
+        </div>
+        <span class="chip-name">{{ currentUser?.firstName }}</span>
       </div>
-
-      <span>Benvenuto/a, <strong>{{ currentUser?.firstName }}</strong>!</span>
-      <button class="btn-logout" (click)="logout()">Esci</button>
+      <button class="btn-logout" (click)="logout()">
+        <span>Esci</span>
+        <span class="logout-icon">→</span>
+      </button>
     </div>
-  </nav>
+  </header>
 
-  <div class="content">
-    <div class="welcome-card">
+  <!-- Main content -->
+  <main class="main-content">
 
-      <div class="profile-header">
-        <div class="profile-avatar-container">
-          <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Foto Profilo" class="profile-avatar">
+    <!-- Decorazioni sfondo -->
+    <div class="bg-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+    </div>
+
+    <div class="content-wrapper">
+
+      <!-- Profilo card -->
+      <div class="profile-card">
+
+        <!-- Avatar grande -->
+        <div class="profile-avatar-wrap">
+          <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Profilo" class="profile-avatar">
           <div *ngIf="!currentUser?.profilePicture" class="profile-avatar-fallback">
             {{ currentUser?.firstName?.charAt(0) | uppercase }}{{ currentUser?.lastName?.charAt(0) | uppercase }}
           </div>
+          <div class="avatar-ring"></div>
         </div>
-        <h3>Il tuo Profilo</h3>
-      </div>
 
-      <div class="profile-details">
-        <p><strong>Nome:</strong> {{ currentUser?.firstName }}</p>
-        <p><strong>Cognome:</strong> {{ currentUser?.lastName }}</p>
-        <p><strong>Email:</strong> {{ currentUser?.email }}</p>
-        <p><strong>Ruolo:</strong> <span class="badge">{{ currentUser?.role }}</span></p>
+        <div class="profile-name">
+          {{ currentUser?.firstName }} {{ currentUser?.lastName }}
+        </div>
+
+        <div class="profile-role-badge">
+          {{ currentUser?.role }}
+        </div>
+
+        <div class="profile-divider"></div>
+
+        <!-- Dettagli -->
+        <div class="profile-details">
+          <div class="detail-row">
+            <span class="detail-icon">✉</span>
+            <div class="detail-content">
+              <span class="detail-label">Email</span>
+              <span class="detail-value">{{ currentUser?.email }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-icon">◈</span>
+            <div class="detail-content">
+              <span class="detail-label">Nome</span>
+              <span class="detail-value">{{ currentUser?.firstName }}</span>
+            </div>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-icon">◈</span>
+            <div class="detail-content">
+              <span class="detail-label">Cognome</span>
+              <span class="detail-value">{{ currentUser?.lastName }}</span>
+            </div>
+          </div>
+        </div>
+
       </div>
 
     </div>
-  </div>
+
+  </main>
 
 </div>
