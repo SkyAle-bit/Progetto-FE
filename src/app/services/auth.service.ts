@@ -60,4 +60,20 @@ export class AuthService {
     // Corretto: aggiungi /users/ nel path
     return this.http.get(`http://localhost:8080/api/users/dashboard/${userId}`);
   }
+
+  getProfessionalSlots(professionalId: number): Observable<any> {
+    return this.http.get(`http://localhost:8080/api/professionals/${professionalId}/slots`);
+  }
+
+  createProfessionalSlots(professionalId: number, slots: any[]): Observable<any> {
+    return this.http.post(`http://localhost:8080/api/professionals/${professionalId}/slots`, slots);
+  }
+
+  deleteProfessionalSlot(professionalId: number, slotId: number): Observable<any> {
+    return this.http.delete(`http://localhost:8080/api/professionals/${professionalId}/slots/${slotId}`);
+  }
+
+  createBooking(request: { userId: number; slotId: number }): Observable<any> {
+    return this.http.post('http://localhost:8080/api/bookings', request);
+  }
 }

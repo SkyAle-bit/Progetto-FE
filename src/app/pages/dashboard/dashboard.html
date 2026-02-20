@@ -15,12 +15,36 @@
     </div>
 
     <div class="topbar-right">
-      <div class="week-stat" *ngIf="!isLoading">
+      <!-- Statistiche (Professionisti) -->
+      <div class="week-stat" *ngIf="!isLoading && isProfessional()">
         <span class="week-stat-num">{{ countWeekBookings() }}</span>
         <span class="week-stat-label">questa settimana</span>
       </div>
+
+      <!-- Crediti e Prenotazione (Clienti) -->
+      <div class="topbar-credits" *ngIf="!isLoading && isClient() && subscription?.active">
+        <div class="topbar-credit-badges">
+          <div class="topbar-credit-badge">
+            <span class="tc-icon">💪</span>
+            <span class="tc-num">{{ subscription.remainingPtCredits }}</span>
+          </div>
+          <div class="topbar-credit-badge nutritionist">
+            <span class="tc-icon">🥗</span>
+            <span class="tc-num">{{ subscription.remainingNutritionistCredits }}</span>
+          </div>
+        </div>
+        <button class="btn-book-topbar" (click)="toggleProfile()">
+          Prenota
+        </button>
+      </div>
+      <!-- Bottone disponibilità in topbar — solo professionisti -->
+      <button *ngIf="isProfessional()" class="btn-avail-topbar" (click)="openAvailability()"
+        title="Gestisci disponibilità settimana prossima">
+        <span>📅</span> Disponibilità
+      </button>
       <button class="profile-btn" (click)="toggleProfile()" [class.active]="isProfileOpen">
-        <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar" class="profile-btn-img">
+        <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar"
+          class="profile-btn-img">
         <span *ngIf="!currentUser?.profilePicture" class="profile-btn-initials">{{ getInitials() }}</span>
       </button>
     </div>
@@ -49,29 +73,18 @@
 
         <!-- Colonna ore -->
         <div class="time-col">
-          <div
-            class="time-slot-label"
-            *ngFor="let slot of timeSlots"
-            [class.full-hour]="isFullHour(slot)"
-            [class.half-hour]="!isFullHour(slot)"
-          >
+          <div class="time-slot-label" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
+            [class.half-hour]="!isFullHour(slot)">
             {{ slot }}
           </div>
         </div>
 
         <!-- Colonne giorni -->
         <div class="day-col" *ngFor="let day of weekDays" [class.today-col]="isToday(day)">
-          <div
-            class="hour-cell"
-            *ngFor="let slot of timeSlots"
-            [class.full-hour]="isFullHour(slot)"
-            [class.half-hour]="!isFullHour(slot)"
-          >
-            <div
-              class="booking-card"
-              *ngFor="let b of getBookingsForSlot(day, slot)"
-              [class]="'booking-card ' + getBookingClass(b)"
-            >
+          <div class="hour-cell" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
+            [class.half-hour]="!isFullHour(slot)">
+            <div class="booking-card" *ngFor="let b of getBookingsForSlot(day, slot)"
+              [class]="'booking-card ' + getBookingClass(b)">
               <div class="booking-time">{{ b.startTime }} – {{ b.endTime }}</div>
               <div class="booking-name">{{ getBookingLabel(b) }}</div>
               <div class="booking-status" [class]="'status-' + b.status?.toLowerCase()">
@@ -94,7 +107,7 @@
 
   </div>
 
-  <!-- ── OVERLAY ── -->
+  <!-- ── OVERLAY PROFILO ── -->
   <div class="panel-overlay" *ngIf="isProfileOpen" (click)="closeProfile()"></div>
 
   <!-- ── PANNELLO PROFILO ── -->
@@ -124,6 +137,13 @@
         <div class="panel-name">{{ profile?.firstName }} {{ profile?.lastName }}</div>
         <div class="panel-role-badge">{{ profile?.role }}</div>
 
+        <!-- Bottone disponibilità — solo professionisti -->
+        <button *ngIf="isProfessional()" class="btn-availability" (click)="openAvailability()">
+          <span class="btn-availability-icon">📅</span>
+          Gestisci Disponibilità
+          <span class="btn-availability-arrow">→</span>
+        </button>
+
         <div class="panel-section-title">Dati Personali</div>
         <div class="panel-details">
           <div class="detail-row">
@@ -144,7 +164,8 @@
               {{ subscription.isActive ? 'Attivo' : 'Scaduto' }}
             </div>
             <div class="sub-dates">Scade il {{ subscription.endDate | date:'d MMMM yyyy':'':'it' }}</div>
-            <div class="sub-days-left" *ngIf="subscription.isActive">{{ getSubscriptionDaysLeft() }} giorni rimanenti</div>
+            <div class="sub-days-left" *ngIf="subscription.isActive">{{ getSubscriptionDaysLeft() }} giorni rimanenti
+            </div>
             <div class="sub-credits">
               <div class="credit-item">
                 <span class="credit-icon">💪</span>
@@ -165,10 +186,12 @@
           <div class="panel-details">
             <div class="detail-row" *ngFor="let p of professionals">
               <span class="detail-icon">{{ p.role === 'PERSONAL_TRAINER' ? '💪' : '🥗' }}</span>
-              <div class="detail-content">
-                <span class="detail-label">{{ p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</span>
+              <div class="detail-content" style="flex: 1;">
+                <span class="detail-label">{{ p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista'
+                  }}</span>
                 <span class="detail-value">{{ p.fullName }}</span>
               </div>
+              <button class="btn-book-sm" (click)="openBooking(p)">Prenota</button>
             </div>
           </div>
         </ng-container>
@@ -179,5 +202,167 @@
 
     </div>
   </aside>
+
+  <!-- ── MODALE DISPONIBILITÀ ── -->
+  <div class="avail-overlay" *ngIf="isAvailabilityOpen" (click)="closeAvailability()"></div>
+
+  <div class="avail-modal" *ngIf="isAvailabilityOpen">
+
+    <!-- Header modale -->
+    <div class="avail-header">
+      <div class="avail-header-text">
+        <span class="avail-title">Disponibilità Settimana Prossima</span>
+        <span class="avail-subtitle">{{ getNextWeekLabel() }}</span>
+      </div>
+      <button class="avail-close" (click)="closeAvailability()">✕</button>
+    </div>
+
+    <!-- Intestazione giorni -->
+    <div class="avail-days-header">
+      <div class="avail-time-gutter">
+        <button *ngIf="isCopyMode" class="btn-cancel-copy" (click)="clearCopy()" title="Annulla copia">✕</button>
+      </div>
+      <div class="avail-day-header" *ngFor="let day of nextWeekDays" [class.is-copy-source]="isCopiedDay(day)">
+        <span class="avail-day-name">{{ getDayName(day) }}</span>
+        <span class="avail-day-number">{{ getDayNumber(day) }}</span>
+        <!-- Giorno sorgente copiato -->
+        <span *ngIf="isCopiedDay(day)" class="badge-copied">✓ Copiato</span>
+        <!-- In copy mode: mostra Incolla sugli altri giorni -->
+        <button *ngIf="isCopyMode && !isCopiedDay(day)" class="btn-paste-day" (click)="pasteDay(day)">⬇ Incolla</button>
+        <!-- Normale: mostra Copia se ha slot -->
+        <button *ngIf="!isCopyMode" class="btn-copy-day" (click)="copyDay(day)" [disabled]="!hasDaySlots(day)"
+          title="Copia disponibilità">⧉ Copia</button>
+      </div>
+    </div>
+
+
+    <!-- Griglia slot -->
+    <div class="avail-body">
+      <div class="avail-grid">
+
+        <!-- Colonna ore -->
+        <div class="avail-time-col">
+          <div class="avail-time-label" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
+            [class.half-hour]="!isFullHour(slot)">
+            {{ isFullHour(slot) ? slot : '' }}
+          </div>
+        </div>
+
+        <!-- Colonne giorni -->
+        <div class="avail-day-col" *ngFor="let day of nextWeekDays"
+          [class.is-paste-target]="isCopyMode && !isCopiedDay(day)" [class.is-copy-source]="isCopiedDay(day)">
+          <div class="avail-slot" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
+            [class.half-hour]="!isFullHour(slot)" [class.selected]="isSlotSelected(day, slot)"
+            [class.existing]="isSlotExisting(day, slot)" [class.locked]="isSlotLocked(day, slot)"
+            (click)="toggleSlot(day, slot)"
+            [title]="getDayName(day) + ' ' + getDayNumber(day) + ' — ' + slot + (isSlotLocked(day, slot) ? ' (Prenotato)' : '')">
+            <span *ngIf="isSlotLocked(day, slot)" class="slot-lock-icon">🔒</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="avail-footer">
+      <span class="avail-counter">
+        <span class="avail-counter-num">{{ getSelectedCount() }}</span>
+        slot selezionati
+        <span class="avail-counter-hours">({{ (getSelectedCount() * 0.5).toFixed(1) }}h totali)</span>
+      </span>
+      <div class="avail-footer-actions">
+        <button class="btn-avail-cancel" (click)="closeAvailability()">Annulla</button>
+        <button class="btn-avail-confirm" (click)="confirmAvailability()" [disabled]="getSelectedCount() === 0">
+          Conferma Disponibilità
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── MODALE PRENOTAZIONE CLIENTE ── -->
+  <div class="booking-overlay" *ngIf="isBookingOpen" (click)="closeBooking()"></div>
+
+  <div class="booking-modal" *ngIf="isBookingOpen">
+    <!-- Header modale -->
+    <div class="booking-header">
+      <div class="booking-header-text">
+        <span class="booking-title">Prenota con {{ selectedProfessional?.fullName }}</span>
+        <span class="booking-subtitle">{{ selectedProfessional?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' :
+          'Nutrizionista' }}</span>
+      </div>
+      <button class="booking-close" (click)="closeBooking()">✕</button>
+    </div>
+
+    <div class="booking-loading" *ngIf="isLoading">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Caricamento disponibilità...</div>
+    </div>
+
+    <div class="booking-body" *ngIf="!isLoading">
+
+      <!-- Stato vuoto: il professionista non ha slot -->
+      <div class="booking-empty" *ngIf="bookingDays.length === 0">
+        <div class="booking-empty-icon">📅</div>
+        <p class="booking-empty-title">Nessuna disponibilità</p>
+        <p class="booking-empty-sub">Questo professionista non ha ancora inserito disponibilità per i prossimi giorni.
+        </p>
+      </div>
+
+      <ng-container *ngIf="bookingDays.length > 0">
+        <!-- Day Selector -->
+        <div class="booking-section-title">Seleziona una data</div>
+        <div class="booking-day-selector">
+          <button class="booking-day-card" *ngFor="let day of bookingDays"
+            [class.selected]="selectedBookingDay && day.getTime() === selectedBookingDay.getTime()"
+            (click)="selectBookingDay(day)">
+            <span class="bdc-name">{{ getDayName(day) }}</span>
+            <span class="bdc-num">{{ getDayNumber(day) }}</span>
+            <span class="bdc-month">{{ day.toLocaleDateString('it-IT', { month: 'short' }) }}</span>
+          </button>
+        </div>
+
+        <!-- Slot Selector -->
+        <div class="booking-section-title" style="margin-top: 1.5rem;">Orari disponibili</div>
+        <div class="booking-slot-grid" *ngIf="slotsForSelectedDay.length > 0">
+          <button class="booking-time-pill" *ngFor="let slot of slotsForSelectedDay"
+            [class.selected]="isBookingSlotSelected(slot)" (click)="toggleBookingSlot(slot)">
+            {{ getSlotTimeLabel(slot) }}
+          </button>
+        </div>
+        <div class="booking-empty-slots" *ngIf="selectedBookingDay && slotsForSelectedDay.length === 0">
+          Nessun orario disponibile in questa data.
+        </div>
+      </ng-container>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="booking-footer" *ngIf="!isLoading">
+      <div class="booking-selection-info" *ngIf="selectedBookingSlot && selectedBookingDay">
+        <span class="bsi-label">Data selezionata:</span>
+        <span class="bsi-value">{{ selectedBookingDay.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric',
+          month: 'long' }) }} alle {{ getSlotTimeLabel(selectedBookingSlot) }}</span>
+      </div>
+      <div class="booking-selection-info empty" *ngIf="!selectedBookingSlot">
+        Seleziona un orario per continuare
+      </div>
+      <div class="booking-footer-actions">
+        <button class="btn-avail-cancel" (click)="closeBooking()">Annulla</button>
+        <button class="btn-book-confirm" (click)="confirmBooking()" [disabled]="!selectedBookingSlot">
+          Conferma Prenotazione
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODALE SUCCESSO GLOBALE ── -->
+  <div class="global-popup-overlay" *ngIf="isPopupOpen" (click)="closePopup()"></div>
+  <div class="global-popup" *ngIf="isPopupOpen">
+    <div class="global-popup-icon">✓</div>
+    <div class="global-popup-title">{{ popupTitle }}</div>
+    <div class="global-popup-message">{{ popupMessage }}</div>
+    <button class="global-popup-btn" (click)="closePopup()">OK, ho capito</button>
+  </div>
 
 </div>

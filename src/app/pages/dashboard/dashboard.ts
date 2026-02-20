@@ -20,16 +20,46 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isLoading: boolean = true;
   isProfileOpen: boolean = false;
 
+  // ── Modale Successo Globale ───────────────────────────────
+  isPopupOpen: boolean = false;
+  popupTitle: string = '';
+  popupMessage: string = '';
+
+  openPopup(title: string, message: string): void {
+    this.popupTitle = title;
+    this.popupMessage = message;
+    this.isPopupOpen = true;
+  }
+
+  closePopup(): void {
+    this.isPopupOpen = false;
+  }
+
+  // ── Disponibilità ─────────────────────────────────────────
+  isAvailabilityOpen: boolean = false;
+  nextWeekDays: Date[] = [];
+  selectedSlots: Set<string> = new Set();
+  existingSlots: Set<string> = new Set();
+  existingSlotIds: Map<string, number> = new Map();
+  lockedSlots: Set<string> = new Set();
+
+  // ── Prenotazione Cliente ──────────────────────────────────
+  isBookingOpen: boolean = false;
+  selectedProfessional: any = null;
+  availableBookingSlots: any[] = [];
+  selectedBookingSlot: any = null;
+
+  bookingDays: Date[] = [];
+  selectedBookingDay: Date | null = null;
+  slotsForSelectedDay: any[] = [];
+
   currentWeekStart: Date = new Date();
   weekDays: Date[] = [];
   timeSlots: string[] = [];
   readonly START_HOUR = 8;
   readonly END_HOUR = 21;
 
-  // Responsive: quanti giorni mostrare in base alla larghezza schermo
   visibleDayCount: number = 7;
-
-  // Offset del "giorno di partenza" nella vista (per mobile: scorre di 1, tablet: di 3)
   dayOffset: number = 0;
 
   ngOnInit(): void {
@@ -45,7 +75,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 
   // ── Responsive ───────────────────────────────────────────
 
@@ -64,7 +94,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     } else {
       this.visibleDayCount = 7;
     }
-    // Ricalcola i giorni visibili
     this.buildWeekDays();
   }
 
@@ -133,15 +162,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   prevWeek(): void {
     if (this.visibleDayCount === 7) {
-      // Desktop: settimana precedente
       const d = new Date(this.currentWeekStart);
       d.setDate(d.getDate() - 7);
       this.currentWeekStart = d;
       this.dayOffset = 0;
     } else {
-      // Tablet/mobile: scorre indietro di N giorni
       this.dayOffset -= this.visibleDayCount;
-      // Evita di andare troppo indietro (limite: 4 settimane fa)
       const minOffset = -28;
       if (this.dayOffset < minOffset) this.dayOffset = minOffset;
     }
@@ -150,15 +176,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   nextWeek(): void {
     if (this.visibleDayCount === 7) {
-      // Desktop: settimana successiva
       const d = new Date(this.currentWeekStart);
       d.setDate(d.getDate() + 7);
       this.currentWeekStart = d;
       this.dayOffset = 0;
     } else {
-      // Tablet/mobile: scorre avanti di N giorni
       this.dayOffset += this.visibleDayCount;
-      // Limite: 8 settimane avanti
       const maxOffset = 56;
       if (this.dayOffset > maxOffset) this.dayOffset = maxOffset;
     }
@@ -181,13 +204,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
 
     if (this.visibleDayCount === 1) {
-      // Su mobile: mostra solo "Ven 20 Feb"
       return first.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
     }
     if (this.visibleDayCount === 3) {
       return `${first.toLocaleDateString('it-IT', opts)} – ${last.toLocaleDateString('it-IT', opts)}`;
     }
-    // Desktop: "20 febbraio – 26 febbraio 2026"
     const optsLong: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
     return `${first.toLocaleDateString('it-IT', optsLong)} – ${last.toLocaleDateString('it-IT', { ...optsLong, year: 'numeric' })}`;
   }
@@ -249,6 +270,322 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!this.subscription?.endDate) return 0;
     const end = new Date(this.subscription.endDate);
     return Math.max(0, Math.ceil((end.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
+  }
+
+  // ── Disponibilità ────────────────────────────────────────
+
+  buildNextWeekDays(): void {
+    this.nextWeekDays = [];
+    const today = new Date();
+    const day = today.getDay();
+    // Lunedì della settimana prossima
+    const daysUntilNextMonday = day === 0 ? 1 : 8 - day;
+    const nextMonday = new Date(today);
+    nextMonday.setDate(today.getDate() + daysUntilNextMonday);
+    nextMonday.setHours(0, 0, 0, 0);
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(nextMonday);
+      d.setDate(nextMonday.getDate() + i);
+      this.nextWeekDays.push(d);
+    }
+  }
+
+  openAvailability(): void {
+    this.buildNextWeekDays();
+    this.selectedSlots.clear();
+    this.existingSlots.clear();
+    this.existingSlotIds.clear();
+    this.lockedSlots.clear();
+    this.isAvailabilityOpen = true;
+    this.isLoading = true;
+
+    this.authService.getProfessionalSlots(this.currentUser.id).subscribe({
+      next: (slots: any[]) => {
+        slots.forEach(slot => {
+          const start = new Date(slot.startTime);
+          const timeLabel = `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}`;
+          const key = this.slotKey(start, timeLabel);
+
+          this.existingSlots.add(key);
+          this.existingSlotIds.set(key, slot.id);
+          // Se lo slot è prenotato (isAvailable == false o available == false), lo blocchiamo
+          if (slot.isAvailable === false || slot.available === false) {
+            this.lockedSlots.add(key);
+          }
+        });
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Errore nel caricamento disponibilità esistente', err);
+        // Anche in caso di errore apriamo la modale vuota e sblocchiamo il loading
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  closeAvailability(): void {
+    this.isAvailabilityOpen = false;
+  }
+
+  slotKey(day: Date, slot: string): string {
+    return `${this.formatDate(day)}|${slot}`;
+  }
+
+  toggleSlot(day: Date, slot: string): void {
+    const key = this.slotKey(day, slot);
+
+    if (this.existingSlots.has(key)) {
+      if (this.lockedSlots.has(key)) {
+        this.openPopup('Slot Prenotato', 'Questo slot è già stato prenotato da un cliente e non può essere rimosso.');
+      } else {
+        const slotId = this.existingSlotIds.get(key);
+        if (slotId && confirm('Vuoi rimuovere questa disponibilità?')) {
+          this.isLoading = true;
+          this.authService.deleteProfessionalSlot(this.currentUser.id, slotId).subscribe({
+            next: () => {
+              this.existingSlots.delete(key);
+              this.existingSlotIds.delete(key);
+              this.isLoading = false;
+              this.cdr.detectChanges();
+              this.loadDashboardData();
+            },
+            error: (err) => {
+              console.error('Errore rimozione slot', err);
+              this.isLoading = false;
+              this.openPopup('Errore', 'Impossibile rimuovere lo slot in questo momento.');
+              this.cdr.detectChanges();
+            }
+          });
+        }
+      }
+      return;
+    }
+
+    if (this.selectedSlots.has(key)) {
+      this.selectedSlots.delete(key);
+    } else {
+      this.selectedSlots.add(key);
+    }
+  }
+
+  isSlotSelected(day: Date, slot: string): boolean {
+    return this.selectedSlots.has(this.slotKey(day, slot));
+  }
+
+  isSlotExisting(day: Date, slot: string): boolean {
+    return this.existingSlots.has(this.slotKey(day, slot));
+  }
+
+  isSlotLocked(day: Date, slot: string): boolean {
+    return this.lockedSlots.has(this.slotKey(day, slot));
+  }
+
+  getSelectedCount(): number {
+    return this.selectedSlots.size;
+  }
+
+  confirmAvailability(): void {
+    if (this.selectedSlots.size === 0) {
+      alert("Nessuno slot selezionato.");
+      return;
+    }
+
+    this.isLoading = true;
+
+    const slotsPayload = Array.from(this.selectedSlots).map(key => {
+      const [date, time] = key.split('|');
+
+      const startStr = `${date}T${time}:00`;
+      const startDate = new Date(startStr);
+      // Aggiunge 30 minuti per calcolare l'endTime
+      const endDate = new Date(startDate.getTime() + 30 * 60000);
+
+      const pad = (n: number) => n.toString().padStart(2, '0');
+      const endStr = `${endDate.getFullYear()}-${pad(endDate.getMonth() + 1)}-${pad(endDate.getDate())}T${pad(endDate.getHours())}:${pad(endDate.getMinutes())}:00`;
+
+      return {
+        startTime: startStr,
+        endTime: endStr,
+        isAvailable: true
+      };
+    });
+
+    this.authService.createProfessionalSlots(this.currentUser.id, slotsPayload).subscribe({
+      next: () => {
+        this.openPopup('Disponibilità Confermate', 'I tuoi slot sono stati salvati con successo. I clienti potranno ora prenotarli.');
+        this.selectedSlots.clear();
+        this.copiedDay = null;
+        this.isLoading = false;
+        this.closeAvailability();
+        // Ricarica la dashboard per riflettere le modifiche (se la view mostra gli slot del prof)
+        this.loadDashboardData();
+      },
+      error: (err) => {
+        console.error('Errore salvataggio disponibilità', err);
+        this.openPopup('Errore', 'Si è verificato un errore durante il salvataggio. Riprova più tardi.');
+        this.isLoading = false;
+      }
+    });
+  }
+
+  /** Clipboard per il copia/incolla giorno */
+  copiedDay: Date | null = null;
+
+  get isCopyMode(): boolean { return this.copiedDay !== null; }
+
+  /** Verifica se un giorno ha slot selezionati */
+  hasDaySlots(day: Date): boolean {
+    return this.timeSlots.some(slot => this.isSlotSelected(day, slot));
+  }
+
+  /** Verifica se questo giorno è quello copiato */
+  isCopiedDay(day: Date): boolean {
+    return this.copiedDay !== null && this.formatDate(this.copiedDay) === this.formatDate(day);
+  }
+
+  /** Memorizza il giorno come sorgente copia */
+  copyDay(day: Date): void {
+    this.copiedDay = day;
+  }
+
+  /** Annulla la copia */
+  clearCopy(): void {
+    this.copiedDay = null;
+  }
+
+  /** Incolla gli slot del giorno copiato nel giorno destinazione */
+  pasteDay(targetDay: Date): void {
+    if (!this.copiedDay) return;
+    const sourceSlots = this.timeSlots.filter(slot => this.isSlotSelected(this.copiedDay!, slot));
+    sourceSlots.forEach(slot => this.selectedSlots.add(this.slotKey(targetDay, slot)));
+    this.copiedDay = null;
+  }
+
+  getNextWeekLabel(): string {
+    if (this.nextWeekDays.length === 0) return '';
+    const first = this.nextWeekDays[0];
+    const last = this.nextWeekDays[6];
+    const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
+    return `${first.toLocaleDateString('it-IT', opts)} – ${last.toLocaleDateString('it-IT', { ...opts, year: 'numeric' })}`;
+  }
+
+  // ── Prenotazione Cliente ──────────────────────────────────
+
+  openBooking(professional: any): void {
+    this.selectedProfessional = professional;
+    this.isLoading = true;
+    this.isBookingOpen = true;
+    this.availableBookingSlots = [];
+    this.bookingDays = [];
+    this.selectedBookingDay = null;
+    this.slotsForSelectedDay = [];
+    this.selectedBookingSlot = null;
+
+    this.authService.getProfessionalSlots(professional.id).subscribe({
+      next: (slots) => {
+        this.availableBookingSlots = slots.filter((s: any) => s.available === true || s.isAvailable === true);
+        this.buildBookingDays();
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Errore nel caricamento degli slot', err);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  closeBooking(): void {
+    this.isBookingOpen = false;
+    this.selectedProfessional = null;
+    this.availableBookingSlots = [];
+    this.bookingDays = [];
+    this.selectedBookingDay = null;
+    this.slotsForSelectedDay = [];
+    this.selectedBookingSlot = null;
+  }
+
+  buildBookingDays(): void {
+    this.bookingDays = [];
+    const uniqueDates = new Set<string>();
+
+    this.availableBookingSlots.forEach(s => {
+      const d = new Date(s.startTime);
+      d.setHours(0, 0, 0, 0);
+      uniqueDates.add(d.getTime().toString());
+    });
+
+    this.bookingDays = Array.from(uniqueDates)
+      .map(timeStr => new Date(Number(timeStr)))
+      .sort((a, b) => a.getTime() - b.getTime());
+
+    // Auto-seleziona il primo giorno disponibile
+    if (this.bookingDays.length > 0) {
+      this.selectBookingDay(this.bookingDays[0]);
+    } else {
+      this.selectedBookingDay = null;
+      this.slotsForSelectedDay = [];
+    }
+  }
+
+  selectBookingDay(day: Date): void {
+    this.selectedBookingDay = day;
+    this.selectedBookingSlot = null;
+    const dayTime = day.getTime();
+
+    this.slotsForSelectedDay = this.availableBookingSlots.filter(s => {
+      const d = new Date(s.startTime);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime() === dayTime;
+    }).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+  }
+
+  getSlotTimeLabel(slot: any): string {
+    const d = new Date(slot.startTime);
+    return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+  }
+
+  toggleBookingSlot(slot: any): void {
+    if (!slot) return;
+    if (this.selectedBookingSlot?.id === slot.id) {
+      this.selectedBookingSlot = null;
+    } else {
+      this.selectedBookingSlot = slot;
+    }
+  }
+
+  isBookingSlotSelected(slot: any): boolean {
+    return this.selectedBookingSlot?.id === slot?.id;
+  }
+
+  confirmBooking(): void {
+    if (!this.selectedBookingSlot || !this.selectedProfessional) return;
+
+    this.isLoading = true;
+    const request = {
+      userId: this.currentUser.id,
+      slotId: this.selectedBookingSlot.id
+    };
+
+    this.authService.createBooking(request).subscribe({
+      next: (res) => {
+        this.openPopup('Prenotazione Confermata', `Hai prenotato con successo un appuntamento per il ${this.selectedBookingDay?.toLocaleDateString('it-IT')} alle ${this.getSlotTimeLabel(this.selectedBookingSlot)}.`);
+        this.closeBooking();
+        this.loadDashboardData();
+      },
+      error: (err) => {
+        console.error('Errore nella prenotazione', err);
+        let errMsg = 'Errore durante la prenotazione';
+        if (err.error && err.error.message) errMsg = err.error.message;
+        else if (err.error && typeof err.error === 'string') errMsg = err.error;
+        this.openPopup('Errore di Prenotazione', errMsg);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   // ── Logout ───────────────────────────────────────────────
