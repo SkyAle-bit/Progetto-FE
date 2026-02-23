@@ -11,7 +11,6 @@
 .register-page {
   min-height: 100vh;
   background: #112240;
-  /* Sfondo navale più morbido */
   background-image:
     radial-gradient(circle at top right, rgba(201, 169, 110, 0.05) 0%, transparent 40%),
     radial-gradient(circle at bottom left, rgba(26, 52, 98, 0.8) 0%, transparent 60%);
@@ -22,6 +21,16 @@
   position: relative;
   overflow: hidden;
   padding: 2rem 1rem;
+}
+
+/* Step 2: pagina scrollabile e piana in alto */
+/* body ha overflow:hidden globale, quindi usiamo la pagina stessa come scroll container */
+.register-page.step2 {
+  height: 100vh;
+  align-items: flex-start;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 3rem 1rem 4rem;
 }
 
 .bg-shapes {
@@ -91,6 +100,17 @@
   align-items: center;
   gap: 1.5rem;
   animation: pageIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: max-width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Il wrapper si espande per mostrare tutte le pricing cards */
+.register-wrapper.wide {
+  max-width: 900px;
+}
+
+/* La glass-card si espande per riempire il wrapper */
+.glass-card.wide {
+  max-width: 900px;
 }
 
 @keyframes pageIn {
@@ -229,6 +249,26 @@
   gap: 1.1rem;
 }
 
+.text-center {
+  text-align: center;
+}
+
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 169, 110, 0.3), transparent);
+  margin: 1rem 0;
+}
+
+.section-heading {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fdfaf4;
+  text-align: center;
+  margin-bottom: 0.3rem;
+}
+
 .avatar-upload {
   display: flex;
   flex-direction: column;
@@ -364,7 +404,376 @@
   box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1);
 }
 
+/* ── PRICING CARDS (Step 2) ── */
+.plans-section {
+  margin-bottom: 0.5rem;
+}
+
+.pricing-carousel {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  padding: 1rem 0.5rem 1.5rem 0.5rem;
+  margin: 0 -0.5rem;
+  /* Nascondi scrollbar ma permetti scroll fluido su mobile */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scroll-snap-type: x mandatory;
+}
+
+.pricing-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.pricing-card {
+  flex: 1 1 0;
+  min-width: 180px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.8rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pricing-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(201, 169, 110, 0.4);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.pricing-card.selected {
+  background: rgba(201, 169, 110, 0.08);
+  border-color: #c9a96e;
+  box-shadow: 0 0 0 1px #c9a96e, 0 12px 30px rgba(0, 0, 0, 0.25);
+  transform: translateY(-4px);
+}
+
+.pc-badge {
+  position: absolute;
+  top: -12px;
+  background: #c9a96e;
+  color: #1a3462;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.8rem;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(201, 169, 110, 0.3);
+}
+
+.pc-header {
+  margin-bottom: 0.8rem;
+  text-align: center;
+}
+
+.pc-name {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.1rem;
+  color: #fdfaf4;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.pricing-card.selected .pc-name {
+  color: #c9a96e;
+}
+
+.pc-price-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.pc-price {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  color: #fdfaf4;
+  line-height: 1;
+}
+
+.pc-price .currency {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  opacity: 0.8;
+  margin-right: 2px;
+}
+
+.pc-price .amount {
+  font-size: 3.5rem;
+  font-family: 'Outfit', 'DM Sans', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+.pc-period {
+  font-size: 0.75rem;
+  color: #8fa3c8;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+  margin-top: 0.4rem;
+}
+
+.pricing-card.selected .pc-period {
+  color: rgba(201, 169, 110, 0.7);
+}
+
+.pc-features {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+.feature-item {
+  font-size: 0.85rem;
+  color: #b1c0d4;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  line-height: 1.3;
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+}
+
+.feature-item:first-child {
+  border-top: 1px dashed rgba(255, 255, 255, 0.06);
+}
+
+.feature-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #c9a96e;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.pricing-card.selected .feature-item {
+  color: #e2ddd5;
+}
+
+.pricing-card.selected .feature-dot {
+  opacity: 1;
+  box-shadow: 0 0 6px rgba(201, 169, 110, 0.6);
+}
+
+.btn-select-plan {
+  width: 100%;
+  padding: 0.75rem;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fdfaf4;
+  font-size: 0.9rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: auto;
+}
+
+.pricing-card:hover .btn-select-plan {
+  border-color: rgba(201, 169, 110, 0.5);
+  color: #e8c97a;
+}
+
+.pricing-card.selected .btn-select-plan {
+  background: linear-gradient(135deg, #c9a96e 0%, #a88a53 100%);
+  border-color: transparent;
+  color: #1a3462;
+  box-shadow: 0 4px 12px rgba(201, 169, 110, 0.25);
+}
+
+/* ── Selezione Professionisti ── */
+
+.prof-search-wrap {
+  position: relative;
+  margin-bottom: 0.6rem;
+}
+
+.prof-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.prof-search-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  padding: 0.75rem 1rem 0.75rem 2.4rem;
+  font-size: 0.9rem;
+  font-family: 'Outfit', sans-serif;
+  color: #fdfaf4;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.prof-search-input::placeholder {
+  color: #5a6a88;
+}
+
+.prof-search-input:focus {
+  border-color: #c9a96e;
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1);
+}
+
+.prof-grid {
+  max-height: 260px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-right: 0.3rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 169, 110, 0.3) transparent;
+}
+
+.prof-grid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.prof-grid::-webkit-scrollbar-thumb {
+  background: rgba(201, 169, 110, 0.3);
+  border-radius: 2px;
+}
+
+.prof-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.prof-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.7rem 0.9rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.prof-card:hover:not(.sold-out) {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(201, 169, 110, 0.35);
+}
+
+.prof-card.selected {
+  background: rgba(201, 169, 110, 0.08);
+  border-color: #c9a96e;
+  box-shadow: 0 0 0 1px #c9a96e;
+}
+
+.prof-card.sold-out {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.prof-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(201, 169, 110, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(201, 169, 110, 0.3);
+}
+
+.prof-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.prof-initials {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #c9a96e;
+  letter-spacing: 0.04em;
+}
+
+.prof-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.prof-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fdfaf4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prof-rating {
+  font-size: 0.78rem;
+  color: #8fa3c8;
+}
+
+.prof-rating-max {
+  color: #5a6a88;
+}
+
+.prof-sold-out-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ff8a93;
+  background: rgba(220, 53, 69, 0.15);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  border-radius: 4px;
+  padding: 0.15rem 0.45rem;
+  flex-shrink: 0;
+}
+
+.prof-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #c9a96e;
+  color: #1a3462;
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.prof-empty {
+  text-align: center;
+  color: #5a6a88;
+  font-size: 0.85rem;
+  padding: 1rem;
+}
+
+/* ── Campo Select (ancora usato per payment frequency) ── */
 .field-select {
+
   width: 100%;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.09);
@@ -647,13 +1056,16 @@
 @media (max-width: 768px) {
   .register-page {
     padding: 1.5rem 1rem;
-    align-items: flex-start;
     padding-top: 2rem;
   }
 
   .register-wrapper {
     max-width: 100%;
     gap: 1.25rem;
+  }
+
+  .register-wrapper.wide {
+    max-width: 100%;
   }
 
   .glass-card {
@@ -725,6 +1137,15 @@
   /* nasconde le label degli step su schermi piccoli */
   .step-line {
     width: 30px;
+  }
+
+  .pricing-carousel {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pricing-card {
+    min-width: unset;
   }
 
   /* Bottoni step affiancati restano ma più compatti */

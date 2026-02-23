@@ -1,4 +1,4 @@
-<div class="register-page">
+<div class="register-page" [class.step2]="currentStep === 2">
 
   <!-- Sfondo animato -->
   <div class="bg-shapes">
@@ -7,7 +7,7 @@
     <div class="shape shape-3"></div>
   </div>
 
-  <div class="register-wrapper">
+  <div class="register-wrapper" [class.wide]="currentStep === 2">
 
     <!-- Brand -->
     <div class="brand">
@@ -15,7 +15,7 @@
       <h1 class="brand-name">Gestionale Tesi</h1>
     </div>
 
-    <form [formGroup]="registerForm" class="glass-card">
+    <form [formGroup]="registerForm" class="glass-card" [class.wide]="currentStep === 2">
 
       <!-- Header step -->
       <ng-container *ngIf="currentStep !== 3">
@@ -40,7 +40,7 @@
 
         <!-- Avatar upload -->
         <div class="avatar-upload">
-          <input type="file" id="actual-btn" (change)="onFileSelected($event)" accept="image/*" hidden/>
+          <input type="file" id="actual-btn" (change)="onFileSelected($event)" accept="image/*" hidden />
           <label for="actual-btn" class="avatar-label">
             <ng-container *ngIf="profilePictureBase64">
               <img [src]="profilePictureBase64" alt="Anteprima" class="avatar-preview">
@@ -80,7 +80,8 @@
           <label class="field-label">Password</label>
           <div class="input-wrapper">
             <span class="input-icon">◉</span>
-            <input type="password" formControlName="password" placeholder="Minimo 6 caratteri" class="field-input with-icon">
+            <input type="password" formControlName="password" placeholder="Minimo 6 caratteri"
+              class="field-input with-icon">
           </div>
         </div>
 
@@ -96,43 +97,122 @@
       <!-- STEP 2 -->
       <div *ngIf="currentStep === 2" class="step-body">
 
-        <div class="field-group">
-          <label class="field-label">Piano</label>
-          <select formControlName="selectedPlanId" class="field-select">
-            <option value="" disabled selected>Seleziona un piano...</option>
-            <option *ngFor="let plan of plans" [value]="plan.id">
-              {{ plan.name }} — {{ plan.duration }} mesi — {{ plan.fullPrice }}€
-            </option>
-          </select>
+        <div class="field-group plans-section">
+          <label class="field-label text-center">Scegli il tuo Piano</label>
+
+          <div class="pricing-carousel">
+            <div class="pricing-card" *ngFor="let plan of plans; let i = index"
+              [class.selected]="registerForm.value.selectedPlanId === plan.id" (click)="selectPlan(plan.id)">
+
+              <!-- Badge "Popular", "Best", "New" in base all'indice -->
+              <div class="pc-badge" *ngIf="i === 1">Vantaggioso</div>
+              <div class="pc-badge" *ngIf="i === 2">Premium</div>
+
+              <div class="pc-header">
+                <h3 class="pc-name">{{ plan.name }}</h3>
+              </div>
+
+              <div class="pc-price-block">
+                <div class="pc-price">
+                  <span class="currency">€</span>
+                  <span class="amount">{{ plan.fullPrice }}</span>
+                </div>
+                <span class="pc-period">Contratto {{ plan.name }}</span>
+              </div>
+
+              <div class="pc-features">
+                <div class="feature-item">
+                  <span class="feature-dot"></span> Schede PT personalizzate
+                </div>
+                <div class="feature-item">
+                  <span class="feature-dot"></span> Piano alimentare mensile
+                </div>
+                <div class="feature-item">
+                  <span class="feature-dot"></span> Appuntamenti inclusi
+                </div>
+              </div>
+
+              <button type="button" class="btn-select-plan">
+                {{ registerForm.value.selectedPlanId === plan.id ? 'Selezionato' : 'Scegli' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- L'input reale rimane nascosto -->
+          <input type="hidden" formControlName="selectedPlanId">
         </div>
 
         <div class="field-group">
-          <label class="field-label">Metodo di pagamento</label>
+          <label class="field-label text-center">Metodo di pagamento</label>
           <select formControlName="paymentFrequency" class="field-select">
             <option value="UNICA_SOLUZIONE">Pagamento Unico (Risparmia)</option>
             <option value="RATE_MENSILI">Rate Mensili</option>
           </select>
         </div>
 
+        <div class="section-divider"></div>
+        <h3 class="section-heading">Scegli i tuoi Professionisti</h3>
+
+        <!-- PT Picker -->
         <div class="field-group">
-          <label class="field-label">Personal Trainer</label>
-          <select formControlName="selectedPtId" class="field-select">
-            <option value="" disabled selected>Seleziona il PT...</option>
-            <option *ngFor="let pt of personalTrainers" [value]="pt.id" [disabled]="pt.isSoldOut">
-              {{ pt.fullName }} ⭐ {{ pt.averageRating }}<span *ngIf="pt.isSoldOut"> — AL COMPLETO</span>
-            </option>
-          </select>
+          <label class="field-label">💪 Personal Trainer</label>
+          <div class="prof-search-wrap">
+            <span class="prof-search-icon">🔍</span>
+            <input type="text" class="prof-search-input" placeholder="Cerca per nome..." [(ngModel)]="ptSearch"
+              [ngModelOptions]="{standalone: true}">
+          </div>
+          <div class="prof-grid">
+            <div class="prof-card" *ngFor="let pt of filteredPts"
+              [class.selected]="registerForm.value.selectedPtId === pt.id" [class.sold-out]="pt.isSoldOut"
+              (click)="!pt.isSoldOut && selectPt(pt.id)">
+              <div class="prof-avatar">
+                <img *ngIf="pt.profilePicture" [src]="pt.profilePicture" [alt]="pt.fullName">
+                <span *ngIf="!pt.profilePicture" class="prof-initials">{{ getInitials(pt.fullName) }}</span>
+              </div>
+              <div class="prof-info">
+                <span class="prof-name">{{ pt.fullName }}</span>
+                <span class="prof-rating">
+                  ⭐ {{ (pt.averageRating | number:'1.1-1') }}<span class="prof-rating-max">/5</span>
+                </span>
+              </div>
+              <span *ngIf="pt.isSoldOut" class="prof-sold-out-badge">Completo</span>
+              <span *ngIf="registerForm.value.selectedPtId === pt.id" class="prof-check">✓</span>
+            </div>
+            <div *ngIf="filteredPts.length === 0" class="prof-empty">Nessun risultato</div>
+          </div>
+          <input type="hidden" formControlName="selectedPtId">
         </div>
 
+        <!-- Nutrizionista Picker -->
         <div class="field-group">
-          <label class="field-label">Nutrizionista</label>
-          <select formControlName="selectedNutritionistId" class="field-select">
-            <option value="" disabled selected>Seleziona il Nutrizionista...</option>
-            <option *ngFor="let nut of nutritionists" [value]="nut.id" [disabled]="nut.isSoldOut">
-              {{ nut.fullName }} ⭐ {{ nut.averageRating }}<span *ngIf="nut.isSoldOut"> — AL COMPLETO</span>
-            </option>
-          </select>
+          <label class="field-label">🥗 Nutrizionista</label>
+          <div class="prof-search-wrap">
+            <span class="prof-search-icon">🔍</span>
+            <input type="text" class="prof-search-input" placeholder="Cerca per nome..." [(ngModel)]="nutSearch"
+              [ngModelOptions]="{standalone: true}">
+          </div>
+          <div class="prof-grid">
+            <div class="prof-card" *ngFor="let nut of filteredNuts"
+              [class.selected]="registerForm.value.selectedNutritionistId === nut.id" [class.sold-out]="nut.isSoldOut"
+              (click)="!nut.isSoldOut && selectNut(nut.id)">
+              <div class="prof-avatar">
+                <img *ngIf="nut.profilePicture" [src]="nut.profilePicture" [alt]="nut.fullName">
+                <span *ngIf="!nut.profilePicture" class="prof-initials">{{ getInitials(nut.fullName) }}</span>
+              </div>
+              <div class="prof-info">
+                <span class="prof-name">{{ nut.fullName }}</span>
+                <span class="prof-rating">
+                  ⭐ {{ (nut.averageRating | number:'1.1-1') }}<span class="prof-rating-max">/5</span>
+                </span>
+              </div>
+              <span *ngIf="nut.isSoldOut" class="prof-sold-out-badge">Completo</span>
+              <span *ngIf="registerForm.value.selectedNutritionistId === nut.id" class="prof-check">✓</span>
+            </div>
+            <div *ngIf="filteredNuts.length === 0" class="prof-empty">Nessun risultato</div>
+          </div>
+          <input type="hidden" formControlName="selectedNutritionistId">
         </div>
+
 
         <div class="btn-row">
           <button type="button" class="btn-secondary" (click)="goToStep1()" [disabled]="isLoading">
@@ -163,7 +243,8 @@
 </div>
 
 <!-- TOAST -->
-<div class="toast-wrapper" *ngIf="toast" [class.toast-success]="toast.type === 'success'" [class.toast-error]="toast.type === 'error'">
+<div class="toast-wrapper" *ngIf="toast" [class.toast-success]="toast.type === 'success'"
+  [class.toast-error]="toast.type === 'error'">
   <div class="toast-icon-wrap">{{ toast.type === 'success' ? '✓' : '!' }}</div>
   <span class="toast-message">{{ toast.message }}</span>
   <button class="toast-close" (click)="dismissToast()">✕</button>

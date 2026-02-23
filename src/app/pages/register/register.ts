@@ -1,13 +1,13 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule, DecimalPipe } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, DecimalPipe],
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })
@@ -19,6 +19,22 @@ export class RegisterComponent implements OnInit {
   plans: any[] = [];
   personalTrainers: any[] = [];
   nutritionists: any[] = [];
+
+  // ── Ricerca Professionisti
+  ptSearch: string = '';
+  nutSearch: string = '';
+
+  get filteredPts(): any[] {
+    const q = this.ptSearch.toLowerCase().trim();
+    return this.personalTrainers.filter(pt =>
+      !q || pt.fullName?.toLowerCase().includes(q));
+  }
+
+  get filteredNuts(): any[] {
+    const q = this.nutSearch.toLowerCase().trim();
+    return this.nutritionists.filter(n =>
+      !q || n.fullName?.toLowerCase().includes(q));
+  }
 
   profilePictureBase64: string | null = null;
 
@@ -93,6 +109,26 @@ export class RegisterComponent implements OnInit {
 
   goToStep1(): void {
     this.currentStep = 1;
+  }
+
+  selectPlan(planId: number): void {
+    this.registerForm.patchValue({ selectedPlanId: planId });
+    this.registerForm.get('selectedPlanId')?.markAsTouched();
+  }
+
+  selectPt(id: number): void {
+    this.registerForm.patchValue({ selectedPtId: id });
+    this.registerForm.get('selectedPtId')?.markAsTouched();
+  }
+
+  selectNut(id: number): void {
+    this.registerForm.patchValue({ selectedNutritionistId: id });
+    this.registerForm.get('selectedNutritionistId')?.markAsTouched();
+  }
+
+  getInitials(fullName: string): string {
+    if (!fullName) return '?';
+    return fullName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
   }
 
   onSubmit(): void {
