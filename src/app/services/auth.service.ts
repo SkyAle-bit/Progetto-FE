@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
+import { environment } from '../../environments/environment'; // IMPORTANTE: Importa l'environment!
 
 export interface AuthResponse {
   token: string;
@@ -19,7 +20,9 @@ export interface AuthResponse {
 export class AuthService {
   private http = inject(HttpClient);
 
-  private baseUrl = 'http://localhost:8080/api/auth';
+  // Usa l'URL dell'ambiente corrente!
+  private apiUrl = environment.apiUrl; 
+  private baseUrl = `${this.apiUrl}/api/auth`;
 
   login(credentials: any): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.baseUrl}/login`, credentials).pipe(
@@ -44,36 +47,30 @@ export class AuthService {
   }
 
   getPlans(): Observable<any> {
-    return this.http.get('http://localhost:8080/api/plans');
+    return this.http.get(`${this.apiUrl}/api/plans`);
   }
 
   getProfessionals(role: string): Observable<any> {
-    return this.http.get(`http://localhost:8080/api/professionals?role=${role}`);
+    return this.http.get(`${this.apiUrl}/api/professionals?role=${role}`);
   }
 
-  /**
-   * Recupera tutti i dati della dashboard per l'utente con il dato id.
-   * GET /api/dashboard/{userId}
-   * Risposta attesa: { profile, subscription, followingProfessionals, upcomingBookings }
-   */
   getDashboard(userId: number): Observable<any> {
-    // Corretto: aggiungi /users/ nel path
-    return this.http.get(`http://localhost:8080/api/users/dashboard/${userId}`);
+    return this.http.get(`${this.apiUrl}/api/users/dashboard/${userId}`);
   }
 
   getProfessionalSlots(professionalId: number): Observable<any> {
-    return this.http.get(`http://localhost:8080/api/professionals/${professionalId}/slots`);
+    return this.http.get(`${this.apiUrl}/api/professionals/${professionalId}/slots`);
   }
 
   createProfessionalSlots(professionalId: number, slots: any[]): Observable<any> {
-    return this.http.post(`http://localhost:8080/api/professionals/${professionalId}/slots`, slots);
+    return this.http.post(`${this.apiUrl}/api/professionals/${professionalId}/slots`, slots);
   }
 
   deleteProfessionalSlot(professionalId: number, slotId: number): Observable<any> {
-    return this.http.delete(`http://localhost:8080/api/professionals/${professionalId}/slots/${slotId}`);
+    return this.http.delete(`${this.apiUrl}/api/professionals/${professionalId}/slots/${slotId}`);
   }
 
   createBooking(request: { userId: number; slotId: number }): Observable<any> {
-    return this.http.post('http://localhost:8080/api/bookings', request);
+    return this.http.post(`${this.apiUrl}/api/bookings`, request);
   }
 }
