@@ -360,7 +360,309 @@
     line-height: 1.6;
 }
 
-/* Responsive */
+/* ============================================================== 
+ * PRICING SECTION
+ * ============================================================== */
+.pricing-section {
+    position: relative;
+    z-index: 10;
+    padding: 6rem 2rem 8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pricing-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    max-width: 600px;
+}
+
+.section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.2rem;
+    font-weight: 700;
+    color: #fdfaf4;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: #b1c0d4;
+    line-height: 1.6;
+    margin-bottom: 2.5rem;
+}
+
+/* Toggle Billing */
+.billing-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.5rem 1.5rem;
+    border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6a7c9b;
+    cursor: pointer;
+    transition: color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.toggle-label.active {
+    color: #fdfaf4;
+}
+
+.discount-badge {
+    background: rgba(201, 169, 110, 0.15);
+    color: #c9a96e;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(201, 169, 110, 0.3);
+}
+
+.toggle-switch {
+    width: 56px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 30px;
+    border: none;
+    position: relative;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.3s;
+}
+
+.toggle-switch.on {
+    background: #c9a96e;
+}
+
+.toggle-knob {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toggle-switch.on .toggle-knob {
+    transform: translateX(26px);
+}
+
+/* Pricing Grid */
+.pricing-grid {
+    display: flex;
+    gap: 1.2rem;
+    width: 100%;
+    max-width: 1300px;
+    /* Aumentato il container per farci stare 4 card */
+    margin: 0 auto;
+    align-items: stretch;
+    justify-content: center;
+    flex-wrap: nowrap;
+    /* Forza la riga singola su desktop */
+    padding: 3rem 1rem 4rem 1rem;
+    /* Aumentato molto il padding top/bottom per scale e ombre su hover */
+    overflow-x: auto;
+    /* Permette scroll se scende sotto min-width */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.pricing-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.pricing-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: calc(25% - 1.2rem);
+    /* Esattamente 1/4 dello spazio su desktop */
+    min-width: 270px;
+    /* Ridotta la card minima per farci stare 4 */
+    max-width: 330px;
+    /* Limita la larghezza massima */
+    padding: 2rem 1.5rem;
+    /* Ridotto leggermente il padding interno */
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 20px;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s;
+}
+
+.pricing-card.popular {
+    border-color: #c9a96e;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(201, 169, 110, 0.3);
+    transform: scale(1.05);
+    background: rgba(25, 42, 75, 0.8);
+    z-index: 1;
+}
+
+.pricing-card.popular:hover {
+    transform: scale(1.05) translateY(-5px);
+}
+
+.popular-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #c9a96e;
+    color: #1a3462;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    box-shadow: 0 4px 15px rgba(201, 169, 110, 0.4);
+}
+
+.pc-header {
+    margin-bottom: 2rem;
+}
+
+.pc-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.5rem;
+    color: #fdfaf4;
+    margin-bottom: 0.5rem;
+}
+
+.pricing-card.popular .pc-name {
+    color: #c9a96e;
+}
+
+.pc-desc {
+    font-size: 0.9rem;
+    color: #8fa3c8;
+}
+
+.pc-price-block {
+    margin-bottom: 2rem;
+}
+
+.pc-price {
+    display: flex;
+    align-items: flex-start;
+    color: #fdfaf4;
+    margin-bottom: 0.5rem;
+}
+
+.pc-price .currency {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-top: 0.3rem;
+    color: #8fa3c8;
+}
+
+.pc-price .amount {
+    font-size: 3.5rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.pc-price .period {
+    font-size: 1rem;
+    color: #8fa3c8;
+    margin-top: 1.8rem;
+    margin-left: 0.3rem;
+}
+
+.pc-billing-text {
+    font-size: 0.85rem;
+    color: #6a7c9b;
+}
+
+.pc-cta {
+    width: 100%;
+    margin-bottom: 2.5rem;
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* La card NOT-popular ha il bottone outline */
+.pricing-card:not(.popular) .pc-cta.btn-outline {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: #fdfaf4;
+}
+
+.pricing-card:not(.popular) .pc-cta.btn-outline:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: #fdfaf4;
+}
+
+.pc-features {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    font-size: 0.95rem;
+    color: #e2ddd5;
+    line-height: 1.4;
+}
+
+.feature-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(201, 169, 110, 0.15);
+    color: #c9a96e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.pricing-card.popular .feature-check {
+    background: #c9a96e;
+    color: #1a3462;
+}
+
+.feature-check.dim {
+    background: transparent;
+    color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature-item .dim-text {
+    color: #6a7c9b;
+    text-decoration: line-through;
+}
+
+/* ============================================================== 
+ * RESPONSIVE
+ * ============================================================== */
 @media (max-width: 1024px) {
     .hero-title {
         font-size: 4rem;

@@ -75,4 +75,75 @@
             </div>
         </div>
     </main>
+
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
+        <div class="pricing-header">
+            <h2 class="section-title">Scegli il livello del tuo successo</h2>
+            <p class="section-subtitle">Piani trasparenti pensati per portarti esattamente dove vuoi arrivare.</p>
+
+            <!-- Toggle Mensile / Annuale -->
+            <div class="billing-toggle">
+                <span class="toggle-label" [class.active]="!isAnnual" (click)="toggleBilling(false)">Mensile</span>
+                <button class="toggle-switch" [class.on]="isAnnual" (click)="toggleBilling(!isAnnual)">
+                    <span class="toggle-knob"></span>
+                </button>
+                <span class="toggle-label" [class.active]="isAnnual" (click)="toggleBilling(true)">
+                    Annuale <span class="discount-badge">Save 20%</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Piani -->
+        <div class="pricing-grid">
+            <!-- Generazione dinamica dei piani dal DB -->
+            <div class="pricing-card glass-card" *ngFor="let plan of plans; let i = index" [class.popular]="i === 1">
+                <!-- Highlight piano intermedio -->
+
+                <div class="popular-badge" *ngIf="i === 1">Most Popular</div>
+
+                <div class="pc-header">
+                    <h3 class="pc-name">{{ plan.name }}</h3>
+                    <p class="pc-desc">Ideale per chi vuole iniziare con il piede giusto</p>
+                </div>
+
+                <div class="pc-price-block">
+                    <div class="pc-price">
+                        <span class="currency">€</span>
+                        <span class="amount">{{ getDisplayPrice(plan) | number:'1.0-2' }}</span>
+                        <span class="period">/mese</span>
+                    </div>
+                    <p class="pc-billing-text" *ngIf="isAnnual">Fatturato annualmente (€{{ plan.fullPrice * 0.8 |
+                        number:'1.0-2' }}/anno)</p>
+                    <p class="pc-billing-text" *ngIf="!isAnnual">Nessun vincolo a lungo termine</p>
+                </div>
+
+                <button class="btn-primary pc-cta" [class.btn-outline]="i !== 1" (click)="goToRegister(plan.id)">
+                    Inizia Ora <span *ngIf="i === 1" class="btn-arrow">→</span>
+                </button>
+
+                <div class="pc-features">
+                    <div class="feature-item">
+                        <div class="feature-check">✓</div>
+                        <span>Scheda Allenamento Mensile</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-check">✓</div>
+                        <span>Piano Alimentare (+ aggiornamenti)</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-check">✓</div>
+                        <span>Chat con i Professionisti</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-check">✓</div>
+                        <span *ngIf="i === 0"><strong>2</strong> Crediti Mensili</span>
+                        <span *ngIf="i === 1"><strong>4</strong> Crediti Mensili</span>
+                        <span *ngIf="i === 2"><strong>8</strong> Crediti Mensili</span>
+                        <span *ngIf="i === 3"><strong>Illimitati</strong> Crediti</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
