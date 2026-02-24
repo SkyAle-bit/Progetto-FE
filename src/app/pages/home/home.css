@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800;900&family=DM+Sans:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 *,
 *::before,
@@ -83,15 +83,17 @@
 
 /* Header */
 .home-header {
-    position: relative;
-    z-index: 10;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 4rem;
-    backdrop-filter: blur(10px);
+    background: rgba(17, 34, 64, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    animation: fadeDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes fadeDown {
@@ -112,29 +114,16 @@
     gap: 0.75rem;
 }
 
-.brand-icon {
-    font-size: 1.8rem;
-    color: #c9a96e;
-    display: block;
-    animation: spin 20s linear infinite;
+.brand-logo-img {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
 }
 
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.brand-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #fdfaf4;
-    letter-spacing: 0.03em;
+.brand:hover .brand-logo-img {
+    transform: scale(1.05);
 }
 
 .auth-buttons {
@@ -151,7 +140,7 @@
     border-radius: 8px;
     font-size: 0.95rem;
     font-family: 'Outfit', sans-serif;
-    font-weight: 600;
+    font-weight: 800;
     text-decoration: none;
     transition: all 0.2s;
 }
@@ -170,7 +159,7 @@
     border-radius: 8px;
     font-size: 0.95rem;
     font-family: 'Outfit', sans-serif;
-    font-weight: 700;
+    font-weight: 900;
     text-decoration: none;
     transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
     display: inline-flex;
@@ -233,9 +222,9 @@
 }
 
 .hero-title {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Darker Grotesque', sans-serif;
     font-size: 4.8rem;
-    font-weight: 700;
+    font-weight: 900;
     line-height: 1.1;
     margin-bottom: 1.5rem;
     background: linear-gradient(to right, #fdfaf4, #c9a96e);
@@ -280,7 +269,7 @@
 
 .stat-number {
     font-size: 2.5rem;
-    font-weight: 700;
+    font-weight: 900;
     color: #c9a96e;
     font-family: 'Outfit', sans-serif;
     line-height: 1;
@@ -347,9 +336,9 @@
 }
 
 .feature-title {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Darker Grotesque', sans-serif;
     font-size: 1.7rem;
-    font-weight: 600;
+    font-weight: 800;
     color: #fdfaf4;
     margin-bottom: 0.75rem;
 }
@@ -380,9 +369,9 @@
 }
 
 .section-title {
-    font-family: 'Cormorant Garamond', serif;
+    font-family: 'Darker Grotesque', sans-serif;
     font-size: 3.2rem;
-    font-weight: 700;
+    font-weight: 900;
     color: #fdfaf4;
     margin-bottom: 1rem;
 }
@@ -408,7 +397,7 @@
 
 .toggle-label {
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 800;
     color: #6a7c9b;
     cursor: pointer;
     transition: color 0.3s;
@@ -428,7 +417,7 @@
     padding: 0.2rem 0.6rem;
     border-radius: 20px;
     text-transform: uppercase;
-    font-weight: 700;
+    font-weight: 900;
     letter-spacing: 0.05em;
     border: 1px solid rgba(201, 169, 110, 0.3);
 }
@@ -494,12 +483,12 @@
     display: flex;
     flex-direction: column;
     height: auto;
-    width: calc(25% - 1.2rem);
-    /* Esattamente 1/4 dello spazio su desktop */
-    min-width: 270px;
-    /* Ridotta la card minima per farci stare 4 */
-    max-width: 330px;
-    /* Limita la larghezza massima */
+    width: calc(50% - 1.2rem);
+    /* Esattamente 1/2 dello spazio su desktop */
+    min-width: 320px;
+    /* Card minima più larga per 2 card */
+    max-width: 450px;
+    /* Limita la larghezza massima a 450px */
     padding: 2rem 1.5rem;
     /* Ridotto leggermente il padding interno */
     background: rgba(255, 255, 255, 0.03);
@@ -530,7 +519,7 @@
     background: #c9a96e;
     color: #1a3462;
     font-size: 0.8rem;
-    font-weight: 700;
+    font-weight: 900;
     padding: 0.4rem 1.2rem;
     border-radius: 20px;
     letter-spacing: 0.05em;
@@ -571,7 +560,7 @@
 
 .pc-price .currency {
     font-size: 1.6rem;
-    font-weight: 600;
+    font-weight: 800;
     margin-top: 0.3rem;
     color: #8fa3c8;
 }
@@ -579,7 +568,7 @@
 .pc-price .amount {
     font-size: 3.5rem;
     font-family: 'Outfit', sans-serif;
-    font-weight: 700;
+    font-weight: 900;
     line-height: 1;
     letter-spacing: -0.03em;
 }
@@ -704,18 +693,43 @@
     .stat-divider {
         display: none;
     }
+
+    .pricing-grid {
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem;
+        gap: 2rem;
+    }
+
+    .pricing-card {
+        width: 100%;
+        max-width: 450px;
+        min-width: unset;
+    }
 }
 
 @media (max-width: 480px) {
     .home-header {
-        flex-direction: column;
-        gap: 1.2rem;
-        padding: 1.2rem;
+        flex-direction: row;
+        gap: 0;
+        padding: 1rem;
+    }
+
+    .brand-logo-img {
+        height: 36px;
+        /* Leggermente più piccolo su mobile per fare spazio */
     }
 
     .auth-buttons {
-        width: 100%;
-        justify-content: center;
+        width: auto;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+
+    .auth-buttons .btn-outline,
+    .auth-buttons .btn-primary {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
     }
 
     .hero-title {
@@ -725,4 +739,41 @@
     .hero-subtitle {
         font-size: 1rem;
     }
+}
+
+/* Footer */
+.home-footer {
+    padding: 3rem 4rem;
+    background: #0f1e38;
+    border-top: 1px solid rgba(201, 169, 110, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.footer-logo {
+    height: 48px;
+    width: auto;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+.footer-copy {
+    color: #8fa3c8;
+    font-size: 0.85rem;
+    max-width: 600px;
+    line-height: 1.5;
+}
+
+.footer-rights {
+    color: #5a6a88;
+    font-size: 0.75rem;
+    margin-top: 1rem;
 }

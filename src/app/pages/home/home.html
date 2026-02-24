@@ -9,8 +9,7 @@
     <!-- Navbar -->
     <header class="home-header">
         <div class="brand">
-            <div class="brand-icon">✧</div>
-            <h1 class="brand-name">Naval Gold</h1>
+            <img src="assets/images/navalgold_logo.png" alt="Naval Gold Logo" class="brand-logo-img">
         </div>
         <div class="auth-buttons">
             <a routerLink="/login" class="btn-outline">Accedi</a>
@@ -21,10 +20,10 @@
     <!-- Hero Section -->
     <main class="hero-section">
         <div class="hero-content">
-            <h2 class="hero-title">Eleva il tuo standard di benessere</h2>
+            <h2 class="hero-title">Forgia la tua eccellenza fisica e mentale</h2>
             <p class="hero-subtitle">
-                Unisciti a Naval Gold e scopri un nuovo modo di vivere la tua forma fisica e nutrizione,
-                guidato dai migliori professionisti del settore in un'esperienza esclusiva.
+                Inizia il tuo percorso con Naval Gold: un ecosistema esclusivo dove allenamento premium e nutrizione
+                avanzata si uniscono per scolpire il tuo successo.
             </p>
 
             <div class="hero-cta">
@@ -56,22 +55,22 @@
             <div class="feature-card glass-card">
                 <div class="feature-icon">💪</div>
                 <h3 class="feature-title">Personal Trainer Dedicati</h3>
-                <p class="feature-desc">Allenamenti su misura creati dai migliori esperti per farti raggiungere i tuoi
-                    obiettivi in modo rapido ed efficace.</p>
+                <p class="feature-desc">Protocolli di allenamento d'élite, progettati su di te per massimizzare forza,
+                    ipertrofia e prestazioni.</p>
             </div>
 
             <div class="feature-card glass-card">
                 <div class="feature-icon">🥗</div>
                 <h3 class="feature-title">Piani Nutrizionali</h3>
-                <p class="feature-desc">Dieta personalizzata per massimizzare i tuoi risultati, migliorare la tua salute
-                    e darti l'energia di cui hai bisogno.</p>
+                <p class="feature-desc">Nutrizione strategica e mirata, il carburante essenziale per sostenere i tuoi
+                    risultati e rigenerare corpo e mente.</p>
             </div>
 
             <div class="feature-card glass-card">
                 <div class="feature-icon">✨</div>
                 <h3 class="feature-title">Esperienza Premium</h3>
-                <p class="feature-desc">Prenota le tue sessioni, monitora i progressi e interagisci con il tuo team in
-                    un'unica piattaforma esclusiva.</p>
+                <p class="feature-desc">Un ambiente digitale senza compromessi. Traccia i progressi, gestisci il tuo
+                    abbonamento e chatta con i tuoi coach in un'unica piattaforma placcata in oro.</p>
             </div>
         </div>
     </main>
@@ -82,14 +81,15 @@
             <h2 class="section-title">Scegli il livello del tuo successo</h2>
             <p class="section-subtitle">Piani trasparenti pensati per portarti esattamente dove vuoi arrivare.</p>
 
-            <!-- Toggle Mensile / Annuale -->
+            <!-- Toggle Semestrale / Annuale -->
             <div class="billing-toggle">
-                <span class="toggle-label" [class.active]="!isAnnual" (click)="toggleBilling(false)">Mensile</span>
-                <button class="toggle-switch" [class.on]="isAnnual" (click)="toggleBilling(!isAnnual)">
+                <span class="toggle-label" [class.active]="!isAnnual" (click)="toggleBilling(false)">Semestrale</span>
+                <button class="toggle-switch" [class.on]="isAnnual" (click)="toggleBilling(!isAnnual)"
+                    aria-label="Cambia durata">
                     <span class="toggle-knob"></span>
                 </button>
                 <span class="toggle-label" [class.active]="isAnnual" (click)="toggleBilling(true)">
-                    Annuale <span class="discount-badge">Save 20%</span>
+                    Annuale <span class="discount-badge">Save 10%</span>
                 </span>
             </div>
         </div>
@@ -97,7 +97,8 @@
         <!-- Piani -->
         <div class="pricing-grid">
             <!-- Generazione dinamica dei piani dal DB -->
-            <div class="pricing-card glass-card" *ngFor="let plan of plans; let i = index" [class.popular]="i === 1">
+            <div class="pricing-card glass-card" *ngFor="let plan of displayedPlans; let i = index"
+                [class.popular]="i === 1">
                 <!-- Highlight piano intermedio -->
 
                 <div class="popular-badge" *ngIf="i === 1">Most Popular</div>
@@ -110,12 +111,11 @@
                 <div class="pc-price-block">
                     <div class="pc-price">
                         <span class="currency">€</span>
-                        <span class="amount">{{ getDisplayPrice(plan) | number:'1.0-2' }}</span>
+                        <span class="amount">{{ plan.monthlyInstallmentPrice }}</span>
                         <span class="period">/mese</span>
                     </div>
-                    <p class="pc-billing-text" *ngIf="isAnnual">Fatturato annualmente (€{{ plan.fullPrice * 0.8 |
-                        number:'1.0-2' }}/anno)</p>
-                    <p class="pc-billing-text" *ngIf="!isAnnual">Nessun vincolo a lungo termine</p>
+                    <p class="pc-billing-text">Fatturazione {{ isAnnual ? 'annuale' : 'semestrale' }}: €{{
+                        plan.fullPrice }}</p>
                 </div>
 
                 <button class="btn-primary pc-cta" [class.btn-outline]="i !== 1" (click)="goToRegister(plan.id)">
@@ -137,13 +137,37 @@
                     </div>
                     <div class="feature-item">
                         <div class="feature-check">✓</div>
-                        <span *ngIf="i === 0"><strong>2</strong> Crediti Mensili</span>
-                        <span *ngIf="i === 1"><strong>4</strong> Crediti Mensili</span>
-                        <span *ngIf="i === 2"><strong>8</strong> Crediti Mensili</span>
-                        <span *ngIf="i === 3"><strong>Illimitati</strong> Crediti</span>
+                        <span>
+                            <strong *ngIf="plan.monthlyCreditsPT < 50">{{ plan.monthlyCreditsPT }}</strong>
+                            <strong *ngIf="plan.monthlyCreditsPT >= 50">Illimitati</strong>
+                            Crediti Personal Trainer
+                        </span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-check">✓</div>
+                        <span>
+                            <strong *ngIf="plan.monthlyCreditsNutri < 50">{{ plan.monthlyCreditsNutri }}</strong>
+                            <strong *ngIf="plan.monthlyCreditsNutri >= 50">Illimitati</strong>
+                            Crediti Nutrizionista
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Footer -->
+    <footer class="home-footer">
+        <div class="footer-brand">
+            <img src="assets/images/navalgold_logo.png" alt="Naval Gold Logo" class="footer-logo">
+        </div>
+        <p class="footer-copy">
+            Naval Gold rappresenta l'eccellenza nel fitness e nella nutrizione.
+            Crediamo in un approccio olistico, dove allenamento di alta qualità e alimentazione
+            mirata si fondono per forgiare la migliore versione di te.
+        </p>
+        <p class="footer-rights">
+            &copy; 2026 Naval Gold. Tutti i diritti riservati.
+        </p>
+    </footer>
 </div>

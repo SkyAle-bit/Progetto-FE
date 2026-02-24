@@ -14,6 +14,11 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
   loginForm: FormGroup;
   errorMessage: string = '';
+  showPassword = false;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   // Iniezione delle dipendenze moderna (Angular 14+)
   private fb = inject(FormBuilder);

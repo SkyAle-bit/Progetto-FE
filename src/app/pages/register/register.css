@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 *,
 *::before,
@@ -129,29 +129,17 @@
   text-align: center;
 }
 
-.brand-icon {
-  font-size: 1.8rem;
-  color: #c9a96e;
-  display: block;
-  animation: spin 20s linear infinite;
+.brand-logo-img {
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 0.5rem;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.brand-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 2.1rem;
-  font-weight: 700;
-  color: #fdfaf4;
-  letter-spacing: 0.03em;
+.brand:hover .brand-logo-img {
+  transform: scale(1.05);
 }
 
 .glass-card {
@@ -170,9 +158,9 @@
 }
 
 .card-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Darker Grotesque', sans-serif;
   font-size: 1.7rem;
-  font-weight: 600;
+  font-weight: 800;
   color: #fdfaf4;
   margin-bottom: 1.25rem;
   text-align: center;
@@ -261,9 +249,9 @@
 }
 
 .section-heading {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Darker Grotesque', sans-serif;
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 800;
   color: #fdfaf4;
   text-align: center;
   margin-bottom: 0.3rem;
@@ -957,9 +945,9 @@
 }
 
 .success-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Darker Grotesque', sans-serif;
   font-size: 1.9rem;
-  font-weight: 700;
+  font-weight: 900;
   color: #fdfaf4;
 }
 
@@ -1050,10 +1038,55 @@
   }
 }
 
+/* Button Back to Home */
+.btn-back {
+  position: absolute;
+  top: 2rem;
+  left: 3rem;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a4b3c6;
+  padding: 0.6rem 1.2rem;
+  border-radius: 30px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  text-decoration: none;
+}
+
+.btn-back:hover {
+  background: rgba(201, 169, 110, 0.15);
+  border-color: rgba(201, 169, 110, 0.3);
+  color: #c9a96e;
+  transform: translateX(-4px);
+}
+
+.back-arrow {
+  transition: transform 0.3s;
+}
+
+.btn-back:hover .back-arrow {
+  transform: translateX(-4px);
+}
+
 /* ===================== RESPONSIVE ===================== */
 
 /* Tablet */
 @media (max-width: 768px) {
+  .btn-back {
+    top: 1.5rem;
+    left: 1.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
+
   .register-page {
     padding: 1.5rem 1rem;
     padding-top: 2rem;
@@ -1100,6 +1133,11 @@
 
 /* Mobile */
 @media (max-width: 480px) {
+  .btn-back {
+    top: 1rem;
+    left: 1rem;
+  }
+
   .register-page {
     padding: 1rem;
     padding-top: 1.5rem;

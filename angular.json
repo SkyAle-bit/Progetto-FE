@@ -22,7 +22,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/assets"
             ],
             "styles": [
               "src/styles.css"
@@ -37,10 +38,10 @@
                   "maximumError": "1MB"
                 },
                 {
-  "type": "anyComponentStyle",
-  "maximumWarning": "50kB",
-  "maximumError": "100kB"
-}
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "50kB",
+                  "maximumError": "100kB"
+                }
               ],
               "outputHashing": "all"
             },

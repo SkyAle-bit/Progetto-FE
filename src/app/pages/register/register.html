@@ -1,5 +1,9 @@
 <div class="register-page" [class.step2]="currentStep === 2">
 
+  <button routerLink="/" class="btn-back">
+    <span class="back-arrow">←</span> Home
+  </button>
+
   <!-- Sfondo animato -->
   <div class="bg-shapes">
     <div class="shape shape-1"></div>
@@ -11,8 +15,7 @@
 
     <!-- Brand -->
     <div class="brand">
-      <div class="brand-icon">✦</div>
-      <h1 class="brand-name">Gestionale Tesi</h1>
+      <img src="assets/images/navalgold_logo.png" alt="Naval Gold Logo" class="brand-logo-img">
     </div>
 
     <form [formGroup]="registerForm" class="glass-card" [class.wide]="currentStep === 2">

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 /* ═══════════════════════════════════════════════════════════════════════
    PALETTE "NAVAL GOLD" — White · Navy · Champagne
@@ -55,32 +55,16 @@
   flex-shrink: 0;
 }
 
-.brand-star {
-  color: #c9a96e;
-  font-size: 1rem;
-  animation: spin 20s linear infinite;
+.brand-logo-img {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  transition: transform 0.3s ease;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.brand-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.35rem;
-  font-weight: 700;
-  background: linear-gradient(90deg, #e8c97a, #c9a96e);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  white-space: nowrap;
-  letter-spacing: 0.04em;
+.topbar-brand:hover .brand-logo-img {
+  transform: scale(1.05);
 }
 
 .topbar-center {
@@ -518,9 +502,9 @@
 }
 
 .empty-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Darker Grotesque', sans-serif;
   font-size: 1.05rem;
-  font-weight: 600;
+  font-weight: 800;
   font-style: italic;
   color: #ccd8ed;
   margin-bottom: 0.25rem;
@@ -582,9 +566,9 @@
 }
 
 .panel-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Darker Grotesque', sans-serif;
   font-size: 1.15rem;
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: 0.03em;
   background: linear-gradient(90deg, #e8c97a, #c9a96e);
   -webkit-background-clip: text;
@@ -650,10 +634,10 @@
   align-items: center;
   justify-content: center;
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: 900;
   position: relative;
   z-index: 1;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Darker Grotesque', sans-serif;
 }
 
 .panel-avatar-ring {
@@ -679,9 +663,9 @@
 }
 
 .panel-name {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Darker Grotesque', sans-serif;
   font-size: 1.35rem;
-  font-weight: 700;
+  font-weight: 900;
   color: #1a2744;
   text-align: center;
   letter-spacing: 0.02em;
@@ -1113,9 +1097,9 @@
 }
 
 .avail-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Darker Grotesque', sans-serif;
   font-size: 1.1rem;
-  font-weight: 700;
+  font-weight: 900;
   background: linear-gradient(90deg, #e8c97a, #c9a96e);
   -webkit-background-clip: text;
   background-clip: text;
@@ -1748,9 +1732,9 @@
 }
 
 .booking-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Darker Grotesque', sans-serif;
   font-size: 1.6rem;
-  font-weight: 600;
+  font-weight: 800;
   line-height: 1.1;
   color: #ffffff;
 }
@@ -1907,9 +1891,9 @@
 }
 
 .bdc-num {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Darker Grotesque', sans-serif;
   font-size: 1.8rem;
-  font-weight: 600;
+  font-weight: 800;
   line-height: 1;
   color: #1a2744;
   margin-bottom: 0.1rem;
@@ -2094,9 +2078,9 @@
 }
 
 .global-popup-title {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Darker Grotesque', sans-serif;
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: 900;
   color: #1a2744;
   margin-bottom: 0.8rem;
   line-height: 1.2;
