@@ -652,37 +652,73 @@
 /* ============================================================== 
  * RESPONSIVE
  * ============================================================== */
+
+/* --- Tablet Landscape (max 1024px) --- */
 @media (max-width: 1024px) {
     .hero-title {
-        font-size: 4rem;
+        font-size: 3.6rem;
+    }
+
+    .hero-content {
+        max-width: 700px;
+        margin-bottom: 3rem;
     }
 
     .features-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        padding: 0 1.5rem;
+    }
+
+    .pricing-section {
+        padding: 4rem 1.5rem 5rem;
+    }
+
+    .section-title {
+        font-size: 2.6rem;
+    }
+
+    .pricing-card {
+        min-width: 280px;
     }
 }
 
+/* --- Tablet Portrait (max 768px) --- */
 @media (max-width: 768px) {
     .home-header {
-        padding: 1rem 2rem;
+        padding: 0.8rem 1.5rem;
     }
 
-    .hero-title {
-        font-size: 3.2rem;
+    .brand-logo-img {
+        height: 40px;
     }
 
-    .hero-subtitle {
-        font-size: 1.1rem;
+    .auth-buttons .btn-outline,
+    .auth-buttons .btn-primary {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
     }
 
     .hero-section {
-        padding: 3rem 1.5rem;
+        padding: 2.5rem 1.5rem 3rem;
     }
 
-    .features-grid {
-        grid-template-columns: 1fr;
-        max-width: 500px;
-        margin: 0 auto;
+    .hero-title {
+        font-size: 2.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .hero-cta {
+        margin-bottom: 2.5rem;
+    }
+
+    .btn-large {
+        padding: 1rem 2rem;
+        font-size: 1rem;
     }
 
     .hero-stats {
@@ -694,50 +730,299 @@
         display: none;
     }
 
+    .stat-number {
+        font-size: 2rem;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        margin: 0 auto;
+        gap: 1.2rem;
+    }
+
+    .glass-card {
+        padding: 2rem;
+    }
+
+    .feature-title {
+        font-size: 1.4rem;
+    }
+
+    .pricing-section {
+        padding: 3rem 1rem 4rem;
+    }
+
+    .pricing-header {
+        margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+        font-size: 2.2rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .billing-toggle {
+        gap: 0.8rem;
+        padding: 0.4rem 1rem;
+    }
+
+    .toggle-label {
+        font-size: 0.85rem;
+    }
+
+    .toggle-switch {
+        width: 46px;
+        height: 26px;
+    }
+
+    .toggle-knob {
+        width: 18px;
+        height: 18px;
+    }
+
+    .toggle-switch.on .toggle-knob {
+        transform: translateX(20px);
+    }
+
     .pricing-grid {
         flex-direction: column;
         align-items: center;
-        padding: 2rem 1rem;
+        padding: 1.5rem 0.5rem;
         gap: 2rem;
     }
 
     .pricing-card {
         width: 100%;
-        max-width: 450px;
+        max-width: 420px;
         min-width: unset;
+    }
+
+    .pricing-card.popular {
+        transform: scale(1);
+    }
+
+    .pricing-card.popular:hover {
+        transform: translateY(-5px);
+    }
+
+    .pc-price .amount {
+        font-size: 2.8rem;
+    }
+
+    .pc-cta {
+        margin-bottom: 1.5rem;
     }
 }
 
+/* --- Smartphone (max 480px) --- */
 @media (max-width: 480px) {
     .home-header {
-        flex-direction: row;
-        gap: 0;
-        padding: 1rem;
+        padding: 0.7rem 1rem;
     }
 
     .brand-logo-img {
-        height: 36px;
-        /* Leggermente più piccolo su mobile per fare spazio */
+        height: 32px;
     }
 
     .auth-buttons {
-        width: auto;
-        justify-content: flex-end;
-        gap: 0.5rem;
+        gap: 0.4rem;
     }
 
     .auth-buttons .btn-outline,
     .auth-buttons .btn-primary {
-        padding: 0.5rem 0.8rem;
-        font-size: 0.85rem;
+        padding: 0.45rem 0.7rem;
+        font-size: 0.8rem;
+        border-radius: 6px;
+    }
+
+    .hero-section {
+        padding: 2rem 1rem 2.5rem;
+    }
+
+    .hero-content {
+        margin-bottom: 2rem;
     }
 
     .hero-title {
-        font-size: 2.6rem;
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
     }
 
     .hero-subtitle {
-        font-size: 1rem;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-cta {
+        margin-bottom: 2rem;
+    }
+
+    .btn-large {
+        padding: 0.9rem 1.6rem;
+        font-size: 0.95rem;
+    }
+
+    .hero-stats {
+        gap: 1rem;
+        padding-top: 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 1.6rem;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+    }
+
+    .features-grid {
+        padding: 0 0.5rem;
+        gap: 1rem;
+    }
+
+    .glass-card {
+        padding: 1.5rem;
+    }
+
+    .feature-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-title {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+        font-size: 0.85rem;
+    }
+
+    .pricing-section {
+        padding: 2rem 0.8rem 3rem;
+    }
+
+    .pricing-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.85rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .billing-toggle {
+        gap: 0.6rem;
+        padding: 0.35rem 0.8rem;
+    }
+
+    .toggle-label {
+        font-size: 0.75rem;
+    }
+
+    .discount-badge {
+        font-size: 0.6rem;
+        padding: 0.15rem 0.4rem;
+    }
+
+    .toggle-switch {
+        width: 40px;
+        height: 22px;
+    }
+
+    .toggle-knob {
+        width: 16px;
+        height: 16px;
+        top: 3px;
+        left: 3px;
+    }
+
+    .toggle-switch.on .toggle-knob {
+        transform: translateX(18px);
+    }
+
+    .pricing-grid {
+        padding: 1rem 0;
+        gap: 1.5rem;
+    }
+
+    .pricing-card {
+        max-width: 100%;
+        padding: 1.5rem 1.2rem;
+        border-radius: 16px;
+    }
+
+    .pc-name {
+        font-size: 1.3rem;
+    }
+
+    .pc-price .amount {
+        font-size: 2.4rem;
+    }
+
+    .pc-price .currency {
+        font-size: 1.2rem;
+    }
+
+    .pc-price .period {
+        font-size: 0.85rem;
+        margin-top: 1.2rem;
+    }
+
+    .pc-billing-text {
+        font-size: 0.75rem;
+    }
+
+    .feature-item {
+        font-size: 0.85rem;
+    }
+
+    .feature-check {
+        width: 18px;
+        height: 18px;
+        font-size: 0.6rem;
+    }
+}
+
+/* --- Small phones (max 360px) --- */
+@media (max-width: 360px) {
+    .hero-title {
+        font-size: 1.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 0.85rem;
+    }
+
+    .btn-large {
+        padding: 0.8rem 1.2rem;
+        font-size: 0.85rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .auth-buttons .btn-outline,
+    .auth-buttons .btn-primary {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
     }
 }
 
@@ -776,4 +1061,38 @@
     color: #5a6a88;
     font-size: 0.75rem;
     margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .home-footer {
+        padding: 2rem 1.5rem;
+        gap: 1rem;
+    }
+
+    .footer-logo {
+        height: 36px;
+    }
+
+    .footer-copy {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-footer {
+        padding: 1.5rem 1rem;
+    }
+
+    .footer-logo {
+        height: 30px;
+    }
+
+    .footer-copy {
+        font-size: 0.75rem;
+    }
+
+    .footer-rights {
+        font-size: 0.65rem;
+        margin-top: 0.5rem;
+    }
 }
