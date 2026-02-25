@@ -1,8 +1,9 @@
-<div class="flex flex-col h-screen overflow-hidden bg-[#f2f6fc] font-['DM_Sans'] text-[#1a2744]">
+<div class="flex flex-col h-[100dvh] overflow-hidden bg-[#f2f6fc] font-['DM_Sans'] text-[#1a2744]">
 
   <!-- ── TOPBAR ── -->
   <header class="flex-shrink-0 flex items-center justify-between
-                 px-4 lg:px-7 h-14 sm:h-16
+                 px-4 lg:px-7 h-[calc(3.5rem+env(safe-area-inset-top))] sm:h-[calc(4rem+env(safe-area-inset-top))]
+                 pt-[env(safe-area-inset-top)]
                  bg-[#1a3462] border-b border-[#c9a96e]/20
                  shadow-[0_2px_20px_rgba(26,52,98,0.30)] z-50 gap-2 sm:gap-3 lg:gap-4">
 
@@ -127,7 +128,8 @@
     </div>
 
     <!-- Griglia scrollabile (nascosta in agenda view su mobile) -->
-    <div class="calendar-grid-scroll flex-1 overflow-y-scroll overflow-x-hidden" [class.hidden]="agendaView">
+    <div class="calendar-grid-scroll flex-1 overflow-y-scroll overflow-x-hidden pb-[env(safe-area-inset-bottom)]"
+      [class.hidden]="agendaView">
       <div
         class="calendar-grid min-h-full bg-[#f2f6fc]
                   grid grid-cols-[44px_repeat(3,1fr)] sm:grid-cols-[48px_repeat(3,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]">
@@ -171,7 +173,9 @@
     </div>
 
     <!-- ── AGENDA VIEW (solo mobile, attiva quando agendaView=true) ── -->
-    <div class="agenda-view sm:hidden flex-1 overflow-y-auto px-4 py-4 flex flex-col bg-[#f2f6fc]" *ngIf="agendaView">
+    <div
+      class="agenda-view sm:hidden flex-1 overflow-y-auto px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom))] flex flex-col bg-[#f2f6fc]"
+      *ngIf="agendaView">
       <!-- Loading -->
       <div class="flex justify-center py-12" *ngIf="isLoading">
         <div class="loading-spinner w-8 h-8 rounded-full border-2 border-[#c9a96e]/20 border-t-[#c9a96e]"></div>
