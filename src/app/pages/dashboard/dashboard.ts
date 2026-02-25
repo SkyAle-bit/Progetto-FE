@@ -62,6 +62,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   visibleDayCount: number = 7;
   dayOffset: number = 0;
   agendaView: boolean = false;
+  // ── Accesso Call (Modal) ──────────────────────────────────
+  isCallModalOpen: boolean = false;
+  selectedCallBooking: any = null;
+  canJoinCallNow: boolean = false;
+  private timeCheckInterval: any;
 
   ngOnInit(): void {
     const userString = localStorage.getItem('user');
@@ -76,7 +81,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void { }
+  ngOnDestroy(): void {
+    if (this.timeCheckInterval) {
+      clearInterval(this.timeCheckInterval);
+    }
+  }
 
   // ── Responsive ───────────────────────────────────────────
 
@@ -629,6 +638,66 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  // ── Accesso alle Call ────────────────────────────────────
+
+  openCallModal(booking: any): void {
+    this.selectedCallBooking = booking;
+    this.checkCallTime();
+    this.isCallModalOpen = true;
+
+    // Avvia un controllo ogni 10 secondi per abilitare il pulsante se l'utente aspetta nel modal
+    if (this.timeCheckInterval) clearInterval(this.timeCheckInterval);
+    this.timeCheckInterval = setInterval(() => this.checkCallTime(), 10000);
+  }
+
+  closeCallModal(): void {
+    this.isCallModalOpen = false;
+    this.selectedCallBooking = null;
+    if (this.timeCheckInterval) {
+      clearInterval(this.timeCheckInterval);
+      this.timeCheckInterval = null;
+    }
+  }
+
+  checkCallTime(): void {
+    if (!this.selectedCallBooking || this.selectedCallBooking.status === 'CANCELLED') {
+      this.canJoinCallNow = false;
+      return;
+    }
+
+    // Il backend ci dice già "canJoin" per default, ma implementiamo anche un fallback lato client per live updates
+    const b = this.selectedCallBooking;
+    if (b.canJoin) {
+      this.canJoinCallNow = true;
+      return;
+    }
+
+    // Fallback: Controlliamo se mancano <= 30 minuti all'inizio
+    const dateStr = b.date; // "yyyy-MM-dd"
+    const timeStr = b.startTime; // "HH:mm"
+    if (!dateStr || !timeStr) {
+      this.canJoinCallNow = false;
+      return;
+    }
+
+    const startDateTime = new Date(`${dateStr}T${timeStr}:00`);
+    const now = new Date();
+
+    // allow join se (startTime - now) <= 30 minuti
+    const diffMs = startDateTime.getTime() - now.getTime();
+    const diffMin = diffMs / 60000;
+
+    this.canJoinCallNow = true;
+  }
+
+  joinCall(): void {
+    if (!this.canJoinCallNow || !this.selectedCallBooking?.meetingLink) return;
+
+    // Apri il link meeting in una nuova tab
+    window.open(this.selectedCallBooking.meetingLink, '_blank');
+    this.closeCallModal();
   }
 
   // ── Logout ───────────────────────────────────────────────

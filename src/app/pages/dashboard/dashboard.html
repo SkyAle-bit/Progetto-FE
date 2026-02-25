@@ -34,7 +34,7 @@
       <button class="today-btn px-2 sm:px-3 py-1 bg-[#c9a96e]/15 border border-[#c9a96e]/45
                      rounded-[6px] text-[#e8c97a] text-[0.75rem] sm:text-[0.78rem] font-semibold
                      uppercase tracking-[0.05em] cursor-pointer transition-all flex-shrink-0"
-        (click)="goToToday()">Oggi</button>
+        [class.hidden]="agendaView" [class.sm:block]="agendaView" (click)="goToToday()">Oggi</button>
 
       <!-- Vista Agenda — solo su mobile -->
       <button class="sm:hidden agenda-toggle-btn flex-shrink-0
@@ -147,8 +147,8 @@
         <div class="day-col border-r border-[#ccd8ed]/60" *ngFor="let day of weekDays" [class.today-col]="isToday(day)">
           <div class="hour-cell" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
             [class.half-hour]="!isFullHour(slot)">
-            <div class="booking-card" *ngFor="let b of getBookingsForSlot(day, slot)"
-              [class]="'booking-card ' + getBookingClass(b)">
+            <div class="booking-card cursor-pointer" *ngFor="let b of getBookingsForSlot(day, slot)"
+              [class]="'booking-card ' + getBookingClass(b)" (click)="openCallModal(b)">
               <div class="booking-time">{{ b.startTime }} – {{ b.endTime }}</div>
               <div class="booking-name">{{ getBookingLabel(b) }}</div>
               <div class="booking-status" [class]="'status-' + b.status?.toLowerCase()">
@@ -200,8 +200,9 @@
             <!-- Booking rows -->
             <div class="ml-[52px] flex flex-col gap-[6px]">
               <div class="agenda-booking-row flex items-center gap-3 px-4 py-[10px]
-                          bg-white border border-[#ccd8ed] rounded-xl shadow-sm"
-                *ngFor="let b of getBookingsForAgendaDay(day)" [class.opacity-50]="b.status === 'CANCELLED'">
+                          bg-white border border-[#ccd8ed] rounded-xl shadow-sm cursor-pointer"
+                *ngFor="let b of getBookingsForAgendaDay(day)" [class.opacity-50]="b.status === 'CANCELLED'"
+                (click)="openCallModal(b)">
                 <div class="w-[7px] h-[7px] rounded-full flex-shrink-0"
                   [style.backgroundColor]="b.status === 'CANCELLED' ? '#8fa3c8' : b.professionalRole === 'NUTRITIONIST' ? '#2d5fa8' : '#1a3462'">
                 </div>
@@ -222,6 +223,111 @@
       </ng-container>
     </div>
 
+  </div>
+
+  <!-- ── MODALE ACCESSO CALL ── -->
+  <div class="fixed inset-0 bg-[#1a3462]/30 backdrop-blur-[4px] z-[120] flex items-center justify-center p-4"
+    style="animation: fadeIn 0.2s ease" *ngIf="isCallModalOpen">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col"
+      style="animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)">
+
+      <!-- Header modale -->
+      <div class="px-6 py-5 bg-[#1a3462] border-b border-[#c9a96e]/20 flex justify-between items-start">
+        <h3 class="text-xl font-bold text-white leading-tight">Dettagli Chiamata</h3>
+        <button class="text-white/60 hover:text-white transition-colors" (click)="closeCallModal()">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Corpo modale -->
+      <div class="p-6 flex flex-col gap-4" *ngIf="selectedCallBooking">
+
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 rounded-full bg-[#f2f6fc] flex items-center justify-center text-[#1a2744] font-bold text-lg">
+            {{ selectedCallBooking.professionalName ? selectedCallBooking.professionalName.charAt(0) :
+            selectedCallBooking.clientName?.charAt(0) }}
+          </div>
+          <div>
+            <div class="text-[0.7rem] uppercase tracking-wider text-[#8fa3c8] font-bold mb-[2px]">Con chi</div>
+            <div class="text-[1.05rem] font-bold text-[#1a2744]">{{ getBookingLabel(selectedCallBooking) }}</div>
+          </div>
+        </div>
+
+        <div class="h-px bg-[#ccd8ed]/50 my-1"></div>
+
+        <div class="flex gap-6">
+          <div>
+            <div class="text-[0.7rem] uppercase tracking-wider text-[#8fa3c8] font-bold mb-[2px]">Data</div>
+            <div class="text-[0.95rem] font-semibold text-[#1a2744]">{{ selectedCallBooking.date }}</div>
+          </div>
+          <div>
+            <div class="text-[0.7rem] uppercase tracking-wider text-[#8fa3c8] font-bold mb-[2px]">Orario</div>
+            <div class="text-[0.95rem] font-semibold text-[#1a2744]">{{ selectedCallBooking.startTime }} - {{
+              selectedCallBooking.endTime }}</div>
+          </div>
+        </div>
+
+        <div class="h-px bg-[#ccd8ed]/50 my-1"></div>
+
+        <!-- Stato -->
+        <div>
+          <span
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[0.75rem] font-bold uppercase tracking-wider"
+            [class.bg-emerald-50]="selectedCallBooking.status === 'CONFIRMED'"
+            [class.text-emerald-600]="selectedCallBooking.status === 'CONFIRMED'"
+            [class.bg-amber-50]="selectedCallBooking.status === 'PENDING'"
+            [class.text-amber-600]="selectedCallBooking.status === 'PENDING'"
+            [class.bg-slate-100]="selectedCallBooking.status === 'CANCELLED'"
+            [class.text-slate-500]="selectedCallBooking.status === 'CANCELLED'">
+            <span class="w-1.5 h-1.5 rounded-full" [class.bg-emerald-500]="selectedCallBooking.status === 'CONFIRMED'"
+              [class.bg-amber-500]="selectedCallBooking.status === 'PENDING'"
+              [class.bg-slate-400]="selectedCallBooking.status === 'CANCELLED'"></span>
+            {{ selectedCallBooking.status === 'CONFIRMED' ? 'Confermata' : selectedCallBooking.status === 'PENDING' ?
+            'In attesa' : 'Annullata' }}
+          </span>
+        </div>
+
+        <!-- Text accesso -->
+        <p class="text-[0.8rem] text-[#8fa3c8] leading-relaxed mt-2"
+          *ngIf="selectedCallBooking.status === 'CONFIRMED' && !canJoinCallNow">
+          Il link per accedere alla videochiamata sarà disponibile <strong class="text-[#1a2744]">30 minuti
+            prima</strong> dell'inizio dell'appuntamento.
+        </p>
+        <p class="text-[0.8rem] text-emerald-600 font-medium leading-relaxed mt-2"
+          *ngIf="selectedCallBooking.status === 'CONFIRMED' && canJoinCallNow">
+          La chiamata è aperta! Puoi accedere premendo il bottone qui sotto.
+        </p>
+        <p class="text-[0.8rem] text-amber-600 font-medium leading-relaxed mt-2"
+          *ngIf="selectedCallBooking.status === 'PENDING'">
+          La chiamata deve ancora essere confermata dal professionista.
+        </p>
+
+        <!-- Bottone Accedi -->
+        <button
+          class="mt-4 w-full py-3.5 rounded-xl text-[0.95rem] font-bold uppercase tracking-wide transition-all flex items-center justify-center gap-2"
+          [ngClass]="canJoinCallNow && selectedCallBooking.status === 'CONFIRMED' ? 'bg-[#1a3462] hover:bg-[#112344] text-white shadow-lg shadow-[#1a3462]/20' : 'bg-[#e0e8f5] text-[#8fa3c8] cursor-not-allowed'"
+          [disabled]="!canJoinCallNow || selectedCallBooking.status !== 'CONFIRMED'" (click)="joinCall()">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            *ngIf="canJoinCallNow && selectedCallBooking.status === 'CONFIRMED'">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+            </path>
+          </svg>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            *ngIf="!canJoinCallNow || selectedCallBooking.status !== 'CONFIRMED'">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+            </path>
+          </svg>
+          {{ canJoinCallNow && selectedCallBooking.status === 'CONFIRMED' ? 'Accedi alla Call' : 'Link non ancora
+          attivo' }}
+        </button>
+
+      </div>
+    </div>
   </div>
 
 
