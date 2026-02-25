@@ -43,6 +43,62 @@
   box-shadow: 0 0 12px rgba(201, 169, 110, 0.20);
 }
 
+/* ── Toggle vista Agenda (solo mobile) ─────────────────────────────────────── */
+.view-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.60);
+}
+
+.view-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(201, 169, 110, 0.40);
+  color: #e8c97a;
+}
+
+.view-toggle-btn.active {
+  background: rgba(201, 169, 110, 0.18);
+  border-color: rgba(201, 169, 110, 0.55);
+  color: #e8c97a;
+  box-shadow: 0 0 10px rgba(201, 169, 110, 0.18);
+}
+
+/* ── Agenda toggle button (solo mobile) — stile identico al view-toggle-btn — */
+.agenda-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.60);
+  font-size: 1rem;
+}
+
+.agenda-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(201, 169, 110, 0.40);
+  color: #e8c97a;
+}
+
+.agenda-toggle-btn.active {
+  background: rgba(201, 169, 110, 0.18);
+  border-color: rgba(201, 169, 110, 0.55);
+  color: #e8c97a;
+  box-shadow: 0 0 10px rgba(201, 169, 110, 0.18);
+}
+
+/* ── Agenda view: booking row hover ────────────────────────────────────── */
+.agenda-booking-row {
+  transition: box-shadow 0.15s, transform 0.1s;
+  cursor: default;
+}
+
+.agenda-booking-row:active {
+  transform: scale(0.99);
+  box-shadow: 0 1px 4px rgba(26, 52, 98, 0.08);
+}
+
+/* Badge data "oggi" — highlight champagne */
+.today-badge {
+  border-color: #c9a96e !important;
+  background: rgba(201, 169, 110, 0.08);
+}
+
 /* ── Topbar credit badge hover ──────────────────────────────────────────── */
 .topbar-credit-badge:hover {
   background: rgba(201, 169, 110, 0.25);
@@ -146,11 +202,11 @@
   }
 }
 
-/* Mobile (<640px): mostra solo 1 colonna */
+/* Mobile (<640px): mostra 3 colonne (stessa logica del tablet) */
 @media (max-width: 639px) {
 
-  .day-header:nth-child(n+3),
-  .day-col:nth-child(n+3) {
+  .day-header:nth-child(n+5),
+  .day-col:nth-child(n+5) {
     display: none;
   }
 

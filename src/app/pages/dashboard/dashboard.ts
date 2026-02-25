@@ -61,6 +61,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   visibleDayCount: number = 7;
   dayOffset: number = 0;
+  agendaView: boolean = false;
 
   ngOnInit(): void {
     const userString = localStorage.getItem('user');
@@ -88,13 +89,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
   updateVisibleDays(): void {
     const w = window.innerWidth;
     if (w <= 640) {
-      this.visibleDayCount = 1;
+      this.visibleDayCount = 3;          // mobile: 3 giorni (come tablet)
     } else if (w <= 1024) {
-      this.visibleDayCount = 3;
+      this.visibleDayCount = 3;          // tablet
     } else {
-      this.visibleDayCount = 7;
+      this.visibleDayCount = 7;          // desktop
     }
     this.buildWeekDays();
+  }
+
+  // ── Agenda view ────────────────────────────────────────────
+  toggleAgendaView(): void {
+    this.agendaView = !this.agendaView;
+  }
+
+  /** Restituisce i prossimi 14 giorni che hanno almeno una prenotazione,
+   *  più oggi e i prossimi 2 giorni anche se vuoti (per orientamento). */
+  getAgendaDays(): Date[] {
+    const days: Date[] = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    for (let i = 0; i < 30; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const hasBk = this.getBookingsForAgendaDay(d).length > 0;
+      if (hasBk || i < 3) days.push(d);
+    }
+    return days;
+  }
+
+  getBookingsForAgendaDay(day: Date): any[] {
+    const dateStr = this.formatDate(day);
+    return (this.bookings || [])
+      .filter((b: any) => b.date === dateStr)
+      .sort((a: any, b: any) => (a.startTime || '').localeCompare(b.startTime || ''));
+  }
+
+  getMonthShort(date: Date): string {
+    return date.toLocaleDateString('it-IT', { month: 'short' }).replace('.', '');
   }
 
   // ── Caricamento dati ─────────────────────────────────────
@@ -189,18 +221,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   goToToday(): void {
-    this.initWeek();           // resets currentWeekStart to this week's Monday, dayOffset = 0
-    this.updateVisibleDays();  // sets visibleDayCount based on window width
-
-    // On mobile/tablet (< 7 days visible) the calendar shows `visibleDayCount` days
-    // starting at (currentWeekStart + dayOffset). With dayOffset = 0 it would show
-    // Monday. We need to offset to today instead.
+    this.initWeek();
+    this.updateVisibleDays();
+    // On tablet/mobile (3-day view), dayOffset = 0 shows Mon.
+    // Adjust offset to the closest 3-day window containing today.
     if (this.visibleDayCount < 7) {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const monday = new Date(this.currentWeekStart);
       const diffDays = Math.round((today.getTime() - monday.getTime()) / (1000 * 60 * 60 * 24));
-      this.dayOffset = Math.max(0, diffDays);
+      // Snap to the 3-day block that contains today
+      this.dayOffset = Math.floor(diffDays / this.visibleDayCount) * this.visibleDayCount;
       this.buildWeekDays();
     }
   }

@@ -34,6 +34,16 @@
                      rounded-[6px] text-[#e8c97a] text-[0.75rem] sm:text-[0.78rem] font-semibold
                      uppercase tracking-[0.05em] cursor-pointer transition-all flex-shrink-0"
         (click)="goToToday()">Oggi</button>
+
+      <!-- Vista Agenda — solo su mobile -->
+      <button class="sm:hidden agenda-toggle-btn flex-shrink-0
+                     flex items-center gap-1 px-2 py-1
+                     border border-white/20 rounded-[6px]
+                     text-[0.7rem] font-semibold tracking-[0.03em]
+                     cursor-pointer transition-all" [class.active]="agendaView" (click)="toggleAgendaView()"
+        title="Vista agenda">
+        <span>☰</span>
+      </button>
     </div>
 
     <!-- Right section -->
@@ -88,7 +98,7 @@
     </div>
   </header>
 
-  <!-- ── CALENDARIO ── -->
+  <!-- ── CALENDARIO / AGENDA ── -->
   <div class="flex-1 flex flex-col overflow-hidden relative">
 
     <!-- Loading overlay -->
@@ -98,10 +108,12 @@
       <span class="text-[0.8rem] text-[#8fa3c8] uppercase tracking-[0.08em]">Caricamento in corso...</span>
     </div>
 
-    <!-- Intestazione giorni -->
-    <div class="calendar-header flex-shrink-0 bg-[#1a3462]
+    <!-- Intestazione giorni (nascosta in agenda view su mobile) -->
+    <div
+      class="calendar-header flex-shrink-0 bg-[#1a3462]
                 border-b border-[#c9a96e]/18
-                grid grid-cols-[44px_1fr] sm:grid-cols-[48px_repeat(7,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]">
+                grid grid-cols-[44px_repeat(3,1fr)] sm:grid-cols-[48px_repeat(3,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]"
+      [class.hidden]="agendaView">
       <div class="border-r border-white/10"></div>
       <div class="day-header flex flex-col items-center py-[0.7rem] border-r border-white/8 gap-[0.3rem]"
         *ngFor="let day of weekDays" [class.today]="isToday(day)">
@@ -114,10 +126,11 @@
       </div>
     </div>
 
-    <!-- Griglia scrollabile -->
-    <div class="calendar-grid-scroll flex-1 overflow-y-scroll overflow-x-hidden">
-      <div class="calendar-grid min-h-full bg-[#f2f6fc]
-                  grid grid-cols-[44px_1fr] sm:grid-cols-[48px_repeat(7,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]">
+    <!-- Griglia scrollabile (nascosta in agenda view su mobile) -->
+    <div class="calendar-grid-scroll flex-1 overflow-y-scroll overflow-x-hidden" [class.hidden]="agendaView">
+      <div
+        class="calendar-grid min-h-full bg-[#f2f6fc]
+                  grid grid-cols-[44px_repeat(3,1fr)] sm:grid-cols-[48px_repeat(3,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]">
 
         <!-- Colonna ore -->
         <div class="time-col border-r border-[#ccd8ed] sticky left-0 bg-white z-[5]
@@ -148,7 +161,7 @@
 
     <!-- Stato vuoto -->
     <div class="empty-state absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                text-center pointer-events-none" *ngIf="!isLoading && bookings.length === 0">
+                text-center pointer-events-none" *ngIf="!isLoading && bookings.length === 0 && !agendaView">
       <div class="text-[2.5rem] mb-3 opacity-35">📅</div>
       <p class="empty-title font-['Darker_Grotesque'] text-[1.05rem] font-extrabold italic text-[#ccd8ed] mb-1">Nessuna
         prenotazione</p>
@@ -157,7 +170,56 @@
       <p class="text-[0.78rem] text-[#e0e8f5]" *ngIf="isProfessional()">Nessun cliente ha ancora prenotato con te.</p>
     </div>
 
+    <!-- ── AGENDA VIEW (solo mobile, attiva quando agendaView=true) ── -->
+    <div class="agenda-view sm:hidden flex-1 overflow-y-auto px-4 py-4 flex flex-col bg-[#f2f6fc]" *ngIf="agendaView">
+      <!-- Loading -->
+      <div class="flex justify-center py-12" *ngIf="isLoading">
+        <div class="loading-spinner w-8 h-8 rounded-full border-2 border-[#c9a96e]/20 border-t-[#c9a96e]"></div>
+      </div>
+      <!-- Lista giorni -->
+      <ng-container *ngIf="!isLoading">
+        <ng-container *ngFor="let day of getAgendaDays()">
+          <div class="agenda-day-block mb-5 last:mb-0">
+            <!-- Header giorno -->
+            <div class="flex items-center gap-3 mb-2">
+              <div class="agenda-date-badge flex-shrink-0 w-11 bg-white border border-[#ccd8ed]
+                          rounded-[10px] py-[5px] text-center shadow-sm" [class.today-badge]="isToday(day)">
+                <div class="text-[1.1rem] font-black leading-none" [style.color]="isToday(day) ? '#c9a96e' : '#1a2744'">
+                  {{ getDayNumber(day) }}</div>
+                <div class="text-[0.58rem] font-semibold uppercase tracking-wide text-[#8fa3c8]">{{ getMonthShort(day)
+                  }}</div>
+              </div>
+              <div class="flex-1 h-px bg-[#ccd8ed]/55"></div>
+              <span class="text-[0.68rem] font-semibold text-[#c9a96e] uppercase tracking-wide flex-shrink-0"
+                *ngIf="isToday(day)">Oggi</span>
+            </div>
+            <!-- Booking rows -->
+            <div class="ml-[52px] flex flex-col gap-[6px]">
+              <div class="agenda-booking-row flex items-center gap-3 px-4 py-[10px]
+                          bg-white border border-[#ccd8ed] rounded-xl shadow-sm"
+                *ngFor="let b of getBookingsForAgendaDay(day)" [class.opacity-50]="b.status === 'CANCELLED'">
+                <div class="w-[7px] h-[7px] rounded-full flex-shrink-0"
+                  [style.backgroundColor]="b.status === 'CANCELLED' ? '#8fa3c8' : b.professionalRole === 'NUTRITIONIST' ? '#2d5fa8' : '#1a3462'">
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-[0.875rem] font-semibold text-[#1a2744] truncate">{{ getBookingLabel(b) }}</div>
+                  <div class="text-[0.74rem] text-[#8fa3c8] font-medium">{{ b.startTime }} – {{ b.endTime }}</div>
+                </div>
+                <span class="text-[0.7rem] font-bold flex-shrink-0"
+                  [style.color]="b.status === 'CONFIRMED' ? '#10b981' : b.status === 'PENDING' ? '#f59e0b' : '#8fa3c8'">
+                  {{ b.status === 'CONFIRMED' ? '●' : b.status === 'PENDING' ? '○' : '✕' }}
+                </span>
+              </div>
+              <p class="text-[0.76rem] text-[#ccd8ed] italic py-[2px]"
+                *ngIf="getBookingsForAgendaDay(day).length === 0">Nessuna prenotazione</p>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+
   </div>
+
 
   <!-- ── OVERLAY PROFILO ── -->
   <div class="fixed inset-0 bg-[#1a3462]/28 z-[100] backdrop-blur-[4px]" style="animation: fadeIn 0.2s ease"
