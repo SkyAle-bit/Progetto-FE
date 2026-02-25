@@ -1,77 +1,127 @@
-<div class="dashboard-page">
+<div class="flex flex-col h-screen overflow-hidden bg-[#f2f6fc] font-['DM_Sans'] text-[#1a2744]">
 
   <!-- ── TOPBAR ── -->
-  <header class="topbar">
-    <div class="topbar-brand">
-      <img src="assets/images/navalgold_logo.png" alt="Naval Gold Logo" class="brand-logo-img">
+  <header class="flex-shrink-0 flex items-center justify-between
+                 px-4 lg:px-7 h-14 sm:h-16
+                 bg-[#1a3462] border-b border-[#c9a96e]/20
+                 shadow-[0_2px_20px_rgba(26,52,98,0.30)] z-50 gap-2 sm:gap-3 lg:gap-4">
+
+    <!-- Brand logo -->
+    <div class="flex items-center flex-shrink-0">
+      <img src="assets/images/navalgold_logo.png" alt="Naval Gold Logo"
+        class="brand-logo-img h-10 sm:h-12 w-auto object-contain">
     </div>
 
-    <div class="topbar-center">
-      <button class="nav-btn" (click)="prevWeek()">‹</button>
-      <span class="week-label">{{ getWeekLabel() }}</span>
-      <button class="nav-btn" (click)="nextWeek()">›</button>
-      <button class="today-btn" (click)="goToToday()">Oggi</button>
+    <!-- Week navigation (centre) -->
+    <div class="flex items-center gap-1 sm:gap-2 flex-1 justify-center min-w-0">
+      <button class="nav-btn w-8 h-8 flex items-center justify-center
+                     bg-white/10 border border-white/20 rounded-lg
+                     text-white/65 text-base cursor-pointer transition-all flex-shrink-0"
+        (click)="prevWeek()">‹</button>
+
+      <span class="hidden sm:block text-center text-[0.85rem] font-medium
+                   text-white/90 tracking-[0.01em] whitespace-nowrap
+                   min-w-[140px] md:min-w-[200px]">
+        {{ getWeekLabel() }}
+      </span>
+
+      <button class="nav-btn w-8 h-8 flex items-center justify-center
+                     bg-white/10 border border-white/20 rounded-lg
+                     text-white/65 text-base cursor-pointer transition-all flex-shrink-0"
+        (click)="nextWeek()">›</button>
+
+      <button class="today-btn px-2 sm:px-3 py-1 bg-[#c9a96e]/15 border border-[#c9a96e]/45
+                     rounded-[6px] text-[#e8c97a] text-[0.75rem] sm:text-[0.78rem] font-semibold
+                     uppercase tracking-[0.05em] cursor-pointer transition-all flex-shrink-0"
+        (click)="goToToday()">Oggi</button>
     </div>
 
-    <div class="topbar-right">
-      <!-- Statistiche (Professionisti) -->
-      <div class="week-stat" *ngIf="!isLoading && isProfessional()">
-        <span class="week-stat-num">{{ countWeekBookings() }}</span>
-        <span class="week-stat-label">questa settimana</span>
+    <!-- Right section -->
+    <div class="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-shrink-0">
+
+      <!-- Week stat (professionals only) — desktop only -->
+      <div class="hidden md:flex flex-col items-end gap-[1px]" *ngIf="!isLoading && isProfessional()">
+        <span class="text-[1.1rem] font-bold text-[#e8c97a] leading-none tabular-nums">{{ countWeekBookings() }}</span>
+        <span class="text-[0.6rem] text-white/40 uppercase tracking-[0.10em]">questa settimana</span>
       </div>
 
-      <!-- Crediti e Prenotazione (Clienti) -->
-      <div class="topbar-credits" *ngIf="!isLoading && isClient() && subscription?.active">
-        <div class="topbar-credit-badges">
-          <div class="topbar-credit-badge">
-            <span class="tc-icon">💪</span>
-            <span class="tc-num">{{ subscription.remainingPtCredits }}</span>
+      <!-- Credits + Book (clients with active subscription) -->
+      <div class="hidden sm:flex items-center gap-2 pr-3 sm:pr-4 border-r border-white/15"
+        *ngIf="!isLoading && isClient() && subscription?.active">
+        <div class="flex items-center gap-1">
+          <div class="topbar-credit-badge flex items-center gap-1 px-2 py-[0.2rem]
+                       bg-[#c9a96e]/15 border border-[#c9a96e]/30 rounded-[6px]
+                       text-[#e8c97a] text-[0.8rem] font-semibold transition-all">
+            <span>💪</span>
+            <span class="tabular-nums">{{ subscription.remainingPtCredits }}</span>
           </div>
-          <div class="topbar-credit-badge nutritionist">
-            <span class="tc-icon">🥗</span>
-            <span class="tc-num">{{ subscription.remainingNutritionistCredits }}</span>
+          <div class="topbar-credit-badge flex items-center gap-1 px-2 py-[0.2rem]
+                       bg-[#c9a96e]/15 border border-[#c9a96e]/30 rounded-[6px]
+                       text-[#e8c97a] text-[0.8rem] font-semibold transition-all">
+            <span>🥗</span>
+            <span class="tabular-nums">{{ subscription.remainingNutritionistCredits }}</span>
           </div>
         </div>
-        <button class="btn-book-topbar" (click)="toggleProfile()">
+        <button class="btn-book-topbar px-3 sm:px-4 py-[0.35rem] rounded-[6px] text-[#1a3462]
+                       text-[0.85rem] font-bold cursor-pointer transition-all" (click)="toggleProfile()">
           Prenota
         </button>
       </div>
-      <!-- Bottone disponibilità in topbar — solo professionisti -->
+
+      <!-- Availability button (professionals only) -->
       <button *ngIf="isProfessional()" class="btn-avail-topbar" (click)="openAvailability()"
         title="Gestisci disponibilità settimana prossima">
-        <span>📅</span> Disponibilità
+        <span>📅</span>
+        <span class="hidden sm:inline">Disponibilità</span>
       </button>
-      <button class="profile-btn" (click)="toggleProfile()" [class.active]="isProfileOpen">
+
+      <!-- Profile button -->
+      <button class="profile-btn w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full border-2 border-[#c9a96e]/50
+                     bg-[#c9a96e]/12 cursor-pointer flex items-center justify-center
+                     transition-all overflow-hidden p-0 flex-shrink-0" (click)="toggleProfile()"
+        [class.active]="isProfileOpen">
         <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar"
-          class="profile-btn-img">
-        <span *ngIf="!currentUser?.profilePicture" class="profile-btn-initials">{{ getInitials() }}</span>
+          class="w-full h-full object-cover">
+        <span *ngIf="!currentUser?.profilePicture" class="text-[0.78rem] font-bold text-[#c9a96e]">{{ getInitials()
+          }}</span>
       </button>
     </div>
   </header>
 
   <!-- ── CALENDARIO ── -->
-  <div class="calendar-wrapper">
+  <div class="flex-1 flex flex-col overflow-hidden relative">
 
-    <div class="loading-overlay" *ngIf="isLoading">
-      <div class="loading-spinner"></div>
-      <span class="loading-text">Caricamento in corso...</span>
+    <!-- Loading overlay -->
+    <div class="loading-overlay absolute inset-0 bg-[#f2f6fc]/88 z-20
+                flex flex-col items-center justify-center gap-4 backdrop-blur-[6px]" *ngIf="isLoading">
+      <div class="loading-spinner w-9 h-9 rounded-full border-2 border-[#c9a96e]/20 border-t-[#c9a96e]"></div>
+      <span class="text-[0.8rem] text-[#8fa3c8] uppercase tracking-[0.08em]">Caricamento in corso...</span>
     </div>
 
     <!-- Intestazione giorni -->
-    <div class="calendar-header">
-      <div class="time-gutter"></div>
-      <div class="day-header" *ngFor="let day of weekDays" [class.today]="isToday(day)">
-        <span class="day-name">{{ getDayName(day) }}</span>
-        <span class="day-number" [class.today-circle]="isToday(day)">{{ getDayNumber(day) }}</span>
+    <div class="calendar-header flex-shrink-0 bg-[#1a3462]
+                border-b border-[#c9a96e]/18
+                grid grid-cols-[44px_1fr] sm:grid-cols-[48px_repeat(7,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]">
+      <div class="border-r border-white/10"></div>
+      <div class="day-header flex flex-col items-center py-[0.7rem] border-r border-white/8 gap-[0.3rem]"
+        *ngFor="let day of weekDays" [class.today]="isToday(day)">
+        <span class="day-name text-[0.62rem] font-semibold text-white/42 tracking-[0.14em] uppercase leading-none">
+          {{ getDayName(day) }}
+        </span>
+        <span class="day-number text-base font-medium text-white/82 w-[30px] h-[30px]
+                     flex items-center justify-center rounded-full transition-all"
+          [class.today-circle]="isToday(day)">{{ getDayNumber(day) }}</span>
       </div>
     </div>
 
-    <!-- Griglia -->
-    <div class="calendar-grid-scroll">
-      <div class="calendar-grid">
+    <!-- Griglia scrollabile -->
+    <div class="calendar-grid-scroll flex-1 overflow-y-scroll overflow-x-hidden">
+      <div class="calendar-grid min-h-full bg-[#f2f6fc]
+                  grid grid-cols-[44px_1fr] sm:grid-cols-[48px_repeat(7,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]">
 
         <!-- Colonna ore -->
-        <div class="time-col">
+        <div class="time-col border-r border-[#ccd8ed] sticky left-0 bg-white z-[5]
+                    shadow-[2px_0_8px_rgba(26,52,98,0.05)]">
           <div class="time-slot-label" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
             [class.half-hour]="!isFullHour(slot)">
             {{ slot }}
@@ -79,7 +129,7 @@
         </div>
 
         <!-- Colonne giorni -->
-        <div class="day-col" *ngFor="let day of weekDays" [class.today-col]="isToday(day)">
+        <div class="day-col border-r border-[#ccd8ed]/60" *ngFor="let day of weekDays" [class.today-col]="isToday(day)">
           <div class="hour-cell" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
             [class.half-hour]="!isFullHour(slot)">
             <div class="booking-card" *ngFor="let b of getBookingsForSlot(day, slot)"
@@ -97,98 +147,137 @@
     </div>
 
     <!-- Stato vuoto -->
-    <div class="empty-state" *ngIf="!isLoading && bookings.length === 0">
-      <div class="empty-icon">📅</div>
-      <p class="empty-title">Nessuna prenotazione</p>
-      <p class="empty-sub" *ngIf="isClient()">Non hai ancora prenotazioni con i tuoi professionisti.</p>
-      <p class="empty-sub" *ngIf="isProfessional()">Nessun cliente ha ancora prenotato con te.</p>
+    <div class="empty-state absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                text-center pointer-events-none" *ngIf="!isLoading && bookings.length === 0">
+      <div class="text-[2.5rem] mb-3 opacity-35">📅</div>
+      <p class="empty-title font-['Darker_Grotesque'] text-[1.05rem] font-extrabold italic text-[#ccd8ed] mb-1">Nessuna
+        prenotazione</p>
+      <p class="text-[0.78rem] text-[#e0e8f5]" *ngIf="isClient()">Non hai ancora prenotazioni con i tuoi professionisti.
+      </p>
+      <p class="text-[0.78rem] text-[#e0e8f5]" *ngIf="isProfessional()">Nessun cliente ha ancora prenotato con te.</p>
     </div>
 
   </div>
 
   <!-- ── OVERLAY PROFILO ── -->
-  <div class="panel-overlay" *ngIf="isProfileOpen" (click)="closeProfile()"></div>
+  <div class="fixed inset-0 bg-[#1a3462]/28 z-[100] backdrop-blur-[4px]" style="animation: fadeIn 0.2s ease"
+    *ngIf="isProfileOpen" (click)="closeProfile()"></div>
 
   <!-- ── PANNELLO PROFILO ── -->
-  <aside class="profile-panel" [class.open]="isProfileOpen">
+  <aside class="profile-panel fixed top-0 right-0 h-screen
+                w-full sm:w-80
+                bg-white border-l border-[#ccd8ed] z-[101]
+                flex flex-col shadow-[-12px_0_48px_rgba(26,52,98,0.14)]" [class.open]="isProfileOpen">
 
-    <div class="panel-header">
-      <span class="panel-title">Il tuo Profilo</span>
-      <button class="panel-close" (click)="closeProfile()">✕</button>
+    <div class="panel-header flex items-center justify-between
+                px-6 py-5 border-b border-[#ccd8ed] flex-shrink-0 bg-[#1a3462]">
+      <span class="panel-title font-['Darker_Grotesque'] text-[1.15rem] font-extrabold tracking-[0.03em]">Il tuo
+        Profilo</span>
+      <button class="w-7 h-7 bg-white/12 border border-white/20 rounded-[6px]
+                     text-white/60 text-[0.75rem] cursor-pointer flex items-center justify-center transition-all"
+        (click)="closeProfile()">✕</button>
     </div>
 
-    <div class="panel-body">
+    <div class="panel-body flex-1 overflow-y-auto px-5 py-7
+                flex flex-col items-center gap-[0.9rem] bg-[#f2f6fc]">
 
       <ng-container *ngIf="isLoading">
-        <div class="skeleton-avatar"></div>
-        <div class="skeleton-line wide"></div>
-        <div class="skeleton-line narrow"></div>
+        <div class="skeleton-avatar w-[82px] h-[82px] rounded-full bg-[#ccd8ed]"></div>
+        <div class="skeleton-line wide h-[13px] rounded-md bg-[#ccd8ed] w-4/5"></div>
+        <div class="skeleton-line narrow h-[13px] rounded-md bg-[#ccd8ed] w-[48%]"></div>
       </ng-container>
 
       <ng-container *ngIf="!isLoading && dashboardData">
 
-        <div class="panel-avatar-wrap">
-          <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar" class="panel-avatar">
-          <div *ngIf="!currentUser?.profilePicture" class="panel-avatar-fallback">{{ getInitials() }}</div>
-          <div class="panel-avatar-ring"></div>
+        <div class="panel-avatar-wrap relative mb-1">
+          <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar"
+            class="w-[82px] h-[82px] rounded-full object-cover border-2 border-[#c9a96e] relative z-[1]">
+          <div *ngIf="!currentUser?.profilePicture" class="panel-avatar-fallback w-[82px] h-[82px] rounded-full
+                      bg-gradient-to-br from-[#1a3462] to-[#2d5fa8]
+                      border-2 border-[#c9a96e] text-[#e8c97a]
+                      flex items-center justify-center text-[1.8rem] font-black
+                      relative z-[1] font-['Darker_Grotesque']">{{ getInitials() }}</div>
+          <div class="panel-avatar-ring absolute rounded-full border border-[#c9a96e]/28" style="inset: -6px"></div>
         </div>
 
-        <div class="panel-name">{{ profile?.firstName }} {{ profile?.lastName }}</div>
-        <div class="panel-role-badge">{{ profile?.role }}</div>
+        <div class="font-['Darker_Grotesque'] text-[1.35rem] font-black text-[#1a2744] text-center tracking-[0.02em]">
+          {{ profile?.firstName }} {{ profile?.lastName }}
+        </div>
+        <div class="bg-[#1a3462]/8 border border-[#1a3462]/20 text-[#1a3462]
+                    px-4 py-[0.22rem] rounded-full text-[0.68rem] font-semibold
+                    tracking-[0.12em] uppercase">{{ profile?.role }}</div>
 
-        <!-- Bottone disponibilità — solo professionisti -->
+        <!-- Availability button (professionals only) -->
         <button *ngIf="isProfessional()" class="btn-availability" (click)="openAvailability()">
           <span class="btn-availability-icon">📅</span>
           Gestisci Disponibilità
           <span class="btn-availability-arrow">→</span>
         </button>
 
-        <div class="panel-section-title">Dati Personali</div>
-        <div class="panel-details">
-          <div class="detail-row">
-            <span class="detail-icon">✉</span>
-            <div class="detail-content">
-              <span class="detail-label">Email</span>
-              <span class="detail-value">{{ profile?.email }}</span>
+        <div class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em]
+                    pb-[0.3rem] border-b border-[#ccd8ed] mt-1">Dati Personali</div>
+        <div class="w-full flex flex-col gap-2">
+          <div class="detail-row flex items-center gap-3 px-4 py-[0.65rem]
+                       bg-white border border-[#ccd8ed] rounded-[10px] transition-all">
+            <span class="text-[0.88rem] text-[#c9a96e] w-[18px] text-center flex-shrink-0">✉</span>
+            <div class="flex flex-col gap-[0.08rem] min-w-0">
+              <span class="text-[0.60rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Email</span>
+              <span class="text-[0.84rem] text-[#1a2744] overflow-hidden text-ellipsis whitespace-nowrap">{{
+                profile?.email }}</span>
             </div>
           </div>
         </div>
 
         <ng-container *ngIf="isClient() && subscription">
-          <div class="panel-section-title">Abbonamento</div>
-          <div class="subscription-card" [class.inactive]="!subscription.isActive">
-            <div class="sub-plan-name">{{ subscription.planName }}</div>
-            <div class="sub-status">
-              <span class="sub-dot" [class.active]="subscription.isActive"></span>
+          <div class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em]
+                      pb-[0.3rem] border-b border-[#ccd8ed] mt-1">Abbonamento</div>
+          <div class="subscription-card w-full rounded-xl p-4 flex flex-col gap-2"
+            [class.inactive]="!subscription.isActive">
+            <div class="text-[0.95rem] font-semibold text-[#1a2744]">{{ subscription.planName }}</div>
+            <div class="sub-status flex items-center gap-2 text-[0.78rem] text-[#8fa3c8]">
+              <span class="sub-dot w-[7px] h-[7px] rounded-full bg-[#ccd8ed] flex-shrink-0"
+                [class.active]="subscription.isActive"></span>
               {{ subscription.isActive ? 'Attivo' : 'Scaduto' }}
             </div>
-            <div class="sub-dates">Scade il {{ subscription.endDate | date:'d MMMM yyyy':'':'it' }}</div>
-            <div class="sub-days-left" *ngIf="subscription.isActive">{{ getSubscriptionDaysLeft() }} giorni rimanenti
+            <div class="text-[0.77rem] text-[#8fa3c8]">Scade il {{ subscription.endDate | date:'d MMMM yyyy':'':'it' }}
             </div>
-            <div class="sub-credits">
-              <div class="credit-item">
-                <span class="credit-icon">💪</span>
-                <span class="credit-label">PT</span>
-                <span class="credit-num">{{ subscription.remainingPtCredits }}</span>
+            <div class="text-[0.74rem] text-[#b8922a] font-medium" *ngIf="subscription.isActive">
+              {{ getSubscriptionDaysLeft() }} giorni rimanenti
+            </div>
+            <div class="sub-credits flex gap-2 mt-1">
+              <div
+                class="credit-item flex-1 bg-white border border-[#ccd8ed] rounded-lg p-2 flex flex-col items-center gap-[0.2rem]">
+                <span class="text-base">💪</span>
+                <span class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.08em]">PT</span>
+                <span class="text-[1.1rem] font-bold text-[#b8922a]">{{ subscription.remainingPtCredits }}</span>
               </div>
-              <div class="credit-item">
-                <span class="credit-icon">🥗</span>
-                <span class="credit-label">Nutrizione</span>
-                <span class="credit-num">{{ subscription.remainingNutritionistCredits }}</span>
+              <div
+                class="credit-item flex-1 bg-white border border-[#ccd8ed] rounded-lg p-2 flex flex-col items-center gap-[0.2rem]">
+                <span class="text-base">🥗</span>
+                <span class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.08em]">Nutrizione</span>
+                <span class="text-[1.1rem] font-bold text-[#b8922a]">{{ subscription.remainingNutritionistCredits
+                  }}</span>
               </div>
             </div>
           </div>
         </ng-container>
 
         <ng-container *ngIf="isClient() && professionals.length > 0">
-          <div class="panel-section-title">I tuoi Professionisti</div>
-          <div class="panel-details">
-            <div class="detail-row" *ngFor="let p of professionals">
-              <span class="detail-icon">{{ p.role === 'PERSONAL_TRAINER' ? '💪' : '🥗' }}</span>
-              <div class="detail-content" style="flex: 1;">
-                <span class="detail-label">{{ p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista'
-                  }}</span>
-                <span class="detail-value">{{ p.fullName }}</span>
+          <div class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em]
+                      pb-[0.3rem] border-b border-[#ccd8ed] mt-1">I tuoi Professionisti</div>
+          <div class="w-full flex flex-col gap-2">
+            <div class="detail-row flex items-center gap-3 px-4 py-[0.65rem]
+                         bg-white border border-[#ccd8ed] rounded-[10px] transition-all"
+              *ngFor="let p of professionals">
+              <span class="text-[0.88rem] text-[#c9a96e] w-[18px] text-center flex-shrink-0">
+                {{ p.role === 'PERSONAL_TRAINER' ? '💪' : '🥗' }}
+              </span>
+              <div class="flex flex-col gap-[0.08rem] min-w-0 flex-1">
+                <span class="text-[0.60rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">
+                  {{ p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}
+                </span>
+                <span class="text-[0.84rem] text-[#1a2744] overflow-hidden text-ellipsis whitespace-nowrap">{{
+                  p.fullName }}</span>
               </div>
               <button class="btn-book-sm" (click)="openBooking(p)">Prenota</button>
             </div>
@@ -197,50 +286,61 @@
 
       </ng-container>
 
-      <button class="btn-logout" (click)="logout()">Esci dall'account →</button>
+      <button class="btn-logout w-full mt-auto" (click)="logout()">Esci dall'account →</button>
 
     </div>
   </aside>
 
   <!-- ── MODALE DISPONIBILITÀ ── -->
-  <div class="avail-overlay" *ngIf="isAvailabilityOpen" (click)="closeAvailability()"></div>
+  <div class="fixed inset-0 bg-[#1a3462]/38 z-[200] backdrop-blur-[5px]" style="animation: fadeIn 0.2s ease"
+    *ngIf="isAvailabilityOpen" (click)="closeAvailability()"></div>
 
-  <div class="avail-modal" *ngIf="isAvailabilityOpen">
+  <div class="avail-modal fixed z-[201] bg-white overflow-hidden flex flex-col
+              top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+              w-[min(96vw,920px)] h-[min(92vh,700px)] rounded-2xl
+              max-sm:top-0 max-sm:left-0 max-sm:translate-x-0 max-sm:translate-y-0
+              max-sm:w-screen max-sm:h-[100dvh] max-sm:rounded-none" *ngIf="isAvailabilityOpen">
 
     <!-- Header modale -->
-    <div class="avail-header">
-      <div class="avail-header-text">
-        <span class="avail-title">Disponibilità Settimana Prossima</span>
-        <span class="avail-subtitle">{{ getNextWeekLabel() }}</span>
+    <div class="flex items-center justify-between px-6 py-[1.1rem] bg-[#1a3462] flex-shrink-0">
+      <div class="flex flex-col gap-[0.15rem]">
+        <span class="avail-title font-['Darker_Grotesque'] text-[1.1rem] font-black tracking-[0.02em]">
+          Disponibilità Settimana Prossima
+        </span>
+        <span class="text-[0.72rem] text-white/52 tracking-[0.04em]">{{ getNextWeekLabel() }}</span>
       </div>
-      <button class="avail-close" (click)="closeAvailability()">✕</button>
+      <button class="w-[30px] h-[30px] bg-white/10 border border-white/18 rounded-[7px]
+                     text-white/65 text-[0.75rem] cursor-pointer flex items-center justify-center
+                     transition-all flex-shrink-0" (click)="closeAvailability()">✕</button>
     </div>
 
     <!-- Intestazione giorni -->
-    <div class="avail-days-header">
-      <div class="avail-time-gutter">
+    <div class="avail-days-header grid border-b border-[#ccd8ed] bg-[#f2f6fc] flex-shrink-0
+                grid-cols-[36px_repeat(7,1fr)] sm:grid-cols-[44px_repeat(7,1fr)]">
+      <div class="avail-time-gutter border-r border-[#ccd8ed] flex items-center justify-center">
         <button *ngIf="isCopyMode" class="btn-cancel-copy" (click)="clearCopy()" title="Annulla copia">✕</button>
       </div>
-      <div class="avail-day-header" *ngFor="let day of nextWeekDays" [class.is-copy-source]="isCopiedDay(day)">
-        <span class="avail-day-name">{{ getDayName(day) }}</span>
-        <span class="avail-day-number">{{ getDayNumber(day) }}</span>
-        <!-- Giorno sorgente copiato -->
+      <div class="avail-day-header flex flex-col items-center py-[0.55rem] border-r border-[#ccd8ed]/60 gap-[0.2rem]"
+        *ngFor="let day of nextWeekDays" [class.is-copy-source]="isCopiedDay(day)">
+        <span class="avail-day-name text-[0.60rem] max-sm:text-[0.52rem] font-bold text-[#8fa3c8] tracking-[0.12em]">
+          {{ getDayName(day) }}
+        </span>
+        <span class="avail-day-number text-[0.9rem] max-sm:text-[0.78rem] font-semibold text-[#1a2744]">
+          {{ getDayNumber(day) }}
+        </span>
         <span *ngIf="isCopiedDay(day)" class="badge-copied">✓ Copiato</span>
-        <!-- In copy mode: mostra Incolla sugli altri giorni -->
         <button *ngIf="isCopyMode && !isCopiedDay(day)" class="btn-paste-day" (click)="pasteDay(day)">⬇ Incolla</button>
-        <!-- Normale: mostra Copia se ha slot -->
         <button *ngIf="!isCopyMode" class="btn-copy-day" (click)="copyDay(day)" [disabled]="!hasDaySlots(day)"
           title="Copia disponibilità">⧉ Copia</button>
       </div>
     </div>
 
-
     <!-- Griglia slot -->
-    <div class="avail-body">
-      <div class="avail-grid">
+    <div class="avail-body flex-1 overflow-y-scroll overflow-x-hidden">
+      <div class="avail-grid min-h-full grid grid-cols-[36px_repeat(7,1fr)] sm:grid-cols-[44px_repeat(7,1fr)]">
 
         <!-- Colonna ore -->
-        <div class="avail-time-col">
+        <div class="avail-time-col border-r border-[#ccd8ed] bg-[#f2f6fc] sticky left-0 z-[2]">
           <div class="avail-time-label" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
             [class.half-hour]="!isFullHour(slot)">
             {{ isFullHour(slot) ? slot : '' }}
@@ -248,7 +348,7 @@
         </div>
 
         <!-- Colonne giorni -->
-        <div class="avail-day-col" *ngFor="let day of nextWeekDays"
+        <div class="avail-day-col border-r border-[#ccd8ed]/50" *ngFor="let day of nextWeekDays"
           [class.is-paste-target]="isCopyMode && !isCopiedDay(day)" [class.is-copy-source]="isCopiedDay(day)">
           <div class="avail-slot" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
             [class.half-hour]="!isFullHour(slot)" [class.selected]="isSlotSelected(day, slot)"
@@ -263,13 +363,17 @@
     </div>
 
     <!-- Footer -->
-    <div class="avail-footer">
-      <span class="avail-counter">
-        <span class="avail-counter-num">{{ getSelectedCount() }}</span>
+    <div class="avail-footer flex items-center justify-between flex-wrap gap-4 px-6 py-[0.9rem]
+                border-t border-[#ccd8ed] bg-white flex-shrink-0
+                max-sm:flex-col max-sm:items-stretch">
+      <span class="flex items-center gap-2 text-[0.82rem] text-[#8fa3c8]">
+        <span class="text-[1.1rem] font-bold text-[#1a3462]">{{ getSelectedCount() }}</span>
         slot selezionati
-        <span class="avail-counter-hours">({{ (getSelectedCount() * 0.5).toFixed(1) }}h totali)</span>
+        <span class="text-[0.75rem] text-[#c9a96e] font-medium">
+          ({{ (getSelectedCount() * 0.5).toFixed(1) }}h totali)
+        </span>
       </span>
-      <div class="avail-footer-actions">
+      <div class="flex gap-2 max-sm:justify-end">
         <button class="btn-avail-cancel" (click)="closeAvailability()">Annulla</button>
         <button class="btn-avail-confirm" (click)="confirmAvailability()" [disabled]="getSelectedCount() === 0">
           Conferma Disponibilità
@@ -280,56 +384,74 @@
   </div>
 
   <!-- ── MODALE PRENOTAZIONE CLIENTE ── -->
-  <div class="booking-overlay" *ngIf="isBookingOpen" (click)="closeBooking()"></div>
+  <div class="fixed inset-0 bg-[#1a2744]/40 backdrop-blur-[4px] z-[2000]" style="animation: fadeIn 0.3s ease"
+    *ngIf="isBookingOpen" (click)="closeBooking()"></div>
 
-  <div class="booking-modal" *ngIf="isBookingOpen">
+  <div class="booking-modal fixed z-[2001] bg-white rounded-xl overflow-hidden flex flex-col
+              top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+              w-[90%] max-w-[540px] max-h-[90vh]" *ngIf="isBookingOpen">
+
     <!-- Header modale -->
-    <div class="booking-header">
-      <div class="booking-header-text">
-        <span class="booking-title">Prenota con {{ selectedProfessional?.fullName }}</span>
-        <span class="booking-subtitle">{{ selectedProfessional?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' :
-          'Nutrizionista' }}</span>
+    <div class="flex justify-between items-start px-6 py-5 bg-[#1a2744] border-b-2 border-[#c9a96e]">
+      <div class="flex flex-col gap-[0.3rem]">
+        <span class="font-['Darker_Grotesque'] text-[1.6rem] font-extrabold leading-tight text-white">
+          Prenota con {{ selectedProfessional?.fullName }}
+        </span>
+        <span class="text-[0.85rem] text-[#c9a96e] font-medium tracking-[0.03em] uppercase">
+          {{ selectedProfessional?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}
+        </span>
       </div>
-      <button class="booking-close" (click)="closeBooking()">✕</button>
+      <button class="booking-close w-7 h-7 bg-white/10 border-none rounded-full
+                     text-white text-[0.9rem] cursor-pointer flex items-center justify-center transition-all"
+        (click)="closeBooking()">✕</button>
     </div>
 
-    <div class="booking-loading" *ngIf="isLoading">
+    <div class="flex flex-col items-center justify-center gap-4 p-12" *ngIf="isLoading">
       <div class="loading-spinner"></div>
-      <div class="loading-text">Caricamento disponibilità...</div>
+      <div class="text-[#64748b] text-[0.9rem]">Caricamento disponibilità...</div>
     </div>
 
-    <div class="booking-body" *ngIf="!isLoading">
+    <div class="booking-body flex-1 overflow-y-auto px-6 py-6 flex flex-col bg-[#f8f9fc]" *ngIf="!isLoading">
 
-      <!-- Stato vuoto: il professionista non ha slot -->
-      <div class="booking-empty" *ngIf="bookingDays.length === 0">
-        <div class="booking-empty-icon">📅</div>
-        <p class="booking-empty-title">Nessuna disponibilità</p>
-        <p class="booking-empty-sub">Questo professionista non ha ancora inserito disponibilità per i prossimi giorni.
+      <!-- Stato vuoto -->
+      <div class="text-center py-8 px-4" *ngIf="bookingDays.length === 0">
+        <div class="text-[2.5rem] mb-4 opacity-80">📅</div>
+        <p class="text-[1.1rem] font-semibold text-[#1a2744] mb-2">Nessuna disponibilità</p>
+        <p class="text-[0.9rem] text-[#64748b] leading-[1.5]">
+          Questo professionista non ha ancora inserito disponibilità per i prossimi giorni.
         </p>
       </div>
 
       <ng-container *ngIf="bookingDays.length > 0">
-        <!-- Day Selector -->
-        <div class="booking-section-title">Seleziona una data</div>
-        <div class="booking-day-selector">
-          <button class="booking-day-card" *ngFor="let day of bookingDays"
+        <div class="text-[0.9rem] font-bold text-[#1a2744] mb-3 uppercase tracking-[0.03em]">Seleziona una data</div>
+        <div class="booking-day-selector flex gap-3 overflow-x-auto pb-2">
+          <button class="booking-day-card flex-[0_0_auto] w-[72px] py-3 flex flex-col items-center justify-center
+                         bg-white border border-[#e2e8f0] rounded-[10px] cursor-pointer transition-all"
+            *ngFor="let day of bookingDays"
             [class.selected]="selectedBookingDay && day.getTime() === selectedBookingDay.getTime()"
             (click)="selectBookingDay(day)">
-            <span class="bdc-name">{{ getDayName(day) }}</span>
-            <span class="bdc-num">{{ getDayNumber(day) }}</span>
-            <span class="bdc-month">{{ day.toLocaleDateString('it-IT', { month: 'short' }) }}</span>
+            <span class="bdc-name text-[0.75rem] text-[#64748b] uppercase font-semibold mb-[0.2rem]">{{ getDayName(day)
+              }}</span>
+            <span
+              class="bdc-num font-['Darker_Grotesque'] text-[1.8rem] font-extrabold leading-none text-[#1a2744] mb-[0.1rem]">{{
+              getDayNumber(day) }}</span>
+            <span class="bdc-month text-[0.75rem] text-[#8fa3c8] font-medium capitalize">{{
+              day.toLocaleDateString('it-IT', { month: 'short' }) }}</span>
           </button>
         </div>
 
-        <!-- Slot Selector -->
-        <div class="booking-section-title" style="margin-top: 1.5rem;">Orari disponibili</div>
-        <div class="booking-slot-grid" *ngIf="slotsForSelectedDay.length > 0">
-          <button class="booking-time-pill" *ngFor="let slot of slotsForSelectedDay"
-            [class.selected]="isBookingSlotSelected(slot)" (click)="toggleBookingSlot(slot)">
+        <div class="text-[0.9rem] font-bold text-[#1a2744] uppercase tracking-[0.03em] mt-6 mb-3">Orari disponibili
+        </div>
+        <div class="flex flex-wrap gap-[0.6rem]" *ngIf="slotsForSelectedDay.length > 0">
+          <button class="booking-time-pill px-5 py-[0.6rem] bg-white border border-[#e2e8f0] rounded-full
+                         text-[#1a2744] font-semibold text-[0.9rem] cursor-pointer transition-all"
+            *ngFor="let slot of slotsForSelectedDay" [class.selected]="isBookingSlotSelected(slot)"
+            (click)="toggleBookingSlot(slot)">
             {{ getSlotTimeLabel(slot) }}
           </button>
         </div>
-        <div class="booking-empty-slots" *ngIf="selectedBookingDay && slotsForSelectedDay.length === 0">
+        <div class="p-4 bg-[#1a2744]/3 rounded-lg text-[#64748b] text-[0.9rem] text-center italic"
+          *ngIf="selectedBookingDay && slotsForSelectedDay.length === 0">
           Nessun orario disponibile in questa data.
         </div>
       </ng-container>
@@ -337,16 +459,20 @@
     </div>
 
     <!-- Footer -->
-    <div class="booking-footer" *ngIf="!isLoading">
-      <div class="booking-selection-info" *ngIf="selectedBookingSlot && selectedBookingDay">
-        <span class="bsi-label">Data selezionata:</span>
-        <span class="bsi-value">{{ selectedBookingDay.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric',
-          month: 'long' }) }} alle {{ getSlotTimeLabel(selectedBookingSlot) }}</span>
+    <div class="flex flex-col gap-4 px-6 py-5 bg-white border-t border-[#e2e8f0]" *ngIf="!isLoading">
+      <div class="booking-selection-info flex items-center gap-2 text-[0.95rem] px-[0.6rem] py-[0.6rem]
+                  bg-[#c9a96e]/10 rounded-md text-[#1a2744]" style="animation: fadeIn 0.3s"
+        *ngIf="selectedBookingSlot && selectedBookingDay">
+        <span class="font-medium text-[#64748b]">Data selezionata:</span>
+        <span class="font-bold text-[#1a2744]">
+          {{ selectedBookingDay.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }) }}
+          alle {{ getSlotTimeLabel(selectedBookingSlot) }}
+        </span>
       </div>
-      <div class="booking-selection-info empty" *ngIf="!selectedBookingSlot">
+      <div class="text-[#8fa3c8] italic text-[0.95rem]" *ngIf="!selectedBookingSlot">
         Seleziona un orario per continuare
       </div>
-      <div class="booking-footer-actions">
+      <div class="flex gap-2 justify-end">
         <button class="btn-avail-cancel" (click)="closeBooking()">Annulla</button>
         <button class="btn-book-confirm" (click)="confirmBooking()" [disabled]="!selectedBookingSlot">
           Conferma Prenotazione
@@ -356,12 +482,14 @@
   </div>
 
   <!-- ── MODALE SUCCESSO GLOBALE ── -->
-  <div class="global-popup-overlay" *ngIf="isPopupOpen" (click)="closePopup()"></div>
-  <div class="global-popup" *ngIf="isPopupOpen">
-    <div class="global-popup-icon">✓</div>
-    <div class="global-popup-title">{{ popupTitle }}</div>
-    <div class="global-popup-message">{{ popupMessage }}</div>
-    <button class="global-popup-btn" (click)="closePopup()">OK, ho capito</button>
+  <div class="fixed inset-0 bg-[#1a2744]/50 z-[3000]" *ngIf="isPopupOpen" (click)="closePopup()"></div>
+  <div class="global-popup fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+              bg-white rounded-2xl p-8 z-[3001] text-center max-w-sm w-[90%]
+              shadow-[0_24px_80px_rgba(26,52,98,0.25)]" *ngIf="isPopupOpen">
+    <div class="text-[2.5rem] mb-4">✓</div>
+    <div class="font-['Darker_Grotesque'] text-[1.35rem] font-extrabold text-[#1a2744] mb-2">{{ popupTitle }}</div>
+    <div class="text-[0.9rem] text-[#8fa3c8] mb-6">{{ popupMessage }}</div>
+    <button class="btn-avail-confirm w-full" (click)="closePopup()">OK, ho capito</button>
   </div>
 
 </div>

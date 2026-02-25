@@ -189,8 +189,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   goToToday(): void {
-    this.initWeek();
-    this.updateVisibleDays();
+    this.initWeek();           // resets currentWeekStart to this week's Monday, dayOffset = 0
+    this.updateVisibleDays();  // sets visibleDayCount based on window width
+
+    // On mobile/tablet (< 7 days visible) the calendar shows `visibleDayCount` days
+    // starting at (currentWeekStart + dayOffset). With dayOffset = 0 it would show
+    // Monday. We need to offset to today instead.
+    if (this.visibleDayCount < 7) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const monday = new Date(this.currentWeekStart);
+      const diffDays = Math.round((today.getTime() - monday.getTime()) / (1000 * 60 * 60 * 24));
+      this.dayOffset = Math.max(0, diffDays);
+      this.buildWeekDays();
+    }
   }
 
   isToday(date: Date): boolean {
