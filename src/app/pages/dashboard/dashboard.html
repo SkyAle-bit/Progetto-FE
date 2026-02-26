@@ -386,8 +386,51 @@
           <span class="btn-availability-arrow">→</span>
         </button>
 
+        <!-- Bottone Clienti (professionals only) -->
+        <button *ngIf="isProfessional()"
+          class="w-full mt-2 bg-[#c9a96e] hover:bg-[#b8922a] text-[#1a2744] font-bold py-3 rounded-lg shadow-md transition-colors flex justify-center items-center gap-2"
+          (click)="goToClients()">
+          <span>👥</span> I Miei Clienti
+        </button>
+
+        <!-- Aggiunta: Vista Rapida Clienti -->
+        <ng-container *ngIf="isProfessional() && myClients && myClients.length > 0">
+          <div class="w-full flex items-center justify-between pb-[0.3rem] border-b border-[#ccd8ed] mt-4 mb-1">
+            <span class="text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em]">Clienti
+              Assegnati</span>
+            <span class="text-[0.62rem] font-bold text-[#1a3462] bg-[#c9a96e]/20 px-2 py-0.5 rounded-full">{{
+              myClients.length }}</span>
+          </div>
+
+          <div class="w-full flex flex-col gap-2 max-h-[180px] overflow-y-auto pr-1">
+            <div
+              class="detail-row flex items-center gap-3 px-3 py-2
+                         bg-white border border-[#ccd8ed] rounded-[10px] transition-all hover:border-[#c9a96e]/60 cursor-pointer shadow-sm"
+              *ngFor="let client of myClients">
+              <!-- Avatar mini -->
+              <div
+                class="w-9 h-9 rounded-full bg-[#1a3462] flex items-center justify-center overflow-hidden border-[1.5px] border-[#c9a96e]/60 flex-shrink-0 shadow-inner">
+                <img *ngIf="client.profilePictureUrl" [src]="client.profilePictureUrl"
+                  class="w-full h-full object-cover">
+                <span *ngIf="!client.profilePictureUrl" class="text-[#e8c97a] text-[0.6rem] font-bold uppercase">{{
+                  client.firstName?.charAt(0) }}{{ client.lastName?.charAt(0) }}</span>
+              </div>
+              <div class="flex flex-col min-w-0 flex-1">
+                <span class="text-[0.80rem] font-bold text-[#1a2744] truncate leading-tight">{{ client.firstName }} {{
+                  client.lastName }}</span>
+                <span class="text-[0.65rem] text-[#8fa3c8] font-medium truncate mt-[2px]">{{ client.email }}</span>
+              </div>
+              <div class="w-5 h-5 rounded-full bg-[#f2f6fc] flex items-center justify-center text-[#c9a96e]">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
         <div class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em]
-                    pb-[0.3rem] border-b border-[#ccd8ed] mt-1">Dati Personali</div>
+                    pb-[0.3rem] border-b border-[#ccd8ed] mt-2">Dati Personali</div>
         <div class="w-full flex flex-col gap-2">
           <div class="detail-row flex items-center gap-3 px-4 py-[0.65rem]
                        bg-white border border-[#ccd8ed] rounded-[10px] transition-all">

@@ -21,7 +21,7 @@ export class AuthService {
   private http = inject(HttpClient);
 
   // Usa l'URL dell'ambiente corrente!
-  private apiUrl = environment.apiUrl; 
+  private apiUrl = environment.apiUrl;
   private baseUrl = `${this.apiUrl}/api/auth`;
 
   login(credentials: any): Observable<AuthResponse> {
@@ -72,5 +72,10 @@ export class AuthService {
 
   createBooking(request: { userId: number; slotId: number }): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/bookings`, request);
+  }
+
+  getMyClients(professionalId: number): Observable<any[]> {
+    const timestamp = new Date().getTime();
+    return this.http.get<any[]>(`${this.apiUrl}/api/users/${professionalId}/clients?t=${timestamp}`);
   }
 }

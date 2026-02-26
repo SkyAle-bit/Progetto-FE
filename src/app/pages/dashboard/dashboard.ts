@@ -19,6 +19,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dashboardData: any = null;
   isLoading: boolean = true;
   isProfileOpen: boolean = false;
+  myClients: any[] = []; // Array per la quick view nel profilo
 
   // ── Modale Successo Globale ───────────────────────────────
   isPopupOpen: boolean = false;
@@ -144,8 +145,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.authService.getDashboard(this.currentUser.id).subscribe({
       next: (data) => {
         this.dashboardData = data;
-        this.isLoading = false;
-        this.cdr.detectChanges();
+
+        // Se è un professionista, carichiamo anche i suoi clienti per il pannello laterale
+        if (this.isProfessional()) {
+          this.authService.getMyClients(this.currentUser.id).subscribe({
+            next: (res: any) => {
+              this.myClients = Array.isArray(res) ? res : (res && res.value) ? res.value : [];
+              this.isLoading = false;
+              this.cdr.detectChanges();
+            },
+            error: (err) => {
+              console.error('Errore caricamento mini-lista clienti', err);
+              this.isLoading = false;
+              this.cdr.detectChanges();
+            }
+          });
+        } else {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
       },
       error: (err) => {
         console.error('Errore nel caricamento della dashboard', err);
@@ -166,6 +184,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isProfessional(): boolean {
     const r = this.currentUser?.role;
     return r === 'PERSONAL_TRAINER' || r === 'NUTRITIONIST';
+  }
+
+  goToClients(): void {
+    this.router.navigate(['/clients']);
   }
 
   // ── Calendario ───────────────────────────────────────────

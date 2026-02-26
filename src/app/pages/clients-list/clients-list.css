@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animate-spin-slow {
+    animation: spin-slow 8s linear infinite;
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Stili scrollbar tematici opzionali... */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b1122; 
+}
+::-webkit-scrollbar-thumb {
+  background: #3a4b6e; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c9a96e; 
+}
