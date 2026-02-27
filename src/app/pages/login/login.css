@@ -10,6 +10,7 @@
 
 .login-page {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #112240;
   /* Sfondo navale più morbido */
   background-image:
@@ -20,7 +21,9 @@
   justify-content: center;
   font-family: 'Outfit', 'DM Sans', sans-serif;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 1rem;
 }
 
 .bg-shapes {
@@ -379,15 +382,17 @@
   .btn-back {
     top: 1rem;
     left: 1rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
   }
 
   .login-page {
     align-items: flex-start;
-    padding-top: 3rem;
+    padding: 3.5rem 0.75rem 1.5rem;
   }
 
   .login-wrapper {
-    padding: 1rem;
+    padding: 0.5rem;
     gap: 1.25rem;
     max-width: 100%;
   }
@@ -402,8 +407,8 @@
     font-size: 1.6rem;
   }
 
-  .brand-icon {
-    font-size: 1.5rem;
+  .brand-logo-img {
+    height: 48px;
   }
 
   .brand-tagline {
@@ -419,6 +424,33 @@
   .btn-primary {
     padding: 1rem;
     font-size: 1rem;
+  }
+
+  .card-title {
+    font-size: 1.4rem;
+  }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .login-page {
+    padding: 3rem 0.5rem 1rem;
+  }
+
+  .glass-card {
+    padding: 1.25rem 1rem;
+  }
+
+  .brand-logo-img {
+    height: 40px;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+  }
+
+  .field-label {
+    font-size: 0.72rem;
   }
 }
 

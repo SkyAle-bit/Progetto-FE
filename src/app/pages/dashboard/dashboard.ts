@@ -1,25 +1,41 @@
-import { Component, inject, OnInit, OnDestroy, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ChangeDetectorRef, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ChatService, ChatMessage, Conversation } from '../../services/chat.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
+  private chatService = inject(ChatService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+
+  @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
   currentUser: any = null;
   dashboardData: any = null;
   isLoading: boolean = true;
   isProfileOpen: boolean = false;
   myClients: any[] = []; // Array per la quick view nel profilo
+
+  // ── Tab mobile ────────────────────────────────────────────
+  activeTab: string = 'home'; // 'home' | 'calendar' | 'chat' | 'clients' | 'professionals'
+
+  // ── Chat ──────────────────────────────────────────────────
+  chatConversations: Conversation[] = [];
+  chatMessages: ChatMessage[] = [];
+  activeConversation: Conversation | null = null;
+  chatInput: string = '';
+  chatLoading: boolean = false;
+  chatView: 'list' | 'conversation' = 'list';
 
   // ── Modale Successo Globale ───────────────────────────────
   isPopupOpen: boolean = false;
@@ -86,6 +102,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.timeCheckInterval) {
       clearInterval(this.timeCheckInterval);
     }
+    this.chatService.stopPolling();
   }
 
   // ── Responsive ───────────────────────────────────────────
@@ -190,6 +207,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.router.navigate(['/clients']);
   }
 
+  setTab(tab: string): void {
+    this.activeTab = tab;
+    // Se si entra nel tab calendario, disattiva agendaView mobile
+    if (tab === 'calendar') {
+      this.agendaView = false;
+    }
+    // Se si entra nel tab chat, carica le conversazioni
+    if (tab === 'chat') {
+      this.chatView = 'list';
+      this.activeConversation = null;
+      this.loadConversations();
+    } else {
+      // Se si esce dal chat, ferma il polling
+      this.chatService.stopPolling();
+    }
+    this.cdr.detectChanges();
+  }
+
   // ── Calendario ───────────────────────────────────────────
 
   initWeek(): void {
@@ -292,6 +327,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const m = (date.getMonth() + 1).toString().padStart(2, '0');
     const d = date.getDate().toString().padStart(2, '0');
     return `${y}-${m}-${d}`;
+  }
+
+  toDate(dateStr: string): Date {
+    return new Date(dateStr + 'T00:00:00');
   }
 
   getDayName(date: Date): string {
@@ -720,6 +759,214 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Apri il link meeting in una nuova tab
     window.open(this.selectedCallBooking.meetingLink, '_blank');
     this.closeCallModal();
+  }
+
+  // ── Chat ──────────────────────────────────────────────────
+
+  loadConversations(): void {
+    if (!this.currentUser) return;
+    this.chatLoading = true;
+    this.chatService.getConversations(this.currentUser.id).subscribe({
+      next: (convs) => {
+        // Se il backend restituisce conversazioni, usale; altrimenti genera da dati locali
+        if (convs && convs.length > 0) {
+          this.chatConversations = convs;
+        } else {
+          this.chatConversations = this.buildLocalConversations();
+        }
+        this.chatLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.chatConversations = this.buildLocalConversations();
+        this.chatLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  /** Genera conversazioni locali dai professionisti/clienti per mostrare i contatti anche senza messaggi */
+  buildLocalConversations(): Conversation[] {
+    const convs: Conversation[] = [];
+    if (this.isClient() && this.professionals?.length > 0) {
+      this.professionals.forEach((p: any) => {
+        convs.push({
+          otherUserId: p.id,
+          otherUserName: p.fullName,
+          otherUserRole: p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista',
+          lastMessage: undefined,
+          lastMessageTime: undefined,
+          unreadCount: 0
+        });
+      });
+    }
+    if (this.isProfessional() && this.myClients?.length > 0) {
+      this.myClients.forEach((c: any) => {
+        convs.push({
+          otherUserId: c.id,
+          otherUserName: `${c.firstName} ${c.lastName}`,
+          otherUserRole: 'Cliente',
+          lastMessage: undefined,
+          lastMessageTime: undefined,
+          unreadCount: 0
+        });
+      });
+    }
+    return convs;
+  }
+
+  openConversation(conv: Conversation): void {
+    this.activeConversation = conv;
+    this.chatView = 'conversation';
+    this.chatMessages = [];
+    this.chatLoading = true;
+
+    // Carica messaggi tra me e l'altro utente
+    this.chatService.getMessages(this.currentUser.id, conv.otherUserId).subscribe({
+      next: (msgs) => {
+        this.chatMessages = msgs;
+        this.chatLoading = false;
+        this.cdr.detectChanges();
+        setTimeout(() => this.scrollToBottom(), 50);
+      },
+      error: () => {
+        this.chatLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+
+    // Segna come letti (io sono il receiver, l'altro è il sender)
+    this.chatService.markAsRead(this.currentUser.id, conv.otherUserId).subscribe();
+    conv.unreadCount = 0;
+
+    // Avvia polling per aggiornamenti in tempo reale
+    this.chatService.startPolling(this.currentUser.id, conv.otherUserId);
+    this.chatService.messages$.subscribe(msgs => {
+      if (msgs.length > 0) {
+        this.chatMessages = msgs;
+        this.cdr.detectChanges();
+        this.scrollToBottom();
+      }
+    });
+  }
+
+  sendChatMessage(): void {
+    const text = this.chatInput.trim();
+    if (!text || !this.activeConversation) return;
+
+    const receiverId = this.activeConversation.otherUserId;
+
+    // Aggiunge messaggio localmente subito (UI ottimistica)
+    const localMsg: ChatMessage = {
+      id: Date.now(),
+      senderId: this.currentUser.id,
+      senderName: `${this.currentUser.firstName} ${this.currentUser.lastName}`,
+      receiverId: receiverId,
+      receiverName: this.activeConversation.otherUserName,
+      content: text,
+      status: 'SENT',
+      createdAt: new Date().toISOString()
+    };
+    this.chatMessages = [...this.chatMessages, localMsg];
+    this.chatInput = '';
+    this.cdr.detectChanges();
+    this.scrollToBottom();
+
+    // Aggiorna preview nella lista conversazioni
+    if (this.activeConversation) {
+      this.activeConversation.lastMessage = text;
+      this.activeConversation.lastMessageTime = localMsg.createdAt;
+    }
+
+    // Invia al backend
+    this.chatService.sendMessage({
+      senderId: this.currentUser.id,
+      receiverId: receiverId,
+      content: text
+    }).subscribe({
+      next: (savedMsg) => {
+        // Sostituisci il messaggio locale con quello del server
+        this.chatMessages = this.chatMessages.map(m =>
+          m.id === localMsg.id ? savedMsg : m
+        );
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.warn('Errore invio messaggio, resta in locale', err);
+      }
+    });
+  }
+
+  backToConversations(): void {
+    this.chatView = 'list';
+    this.activeConversation = null;
+    this.chatMessages = [];
+    this.chatService.clearMessages();
+    this.chatService.stopPolling();
+    this.loadConversations();
+  }
+
+  isMyMessage(msg: ChatMessage): boolean {
+    return msg.senderId === this.currentUser?.id;
+  }
+
+  formatChatTime(isoString: string): string {
+    if (!isoString) return '';
+    const d = new Date(isoString);
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const isYesterday = d.toDateString() === yesterday.toDateString();
+
+    const time = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+
+    if (isToday) return time;
+    if (isYesterday) return `Ieri ${time}`;
+    return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }) + ` ${time}`;
+  }
+
+  formatConvTime(isoString?: string): string {
+    if (!isoString) return '';
+    const d = new Date(isoString);
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    if (isToday) return d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (d.toDateString() === yesterday.toDateString()) return 'Ieri';
+    return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
+  }
+
+  getConversationInitials(conv: Conversation): string {
+    const parts = conv.otherUserName.split(' ');
+    return parts.map(p => p.charAt(0)).join('').substring(0, 2).toUpperCase();
+  }
+
+  getTotalUnread(): number {
+    return this.chatConversations.reduce((sum, c) => sum + c.unreadCount, 0);
+  }
+
+  private scrollToBottom(): void {
+    try {
+      if (this.messagesContainer) {
+        const el = this.messagesContainer.nativeElement;
+        el.scrollTop = el.scrollHeight;
+      }
+    } catch (e) {}
+  }
+
+  autoGrow(event: Event): void {
+    const el = event.target as HTMLTextAreaElement;
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  onChatKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendChatMessage();
+    }
   }
 
   // ── Logout ───────────────────────────────────────────────

@@ -7,5 +7,19 @@ body {
   margin: 0 !important;
   padding: 0 !important;
   background: #080e1c;
-  overflow: hidden;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure images & media never overflow */
+img, video, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Prevent horizontal overflow anywhere */
+*, *::before, *::after {
+  box-sizing: border-box;
 }

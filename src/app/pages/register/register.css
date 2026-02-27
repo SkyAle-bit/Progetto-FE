@@ -10,6 +10,7 @@
 
 .register-page {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #112240;
   background-image:
     radial-gradient(circle at top right, rgba(201, 169, 110, 0.05) 0%, transparent 40%),
@@ -19,14 +20,17 @@
   justify-content: center;
   font-family: 'Outfit', 'DM Sans', sans-serif;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   padding: 2rem 1rem;
 }
 
 /* Step 2: pagina scrollabile e piana in alto */
 /* body ha overflow:hidden globale, quindi usiamo la pagina stessa come scroll container */
 .register-page.step2 {
-  height: 100vh;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: auto;
   align-items: flex-start;
   overflow-y: auto;
   overflow-x: hidden;
@@ -1092,6 +1096,10 @@
     padding-top: 2rem;
   }
 
+  .register-page.step2 {
+    padding: 2rem 0.75rem 3rem;
+  }
+
   .register-wrapper {
     max-width: 100%;
     gap: 1.25rem;
@@ -1107,6 +1115,14 @@
 
   .card-title {
     font-size: 1.4rem;
+  }
+
+  .pricing-carousel {
+    gap: 1rem;
+  }
+
+  .prof-grid {
+    max-height: 220px;
   }
 
   .toast-wrapper {
@@ -1136,11 +1152,17 @@
   .btn-back {
     top: 1rem;
     left: 1rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
   }
 
   .register-page {
-    padding: 1rem;
+    padding: 1rem 0.5rem;
     padding-top: 1.5rem;
+  }
+
+  .register-page.step2 {
+    padding: 1.5rem 0.5rem 2rem;
   }
 
   .glass-card {
@@ -1150,6 +1172,10 @@
 
   .brand-name {
     font-size: 1.6rem;
+  }
+
+  .brand-logo-img {
+    height: 48px;
   }
 
   /* Griglia nome/cognome → colonna singola su mobile */
@@ -1180,10 +1206,35 @@
   .pricing-carousel {
     flex-direction: column;
     align-items: stretch;
+    gap: 1rem;
+    padding: 0.5rem 0 1rem;
   }
 
   .pricing-card {
     min-width: unset;
+    padding: 1.5rem 1rem;
+  }
+
+  .pc-price .amount {
+    font-size: 2.8rem;
+  }
+
+  .prof-card {
+    padding: 0.6rem 0.75rem;
+    gap: 0.7rem;
+  }
+
+  .prof-avatar {
+    width: 38px;
+    height: 38px;
+  }
+
+  .prof-name {
+    font-size: 0.82rem;
+  }
+
+  .section-heading {
+    font-size: 1.05rem;
   }
 
   /* Bottoni step affiancati restano ma più compatti */
@@ -1194,6 +1245,7 @@
   .btn-secondary {
     flex: 0 0 auto;
     padding: 0.9rem 1rem;
+    font-size: 0.85rem;
   }
 
   .btn-submit {
@@ -1202,5 +1254,48 @@
 
   .success-title {
     font-size: 1.4rem;
+  }
+
+  .success-ring {
+    width: 65px;
+    height: 65px;
+  }
+
+  .success-check {
+    font-size: 1.6rem;
+  }
+}
+
+/* Small phones */
+@media (max-width: 360px) {
+  .register-page {
+    padding: 0.75rem 0.4rem;
+    padding-top: 1rem;
+  }
+
+  .glass-card {
+    padding: 1rem 0.75rem;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+  }
+
+  .field-label {
+    font-size: 0.68rem;
+  }
+
+  .pricing-card {
+    padding: 1.2rem 0.8rem;
+  }
+
+  .btn-primary {
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-secondary {
+    padding: 0.8rem;
+    font-size: 0.8rem;
   }
 }
