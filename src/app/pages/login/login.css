@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap');
 
+:host {
+  display: block;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 *,
 *::before,
 *::after {
@@ -9,8 +16,7 @@
 }
 
 .login-page {
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100%;
   background: #112240;
   /* Sfondo navale più morbido */
   background-image:

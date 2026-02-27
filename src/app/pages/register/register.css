@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap');
 
+:host {
+  display: block;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 *,
 *::before,
 *::after {
@@ -9,8 +16,7 @@
 }
 
 .register-page {
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100%;
   background: #112240;
   background-image:
     radial-gradient(circle at top right, rgba(201, 169, 110, 0.05) 0%, transparent 40%),
@@ -28,9 +34,7 @@
 /* Step 2: pagina scrollabile e piana in alto */
 /* body ha overflow:hidden globale, quindi usiamo la pagina stessa come scroll container */
 .register-page.step2 {
-  min-height: 100vh;
-  min-height: 100dvh;
-  height: auto;
+  height: 100%;
   align-items: flex-start;
   overflow-y: auto;
   overflow-x: hidden;

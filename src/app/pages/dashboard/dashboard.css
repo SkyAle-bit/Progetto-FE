@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap');
 
+:host {
+  display: block;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
    DASHBOARD — CSS residuo dopo migrazione Tailwind
    ─────────────────────────────────────────────────────────────────────

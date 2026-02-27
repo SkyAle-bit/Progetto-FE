@@ -3,14 +3,24 @@
 @tailwind utilities;
 
 /* Global overrides */
-body {
+html, body {
   margin: 0 !important;
   padding: 0 !important;
+  height: 100%;
+  overflow: hidden;
   background: #080e1c;
-  overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hide scrollbar on html/body (scroll is managed by page containers) */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+html, body {
+  scrollbar-width: none;
 }
 
 /* Ensure images & media never overflow */

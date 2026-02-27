@@ -1,3 +1,11 @@
+:host {
+  display: block;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -22,12 +30,12 @@
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b1122; 
+  background: #0b1122;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3a4b6e; 
+  background: #3a4b6e;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #c9a96e; 
+  background: #c9a96e;
 }
