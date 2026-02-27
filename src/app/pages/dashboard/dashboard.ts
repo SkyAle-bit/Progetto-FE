@@ -29,6 +29,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // ── Tab mobile ────────────────────────────────────────────
   activeTab: string = 'home'; // 'home' | 'calendar' | 'chat' | 'clients' | 'professionals'
 
+  // ── Client detail / documenti ─────────────────────────────
+  selectedClient: any = null;
+  clientDocuments: any[] = [];
+  clientDocsLoading: boolean = false;
+  docFilterType: string = 'ALL'; // 'ALL' | 'WORKOUT_PLAN' | 'DIET_PLAN'
+  isUploading: boolean = false;
+
   // ── Chat ──────────────────────────────────────────────────
   chatConversations: Conversation[] = [];
   chatMessages: ChatMessage[] = [];
@@ -221,6 +228,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     } else {
       // Se si esce dal chat, ferma il polling
       this.chatService.stopPolling();
+    }
+    // Se si entra nel tab clienti, resetta il dettaglio
+    if (tab === 'clients') {
+      this.selectedClient = null;
+      this.clientDocuments = [];
     }
     this.cdr.detectChanges();
   }
@@ -991,6 +1003,128 @@ export class DashboardComponent implements OnInit, OnDestroy {
       event.preventDefault();
       this.sendChatMessage();
     }
+  }
+
+  // ── Gestione Documenti Clienti ───────────────────────────
+
+  openClientDetail(client: any): void {
+    this.selectedClient = client;
+    this.clientDocuments = [];
+    this.docFilterType = 'ALL';
+    this.loadClientDocuments();
+  }
+
+  closeClientDetail(): void {
+    this.selectedClient = null;
+    this.clientDocuments = [];
+  }
+
+  loadClientDocuments(): void {
+    if (!this.selectedClient) return;
+    this.clientDocsLoading = true;
+    const clientId = this.selectedClient.id;
+
+    const obs = this.docFilterType === 'ALL'
+      ? this.authService.getClientDocuments(clientId)
+      : this.authService.getClientDocumentsByType(clientId, this.docFilterType);
+
+    obs.subscribe({
+      next: (docs) => {
+        this.clientDocuments = docs;
+        this.clientDocsLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.clientDocsLoading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onDocFilterChange(type: string): void {
+    this.docFilterType = type;
+    this.loadClientDocuments();
+  }
+
+  onFileSelected(event: Event, type: string): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0 || !this.selectedClient) return;
+
+    const file = input.files[0];
+    if (file.type !== 'application/pdf') {
+      this.openPopup('Errore', 'Puoi caricare solo file PDF.');
+      input.value = '';
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      this.openPopup('Errore', 'Il file non può superare i 10MB.');
+      input.value = '';
+      return;
+    }
+
+    this.isUploading = true;
+    this.authService.uploadDocument(file, this.selectedClient.id, this.currentUser.id, type).subscribe({
+      next: () => {
+        this.isUploading = false;
+        this.openPopup('Caricato!', `${type === 'WORKOUT_PLAN' ? 'Scheda' : 'Dieta'} caricata con successo.`);
+        this.loadClientDocuments();
+        input.value = '';
+      },
+      error: () => {
+        this.isUploading = false;
+        this.openPopup('Errore', 'Impossibile caricare il file. Riprova.');
+        input.value = '';
+      }
+    });
+  }
+
+  viewDocument(doc: any): void {
+    this.authService.downloadDocument(doc.id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+      },
+      error: () => {
+        this.openPopup('Errore', 'Impossibile aprire il documento.');
+      }
+    });
+  }
+
+  deleteDoc(doc: any): void {
+    if (!confirm(`Eliminare "${doc.fileName}"?`)) return;
+    this.authService.deleteDocument(doc.id).subscribe({
+      next: () => {
+        this.loadClientDocuments();
+      },
+      error: () => {
+        this.openPopup('Errore', 'Impossibile eliminare il documento.');
+      }
+    });
+  }
+
+  getDocTypeLabel(type: string): string {
+    switch (type) {
+      case 'WORKOUT_PLAN': return 'Scheda';
+      case 'DIET_PLAN': return 'Dieta';
+      case 'MEDICAL_CERT': return 'Certificato';
+      case 'INSURANCE_POLICE': return 'Polizza';
+      default: return type;
+    }
+  }
+
+  getDocTypeIcon(type: string): string {
+    switch (type) {
+      case 'WORKOUT_PLAN': return '💪';
+      case 'DIET_PLAN': return '🥗';
+      case 'MEDICAL_CERT': return '🏥';
+      case 'INSURANCE_POLICE': return '📋';
+      default: return '📄';
+    }
+  }
+
+  formatDocDate(dateStr: string): string {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' });
   }
 
   // ── Logout ───────────────────────────────────────────────

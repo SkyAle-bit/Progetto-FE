@@ -731,36 +731,178 @@
          └──────────────────────────────────────────────────────┘ -->
     <div class="flex-1 overflow-y-auto" *ngIf="activeTab === 'clients' && isProfessional()">
       <div class="px-4 py-5 sm:max-w-[900px] sm:mx-auto sm:py-8 sm:px-8">
-        <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[#1a2744] mb-1">I Miei Clienti</h3>
-        <p class="text-[0.78rem] sm:text-[0.85rem] text-[#8fa3c8] mb-4 sm:mb-6">{{ myClients.length }} clienti assegnati</p>
 
-        <div class="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" *ngIf="myClients.length > 0">
-          <div class="flex items-center gap-3 bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm
-                      transition-all active:scale-[0.98]"
-            *ngFor="let client of myClients">
-            <div class="w-12 h-12 rounded-full bg-[#1a3462] flex items-center justify-center overflow-hidden
-                        border-2 border-[#c9a96e]/50 flex-shrink-0">
-              <img *ngIf="client.profilePictureUrl" [src]="client.profilePictureUrl" class="w-full h-full object-cover">
-              <span *ngIf="!client.profilePictureUrl" class="text-[#e8c97a] text-[0.75rem] font-bold uppercase">
-                {{ client.firstName?.charAt(0) }}{{ client.lastName?.charAt(0) }}
-              </span>
-            </div>
-            <div class="flex flex-col min-w-0 flex-1">
-              <span class="text-[0.92rem] font-bold text-[#1a2744] truncate">{{ client.firstName }} {{ client.lastName }}</span>
-              <span class="text-[0.72rem] text-[#8fa3c8] truncate mt-[2px]">{{ client.email }}</span>
-            </div>
-            <div class="w-8 h-8 rounded-full bg-[#f2f6fc] flex items-center justify-center text-[#c9a96e] flex-shrink-0">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
+        <!-- Header + Back (se dettaglio aperto) -->
+        <div class="flex items-center gap-3 mb-1" *ngIf="selectedClient">
+          <button class="w-8 h-8 rounded-lg bg-[#f2f6fc] border border-[#ccd8ed] flex items-center justify-center
+                         text-[#8fa3c8] hover:text-[#1a2744] transition-all flex-shrink-0"
+            (click)="closeClientDetail()">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+            </svg>
+          </button>
+          <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[#1a2744]">
+            {{ selectedClient.firstName }} {{ selectedClient.lastName }}
+          </h3>
+        </div>
+        <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[#1a2744] mb-1" *ngIf="!selectedClient">I Miei Clienti</h3>
+        <p class="text-[0.78rem] sm:text-[0.85rem] text-[#8fa3c8] mb-4 sm:mb-6" *ngIf="!selectedClient">{{ myClients.length }} clienti assegnati</p>
+
+        <!-- ═══ LISTA CLIENTI ═══ -->
+        <ng-container *ngIf="!selectedClient">
+          <div class="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" *ngIf="myClients.length > 0">
+            <div class="flex items-center gap-3 bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm
+                        cursor-pointer hover:border-[#c9a96e]/50 hover:shadow-md
+                        transition-all active:scale-[0.98]"
+              *ngFor="let client of myClients" (click)="openClientDetail(client)">
+              <div class="w-12 h-12 rounded-full bg-[#1a3462] flex items-center justify-center overflow-hidden
+                          border-2 border-[#c9a96e]/50 flex-shrink-0">
+                <img *ngIf="client.profilePictureUrl" [src]="client.profilePictureUrl" alt="Avatar" class="w-full h-full object-cover">
+                <span *ngIf="!client.profilePictureUrl" class="text-[#e8c97a] text-[0.75rem] font-bold uppercase">
+                  {{ client.firstName?.charAt(0) }}{{ client.lastName?.charAt(0) }}
+                </span>
+              </div>
+              <div class="flex flex-col min-w-0 flex-1">
+                <span class="text-[0.92rem] font-bold text-[#1a2744] truncate">{{ client.firstName }} {{ client.lastName }}</span>
+                <span class="text-[0.72rem] text-[#8fa3c8] truncate mt-[2px]">{{ client.email }}</span>
+              </div>
+              <div class="w-8 h-8 rounded-full bg-[#f2f6fc] flex items-center justify-center text-[#c9a96e] flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="text-center py-12" *ngIf="myClients.length === 0">
-          <div class="text-[2.5rem] mb-3 opacity-35">👥</div>
-          <p class="text-[0.85rem] text-[#ccd8ed] italic">Nessun cliente assegnato</p>
-        </div>
+          <div class="text-center py-12" *ngIf="myClients.length === 0">
+            <div class="text-[2.5rem] mb-3 opacity-35">👥</div>
+            <p class="text-[0.85rem] text-[#ccd8ed] italic">Nessun cliente assegnato</p>
+          </div>
+        </ng-container>
+
+        <!-- ═══ DETTAGLIO CLIENTE ═══ -->
+        <ng-container *ngIf="selectedClient">
+
+          <!-- Info cliente -->
+          <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm mb-5 mt-3">
+            <div class="flex items-center gap-4">
+              <div class="w-14 h-14 rounded-full bg-[#1a3462] flex items-center justify-center overflow-hidden
+                          border-[3px] border-[#c9a96e]/50 flex-shrink-0">
+                <img *ngIf="selectedClient.profilePictureUrl" [src]="selectedClient.profilePictureUrl" alt="Avatar" class="w-full h-full object-cover">
+                <span *ngIf="!selectedClient.profilePictureUrl" class="text-[#e8c97a] text-[1rem] font-bold uppercase">
+                  {{ selectedClient.firstName?.charAt(0) }}{{ selectedClient.lastName?.charAt(0) }}
+                </span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[1.05rem] font-bold text-[#1a2744]">{{ selectedClient.firstName }} {{ selectedClient.lastName }}</div>
+                <div class="text-[0.78rem] text-[#8fa3c8]">{{ selectedClient.email }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upload buttons -->
+          <div class="flex gap-3 mb-5">
+            <label class="flex-1 relative cursor-pointer">
+              <input type="file" accept="application/pdf" class="hidden"
+                (change)="onFileSelected($event, 'WORKOUT_PLAN')" [disabled]="isUploading">
+              <div class="flex items-center justify-center gap-2 py-3.5 rounded-xl
+                          bg-[#1a3462] text-white text-[0.82rem] font-bold
+                          transition-all active:scale-[0.97] hover:bg-[#112344]"
+                [class.opacity-50]="isUploading" [class.pointer-events-none]="isUploading">
+                <span class="text-[1.1rem]">💪</span>
+                <span>Carica Scheda</span>
+              </div>
+            </label>
+            <label class="flex-1 relative cursor-pointer">
+              <input type="file" accept="application/pdf" class="hidden"
+                (change)="onFileSelected($event, 'DIET_PLAN')" [disabled]="isUploading">
+              <div class="flex items-center justify-center gap-2 py-3.5 rounded-xl
+                          bg-gradient-to-r from-[#c9a96e] to-[#a88a53] text-[#1a2744] text-[0.82rem] font-bold
+                          transition-all active:scale-[0.97] hover:shadow-lg"
+                [class.opacity-50]="isUploading" [class.pointer-events-none]="isUploading">
+                <span class="text-[1.1rem]">🥗</span>
+                <span>Carica Dieta</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- Uploading indicator -->
+          <div class="flex items-center justify-center gap-2 py-3 mb-4 bg-[#f2f6fc] rounded-xl border border-[#ccd8ed]"
+            *ngIf="isUploading">
+            <div class="w-4 h-4 border-2 border-[#c9a96e] border-t-transparent rounded-full animate-spin"></div>
+            <span class="text-[0.82rem] text-[#8fa3c8] font-medium">Caricamento in corso...</span>
+          </div>
+
+          <!-- Filter tabs -->
+          <div class="flex gap-2 mb-4">
+            <button class="px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold transition-all border"
+              [ngClass]="docFilterType === 'ALL' ? 'bg-[#1a3462] text-white border-[#1a3462]' : 'bg-white text-[#8fa3c8] border-[#ccd8ed] hover:border-[#1a3462]/30'"
+              (click)="onDocFilterChange('ALL')">Tutti</button>
+            <button class="px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold transition-all border"
+              [ngClass]="docFilterType === 'WORKOUT_PLAN' ? 'bg-[#1a3462] text-white border-[#1a3462]' : 'bg-white text-[#8fa3c8] border-[#ccd8ed] hover:border-[#1a3462]/30'"
+              (click)="onDocFilterChange('WORKOUT_PLAN')">💪 Schede</button>
+            <button class="px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold transition-all border"
+              [ngClass]="docFilterType === 'DIET_PLAN' ? 'bg-[#c9a96e] text-[#1a2744] border-[#c9a96e]' : 'bg-white text-[#8fa3c8] border-[#ccd8ed] hover:border-[#c9a96e]/30'"
+              (click)="onDocFilterChange('DIET_PLAN')">🥗 Diete</button>
+          </div>
+
+          <!-- Documents list -->
+          <div class="flex flex-col gap-2.5" *ngIf="!clientDocsLoading && clientDocuments.length > 0">
+            <div class="bg-white rounded-xl border border-[#ccd8ed] p-4 shadow-sm
+                        hover:border-[#c9a96e]/40 transition-all"
+              *ngFor="let doc of clientDocuments">
+              <div class="flex items-center gap-3">
+                <!-- Icon -->
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-[1.2rem] flex-shrink-0"
+                  [ngClass]="doc.type === 'WORKOUT_PLAN' ? 'bg-[#1a3462]/10' : 'bg-[#c9a96e]/15'">
+                  {{ getDocTypeIcon(doc.type) }}
+                </div>
+                <!-- Info -->
+                <div class="flex-1 min-w-0">
+                  <div class="text-[0.88rem] font-bold text-[#1a2744] truncate">{{ doc.fileName }}</div>
+                  <div class="flex items-center gap-2 mt-[2px]">
+                    <span class="text-[0.65rem] font-semibold uppercase tracking-[0.06em] px-1.5 py-[1px] rounded"
+                      [ngClass]="doc.type === 'WORKOUT_PLAN' ? 'bg-[#1a3462]/10 text-[#1a3462]' : 'bg-[#c9a96e]/15 text-[#a88a53]'">
+                      {{ getDocTypeLabel(doc.type) }}
+                    </span>
+                    <span class="text-[0.68rem] text-[#8fa3c8]">{{ formatDocDate(doc.uploadDate) }}</span>
+                  </div>
+                </div>
+                <!-- Actions -->
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                  <button class="w-8 h-8 rounded-lg bg-[#f2f6fc] border border-[#ccd8ed] flex items-center justify-center
+                                 text-[#1a3462] hover:bg-[#1a3462] hover:text-white transition-all"
+                    title="Visualizza PDF" (click)="viewDocument(doc)">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                  </button>
+                  <button class="w-8 h-8 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center
+                                 text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all"
+                    title="Elimina" (click)="deleteDoc(doc)">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading -->
+          <div class="flex items-center justify-center py-10" *ngIf="clientDocsLoading">
+            <div class="w-6 h-6 border-2 border-[#c9a96e] border-t-transparent rounded-full animate-spin"></div>
+          </div>
+
+          <!-- Empty state -->
+          <div class="text-center py-10 bg-white rounded-2xl border border-[#ccd8ed] border-dashed"
+            *ngIf="!clientDocsLoading && clientDocuments.length === 0">
+            <div class="text-[2rem] mb-2 opacity-40">📄</div>
+            <p class="text-[0.85rem] text-[#8fa3c8] font-medium">Nessun documento caricato</p>
+            <p class="text-[0.72rem] text-[#ccd8ed] mt-1">Carica una scheda o una dieta usando i pulsanti sopra</p>
+          </div>
+        </ng-container>
       </div>
     </div>
 
