@@ -815,11 +815,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return convs;
   }
 
+  private chatSubscription: any = null;
+
   openConversation(conv: Conversation): void {
     this.activeConversation = conv;
     this.chatView = 'conversation';
     this.chatMessages = [];
     this.chatLoading = true;
+
+    // Disiscriviti dalla subscription precedente
+    if (this.chatSubscription) {
+      this.chatSubscription.unsubscribe();
+      this.chatSubscription = null;
+    }
 
     // Carica messaggi tra me e l'altro utente
     this.chatService.getMessages(this.currentUser.id, conv.otherUserId).subscribe({
@@ -841,11 +849,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     // Avvia polling per aggiornamenti in tempo reale
     this.chatService.startPolling(this.currentUser.id, conv.otherUserId);
-    this.chatService.messages$.subscribe(msgs => {
-      if (msgs.length > 0) {
+    this.chatSubscription = this.chatService.messages$.subscribe(msgs => {
+      if (msgs.length > 0 && msgs.length !== this.chatMessages.length) {
+        const hadMessages = this.chatMessages.length;
         this.chatMessages = msgs;
         this.cdr.detectChanges();
-        this.scrollToBottom();
+        // Scrolla solo se ci sono nuovi messaggi (non al primo caricamento del polling)
+        if (hadMessages > 0) {
+          this.scrollToBottom();
+        }
       }
     });
   }
@@ -901,6 +913,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.chatView = 'list';
     this.activeConversation = null;
     this.chatMessages = [];
+    if (this.chatSubscription) {
+      this.chatSubscription.unsubscribe();
+      this.chatSubscription = null;
+    }
     this.chatService.clearMessages();
     this.chatService.stopPolling();
     this.loadConversations();
@@ -945,6 +961,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getTotalUnread(): number {
     return this.chatConversations.reduce((sum, c) => sum + c.unreadCount, 0);
+  }
+
+  trackConversation(index: number, conv: Conversation): number {
+    return conv.otherUserId;
+  }
+
+  trackMessage(index: number, msg: ChatMessage): number {
+    return msg.id;
   }
 
   private scrollToBottom(): void {
