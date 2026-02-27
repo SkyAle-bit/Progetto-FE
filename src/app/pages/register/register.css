@@ -34,7 +34,8 @@
 /* Step 2: pagina scrollabile e piana in alto */
 /* body ha overflow:hidden globale, quindi usiamo la pagina stessa come scroll container */
 .register-page.step2 {
-  height: 100%;
+  height: 100vh;
+  height: 100dvh;
   align-items: flex-start;
   overflow-y: auto;
   overflow-x: hidden;

@@ -1,11 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@500;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap');
 
-:host {
-  display: block;
-  height: 100vh;
-  height: 100dvh;
-  overflow: hidden;
-}
 
 /* ═══════════════════════════════════════════════════════════════════════
    DASHBOARD — CSS residuo dopo migrazione Tailwind
@@ -1161,13 +1155,17 @@
   letter-spacing: 0.01em;
 }
 
-/* Hide scrollbar on nav overflow */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
+/* Tablet: nav items più compatti */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .desktop-nav-item {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.72rem;
+  }
+  .desktop-nav-item svg {
+    width: 14px;
+    height: 14px;
+    margin-right: 0.25rem;
+  }
 }
 
 .desktop-nav-item:hover {

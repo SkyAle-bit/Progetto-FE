@@ -100,19 +100,17 @@ export class ChatService {
     this.pollInterval = setInterval(() => {
       if (!this.pollingActive) return;
 
-      // Aggiorna lista conversazioni solo se cambiate
+      // Aggiorna lista conversazioni
       this.getConversations(currentUserId).subscribe(convs => {
-        if (convs.length > 0 && !this.isEqualConversations(convs, this.conversationsSubject.value)) {
+        if (convs.length > 0) {
           this.conversationsSubject.next(convs);
         }
       });
 
-      // Aggiorna messaggi solo se cambiano
+      // Aggiorna messaggi della conversazione attiva
       if (otherUserId) {
         this.getMessages(currentUserId, otherUserId).subscribe(msgs => {
-          if (!this.isEqualMessages(msgs, this.messagesSubject.value)) {
-            this.messagesSubject.next(msgs);
-          }
+          this.messagesSubject.next(msgs);
         });
       }
     }, 4000);
@@ -128,29 +126,6 @@ export class ChatService {
 
   // ── Helpers ────────────────────────────────────────────────
 
-  /** Confronta messaggi per evitare re-render inutili */
-  private isEqualMessages(a: ChatMessage[], b: ChatMessage[]): boolean {
-    if (a.length !== b.length) return false;
-    if (a.length === 0) return true;
-    // Confronta solo l'ultimo id e il count — sufficiente e veloce
-    return a[a.length - 1]?.id === b[b.length - 1]?.id
-        && a[0]?.id === b[0]?.id;
-  }
-
-  /** Confronta conversazioni per evitare re-render inutili */
-  private isEqualConversations(a: Conversation[], b: Conversation[]): boolean {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (a[i].otherUserId !== b[i].otherUserId
-        || a[i].unreadCount !== b[i].unreadCount
-        || a[i].lastMessage !== b[i].lastMessage
-        || a[i].lastMessageTime !== b[i].lastMessageTime) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   refreshConversations(userId: number): void {
     this.getConversations(userId).subscribe(convs => {
       this.conversationsSubject.next(convs);
@@ -161,3 +136,4 @@ export class ChatService {
     this.messagesSubject.next([]);
   }
 }
+

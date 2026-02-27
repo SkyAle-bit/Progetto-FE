@@ -14,14 +14,6 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Hide scrollbar on html/body (scroll is managed by page containers) */
-html::-webkit-scrollbar,
-body::-webkit-scrollbar {
-  display: none;
-}
-html, body {
-  scrollbar-width: none;
-}
 
 /* Ensure images & media never overflow */
 img, video, svg {

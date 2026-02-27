@@ -1,78 +1,76 @@
-<div class="flex flex-col h-screen h-[100dvh] overflow-hidden bg-[#f2f6fc] font-['DM_Sans'] text-[#1a2744]">
+<div class="flex flex-col h-[100dvh] overflow-hidden bg-[#f2f6fc] font-['DM_Sans'] text-[#1a2744]">
 
   <!-- ══════════════════════════════════════════════════════════
-       TOPBAR — Nav sx, Logo centrato, Profilo dx
+       TOPBAR — Logo + Nav desktop al centro, Profilo dx
        ══════════════════════════════════════════════════════════ -->
-  <header class="flex-shrink-0 relative flex items-center
+  <header class="flex-shrink-0 flex items-center justify-between
                  px-4 lg:px-7 h-[calc(3.5rem+env(safe-area-inset-top))] sm:h-[calc(4rem+env(safe-area-inset-top))]
                  pt-[env(safe-area-inset-top)]
                  bg-[#1a3462] border-b border-[#c9a96e]/20
                  shadow-[0_2px_20px_rgba(26,52,98,0.30)] z-50">
 
-    <!-- Sinistra: Desktop navigation tabs -->
-    <div class="flex-1 min-w-0 hidden sm:block">
-      <nav class="flex items-center gap-0.5 md:gap-1 min-w-0 overflow-x-auto scrollbar-hide">
-        <button class="desktop-nav-item px-2 md:px-3.5 py-[0.4rem] rounded-lg text-[0.72rem] md:text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap flex-shrink-0"
+    <!-- Brand logo + Desktop nav (sinistra) -->
+    <div class="flex items-center gap-6 flex-shrink-0">
+      <img src="assets/images/navalgold_logo.png" alt="Naval Gold Logo"
+        class="brand-logo-img h-10 sm:h-12 w-auto object-contain">
+
+      <!-- Desktop navigation tabs -->
+      <nav class="hidden sm:flex items-center gap-1">
+        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap"
           [class.active]="activeTab === 'home'"
           (click)="setTab('home')">
-          <svg class="w-4 h-4 md:mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
           </svg>
-          <span class="hidden md:inline">Dashboard</span>
+          Dashboard
         </button>
-        <button class="desktop-nav-item px-2 md:px-3.5 py-[0.4rem] rounded-lg text-[0.72rem] md:text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap flex-shrink-0"
+        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap"
           [class.active]="activeTab === 'calendar'"
           (click)="setTab('calendar')">
-          <svg class="w-4 h-4 md:mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
           </svg>
-          <span class="hidden md:inline">Calendario</span>
+          Calendario
         </button>
-        <button class="desktop-nav-item px-2 md:px-3.5 py-[0.4rem] rounded-lg text-[0.72rem] md:text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap relative flex-shrink-0"
+        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap relative"
           [class.active]="activeTab === 'chat'"
           (click)="setTab('chat')">
-          <svg class="w-4 h-4 md:mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
           </svg>
-          <span class="hidden md:inline">Chat</span>
+          Chat
           <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#c9a96e] text-[#1a2744]
                        text-[0.5rem] font-black flex items-center justify-center"
             *ngIf="getTotalUnread() > 0">{{ getTotalUnread() > 9 ? '9+' : getTotalUnread() }}</span>
         </button>
-        <button class="desktop-nav-item px-2 md:px-3.5 py-[0.4rem] rounded-lg text-[0.72rem] md:text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap flex-shrink-0"
+        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap"
           *ngIf="isProfessional()"
           [class.active]="activeTab === 'clients'"
           (click)="setTab('clients')">
-          <svg class="w-4 h-4 md:mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
-          <span class="hidden md:inline">I Miei Clienti</span>
+          I Miei Clienti
         </button>
-        <button class="desktop-nav-item px-2 md:px-3.5 py-[0.4rem] rounded-lg text-[0.72rem] md:text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap flex-shrink-0"
+        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap"
           *ngIf="isClient()"
           [class.active]="activeTab === 'professionals'"
           (click)="setTab('professionals')">
-          <svg class="w-4 h-4 md:mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
           </svg>
-          <span class="hidden md:inline">Professionisti</span>
+          I Miei Professionisti
         </button>
       </nav>
     </div>
 
-    <!-- Centro: Logo centrato (posizione assoluta) -->
-    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10">
-      <img src="assets/images/navalgold_logo.png" alt="Kore Logo"
-        class="brand-logo-img h-9 sm:h-10 md:h-11 w-auto object-contain">
-    </div>
-
-    <!-- Destra: Azioni + Profilo -->
-    <div class="flex items-center gap-1.5 sm:gap-2 lg:gap-4 flex-shrink-0 ml-auto">
+    <!-- Destra -->
+    <div class="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-shrink-0">
 
       <!-- Week stat (professionals only) — desktop only, visible on calendar tab -->
       <div class="hidden md:flex flex-col items-end gap-[1px]" *ngIf="!isLoading && isProfessional() && activeTab === 'calendar'">
@@ -192,7 +190,7 @@
          │  Su desktop il calendario è sempre visibile          │
          └──────────────────────────────────────────────────────┘ -->
     <div class="tab-home flex-1 overflow-y-auto" *ngIf="activeTab === 'home'">
-      <div class="px-5 py-6 flex flex-col gap-5 sm:max-w-[700px] md:max-w-[800px] lg:max-w-[900px] sm:mx-auto sm:py-8 sm:px-6 md:py-10 md:px-8" *ngIf="!isLoading && dashboardData">
+      <div class="px-5 py-6 flex flex-col gap-5 sm:max-w-[900px] sm:mx-auto sm:py-10 sm:px-8" *ngIf="!isLoading && dashboardData">
 
         <!-- Benvenuto -->
         <div class="text-center">
@@ -500,7 +498,7 @@
       <!-- ═══ PANNELLO SINISTRO: LISTA CONVERSAZIONI ═══ -->
       <!-- Desktop: sempre visibile (w-[340px]) | Mobile: visibile solo se chatView=list -->
       <div class="chat-sidebar flex flex-col overflow-hidden bg-white border-r border-[#ccd8ed]
-                  w-full sm:w-[280px] md:w-[320px] lg:w-[360px] sm:flex-shrink-0"
+                  w-full sm:w-[340px] lg:w-[380px] sm:flex-shrink-0"
            [class.hidden]="chatView !== 'list'"
            [class.sm:flex]="true">
 
@@ -733,10 +731,10 @@
          └──────────────────────────────────────────────────────┘ -->
     <div class="flex-1 overflow-y-auto" *ngIf="activeTab === 'clients' && isProfessional()">
       <div class="px-4 py-5 sm:max-w-[900px] sm:mx-auto sm:py-8 sm:px-8">
-        <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.6rem] md:text-[1.8rem] font-black text-[#1a2744] mb-1">I Miei Clienti</h3>
+        <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[#1a2744] mb-1">I Miei Clienti</h3>
         <p class="text-[0.78rem] sm:text-[0.85rem] text-[#8fa3c8] mb-4 sm:mb-6">{{ myClients.length }} clienti assegnati</p>
 
-        <div class="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" *ngIf="myClients.length > 0">
+        <div class="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" *ngIf="myClients.length > 0">
           <div class="flex items-center gap-3 bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm
                       transition-all active:scale-[0.98]"
             *ngFor="let client of myClients">
@@ -771,10 +769,10 @@
          └──────────────────────────────────────────────────────┘ -->
     <div class="flex-1 overflow-y-auto" *ngIf="activeTab === 'professionals' && isClient()">
       <div class="px-4 py-5 sm:max-w-[900px] sm:mx-auto sm:py-8 sm:px-8">
-        <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.6rem] md:text-[1.8rem] font-black text-[#1a2744] mb-1">I Miei Professionisti</h3>
+        <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[#1a2744] mb-1">I Miei Professionisti</h3>
         <p class="text-[0.78rem] sm:text-[0.85rem] text-[#8fa3c8] mb-4 sm:mb-6">Prenota un appuntamento con i tuoi professionisti</p>
 
-        <div class="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" *ngIf="professionals.length > 0">
+        <div class="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" *ngIf="professionals.length > 0">
           <div class="bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm"
             *ngFor="let p of professionals">
             <div class="flex items-center gap-3 mb-3">
@@ -945,7 +943,7 @@
     *ngIf="isProfileOpen" (click)="closeProfile()"></div>
 
   <!-- ── PANNELLO PROFILO ── -->
-  <aside class="profile-panel fixed top-0 right-0 h-screen w-full sm:w-[320px] md:w-[360px]
+  <aside class="profile-panel fixed top-0 right-0 h-screen w-full sm:w-80
                 bg-white border-l border-[#ccd8ed] z-[101]
                 flex flex-col shadow-[-12px_0_48px_rgba(26,52,98,0.14)]" [class.open]="isProfileOpen">
     <div class="panel-header flex items-center justify-between px-6 py-5 border-b border-[#ccd8ed] flex-shrink-0 bg-[#1a3462]">
