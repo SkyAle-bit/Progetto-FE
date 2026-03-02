@@ -1,14 +1,20 @@
-import { Component, inject, OnInit, OnDestroy, ChangeDetectorRef, HostListener, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component, inject, OnInit, OnDestroy, ChangeDetectorRef, HostListener
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { ChatService, ChatMessage, Conversation } from '../../services/chat.service';
+import { ChatService } from '../../services/chat.service';
+import { HomeTabComponent } from './components/home-tab/home-tab';
+import { CalendarTabComponent } from './components/calendar-tab/calendar-tab';
+import { ChatTabComponent } from './components/chat-tab/chat-tab';
+import { ClientsTabComponent } from './components/clients-tab/clients-tab';
+import { ProfessionalsTabComponent } from './components/professionals-tab/professionals-tab';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, ProfessionalsTabComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -17,8 +23,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private chatService = inject(ChatService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
-
-  @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
   currentUser: any = null;
   dashboardData: any = null;
@@ -29,20 +33,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // ── Tab mobile ────────────────────────────────────────────
   activeTab: string = 'home'; // 'home' | 'calendar' | 'chat' | 'clients' | 'professionals'
 
-  // ── Client detail / documenti ─────────────────────────────
-  selectedClient: any = null;
-  clientDocuments: any[] = [];
-  clientDocsLoading: boolean = false;
-  docFilterType: string = 'ALL'; // 'ALL' | 'WORKOUT_PLAN' | 'DIET_PLAN'
-  isUploading: boolean = false;
-
-  // ── Chat ──────────────────────────────────────────────────
-  chatConversations: Conversation[] = [];
-  chatMessages: ChatMessage[] = [];
-  activeConversation: Conversation | null = null;
-  chatInput: string = '';
-  chatLoading: boolean = false;
-  chatView: 'list' | 'conversation' = 'list';
+  // ── Chat (solo badge globale) ───────────────────────────
   globalUnreadCount: number = 0;
 
   // ── Modale Successo Globale ───────────────────────────────
@@ -54,6 +45,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.popupTitle = title;
     this.popupMessage = message;
     this.isPopupOpen = true;
+  }
+
+  showPopupMessage(title: string, message: string): void {
+    this.openPopup(title, message);
   }
 
   closePopup(): void {
@@ -110,18 +105,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.globalUnreadCount = count;
         this.cdr.detectChanges();
       });
-
-      // Sottoscrizione alle conversazioni aggiornate dal polling
-      this.chatService.conversations$.subscribe(convs => {
-        if (convs && convs.length > 0) {
-          // Merge backend + contatti locali senza messaggi
-          const backendIds = new Set(convs.map(c => c.otherUserId));
-          const localContacts = this.buildLocalConversations();
-          const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
-          this.chatConversations = [...convs, ...localOnly];
-          this.cdr.detectChanges();
-        }
-      });
     } else {
       this.router.navigate(['/login']);
     }
@@ -153,37 +136,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.visibleDayCount = 7;          // desktop
     }
     this.buildWeekDays();
-  }
-
-  // ── Agenda view ────────────────────────────────────────────
-  toggleAgendaView(): void {
-    this.agendaView = !this.agendaView;
-  }
-
-  /** Restituisce i prossimi 14 giorni che hanno almeno una prenotazione,
-   *  più oggi e i prossimi 2 giorni anche se vuoti (per orientamento). */
-  getAgendaDays(): Date[] {
-    const days: Date[] = [];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    for (let i = 0; i < 30; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() + i);
-      const hasBk = this.getBookingsForAgendaDay(d).length > 0;
-      if (hasBk || i < 3) days.push(d);
-    }
-    return days;
-  }
-
-  getBookingsForAgendaDay(day: Date): any[] {
-    const dateStr = this.formatDate(day);
-    return (this.bookings || [])
-      .filter((b: any) => b.date === dateStr)
-      .sort((a: any, b: any) => (a.startTime || '').localeCompare(b.startTime || ''));
-  }
-
-  getMonthShort(date: Date): string {
-    return date.toLocaleDateString('it-IT', { month: 'short' }).replace('.', '');
   }
 
   // ── Caricamento dati ─────────────────────────────────────
@@ -233,30 +185,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return r === 'PERSONAL_TRAINER' || r === 'NUTRITIONIST';
   }
 
-  goToClients(): void {
-    this.router.navigate(['/clients']);
-  }
-
   setTab(tab: string): void {
     this.activeTab = tab;
-    // Se si entra nel tab calendario, disattiva agendaView mobile
-    if (tab === 'calendar') {
-      this.agendaView = false;
-    }
-    // Se si entra nel tab chat, carica le conversazioni
-    if (tab === 'chat') {
-      this.chatView = 'list';
-      this.activeConversation = null;
-      this.loadConversations();
-    } else {
-      // Se si esce dal chat, ferma il polling messaggi
-      this.chatService.stopMessagePolling();
-    }
-    // Se si entra nel tab clienti, resetta il dettaglio
-    if (tab === 'clients') {
-      this.selectedClient = null;
-      this.clientDocuments = [];
-    }
     this.cdr.detectChanges();
   }
 
@@ -293,79 +223,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   isFullHour(slot: string): boolean { return slot.endsWith(':00'); }
 
-  prevWeek(): void {
-    if (this.visibleDayCount === 7) {
-      const d = new Date(this.currentWeekStart);
-      d.setDate(d.getDate() - 7);
-      this.currentWeekStart = d;
-      this.dayOffset = 0;
-    } else {
-      this.dayOffset -= this.visibleDayCount;
-      const minOffset = -28;
-      if (this.dayOffset < minOffset) this.dayOffset = minOffset;
-    }
-    this.buildWeekDays();
-  }
-
-  nextWeek(): void {
-    if (this.visibleDayCount === 7) {
-      const d = new Date(this.currentWeekStart);
-      d.setDate(d.getDate() + 7);
-      this.currentWeekStart = d;
-      this.dayOffset = 0;
-    } else {
-      this.dayOffset += this.visibleDayCount;
-      const maxOffset = 56;
-      if (this.dayOffset > maxOffset) this.dayOffset = maxOffset;
-    }
-    this.buildWeekDays();
-  }
-
-  goToToday(): void {
-    this.initWeek();
-    this.updateVisibleDays();
-    // On tablet/mobile (3-day view), dayOffset = 0 shows Mon.
-    // Adjust offset to the closest 3-day window containing today.
-    if (this.visibleDayCount < 7) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const monday = new Date(this.currentWeekStart);
-      const diffDays = Math.round((today.getTime() - monday.getTime()) / (1000 * 60 * 60 * 24));
-      // Snap to the 3-day block that contains today
-      this.dayOffset = Math.floor(diffDays / this.visibleDayCount) * this.visibleDayCount;
-      this.buildWeekDays();
-    }
-  }
-
-  isToday(date: Date): boolean {
-    return date.toDateString() === new Date().toDateString();
-  }
-
-  getWeekLabel(): string {
-    if (this.weekDays.length === 0) return '';
-    const first = this.weekDays[0];
-    const last = this.weekDays[this.weekDays.length - 1];
-    const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
-
-    if (this.visibleDayCount === 1) {
-      return first.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
-    }
-    if (this.visibleDayCount === 3) {
-      return `${first.toLocaleDateString('it-IT', opts)} – ${last.toLocaleDateString('it-IT', opts)}`;
-    }
-    const optsLong: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
-    return `${first.toLocaleDateString('it-IT', optsLong)} – ${last.toLocaleDateString('it-IT', { ...optsLong, year: 'numeric' })}`;
-  }
-
   formatDate(date: Date): string {
     const y = date.getFullYear();
     const m = (date.getMonth() + 1).toString().padStart(2, '0');
     const d = date.getDate().toString().padStart(2, '0');
     return `${y}-${m}-${d}`;
-  }
-
-  toDate(dateStr: string): Date {
-    return new Date(dateStr + 'T00:00:00');
   }
 
   getDayName(date: Date): string {
@@ -374,28 +236,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getDayNumber(date: Date): number { return date.getDate(); }
 
-  getBookingsForSlot(day: Date, timeSlot: string): any[] {
-    const dateStr = this.formatDate(day);
-    const [slotH, slotM] = timeSlot.split(':').map(Number);
-    return this.bookings.filter(b => {
-      if (b.date !== dateStr) return false;
-      const [bH, bM] = (b.startTime ?? '00:00').split(':').map(Number);
-      return bH === slotH && bM === slotM;
-    });
-  }
-
   getBookingLabel(b: any): string {
     if (this.isClient()) {
       const role = b.professionalRole === 'PERSONAL_TRAINER' ? 'PT' : 'Nutr.';
       return `${role} – ${b.professionalName ?? ''}`;
     }
     return b.clientName ?? '';
-  }
-
-  getBookingClass(b: any): string {
-    if (b.status === 'CANCELLED') return 'booking-cancelled';
-    if (b.professionalRole === 'NUTRITIONIST') return 'booking-nutrition';
-    return 'booking-pt';
   }
 
   countWeekBookings(): number {
@@ -457,7 +303,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.existingSlots.add(key);
           this.existingSlotIds.set(key, slot.id);
           // Se lo slot è prenotato (isAvailable == false o available == false), lo blocchiamo
-          if (slot.isAvailable === false || slot.available === false) {
+          if (!slot.isAvailable || slot.available === false) {
             this.lockedSlots.add(key);
           }
         });
@@ -633,7 +479,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.authService.getProfessionalSlots(professional.id).subscribe({
       next: (slots) => {
-        this.availableBookingSlots = slots.filter((s: any) => s.available === true || s.isAvailable === true);
+        this.availableBookingSlots = slots.filter((s: any) => s.available || s.isAvailable);
         this.buildBookingDays();
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -719,7 +565,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
 
     this.authService.createBooking(request).subscribe({
-      next: (res) => {
+      next: () => {
         this.openPopup('Prenotazione Confermata', `Hai prenotato con successo un appuntamento per il ${this.selectedBookingDay?.toLocaleDateString('it-IT')} alle ${this.getSlotTimeLabel(this.selectedBookingSlot)}.`);
         this.closeBooking();
         this.loadDashboardData();
@@ -782,9 +628,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const now = new Date();
 
     // allow join se (startTime - now) <= 30 minuti
-    const diffMs = startDateTime.getTime() - now.getTime();
-    const diffMin = diffMs / 60000;
-
     this.canJoinCallNow = true;
   }
 
@@ -796,374 +639,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.closeCallModal();
   }
 
-  // ── Chat ──────────────────────────────────────────────────
-
-  loadConversations(): void {
-    if (!this.currentUser) return;
-    this.chatLoading = true;
-    this.chatService.getConversations(this.currentUser.id).subscribe({
-      next: (convs) => {
-        const localContacts = this.buildLocalConversations();
-        if (convs && convs.length > 0) {
-          const backendIds = new Set(convs.map(c => c.otherUserId));
-          const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
-          this.chatConversations = [...convs, ...localOnly];
-        } else {
-          this.chatConversations = localContacts;
-        }
-        this.chatLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.chatConversations = this.buildLocalConversations();
-        this.chatLoading = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  /** Genera conversazioni locali dai professionisti/clienti per mostrare i contatti anche senza messaggi */
-  buildLocalConversations(): Conversation[] {
-    const convs: Conversation[] = [];
-    if (this.isClient() && this.professionals?.length > 0) {
-      this.professionals.forEach((p: any) => {
-        convs.push({
-          otherUserId: p.id,
-          otherUserName: p.fullName,
-          otherUserRole: p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista',
-          lastMessage: undefined,
-          lastMessageTime: undefined,
-          unreadCount: 0
-        });
-      });
-    }
-    if (this.isProfessional() && this.myClients?.length > 0) {
-      this.myClients.forEach((c: any) => {
-        convs.push({
-          otherUserId: c.id,
-          otherUserName: `${c.firstName} ${c.lastName}`,
-          otherUserRole: 'Cliente',
-          lastMessage: undefined,
-          lastMessageTime: undefined,
-          unreadCount: 0
-        });
-      });
-    }
-    return convs;
-  }
-
-  private chatSubscription: any = null;
-
-  openConversation(conv: Conversation): void {
-    this.activeConversation = conv;
-    this.chatView = 'conversation';
-    this.chatMessages = [];
-    this.chatLoading = true;
-
-    // Disiscriviti dalla subscription precedente
-    if (this.chatSubscription) {
-      this.chatSubscription.unsubscribe();
-      this.chatSubscription = null;
-    }
-
-    // Carica messaggi tra me e l'altro utente
-    this.chatService.getMessages(this.currentUser.id, conv.otherUserId).subscribe({
-      next: (msgs) => {
-        this.chatMessages = this.sortMessages(msgs);
-        this.chatLoading = false;
-        this.cdr.detectChanges();
-        setTimeout(() => this.scrollToBottom(), 50);
-      },
-      error: () => {
-        this.chatLoading = false;
-        this.cdr.detectChanges();
-      }
-    });
-
-    // Segna come letti (io sono il receiver, l'altro è il sender)
-    this.chatService.markAsRead(this.currentUser.id, conv.otherUserId).subscribe();
-    conv.unreadCount = 0;
-
-    // Avvia polling SOLO per i messaggi della conversazione attiva
-    this.chatService.startMessagePolling(this.currentUser.id, conv.otherUserId);
-    this.chatSubscription = this.chatService.messages$.subscribe(msgs => {
-      if (msgs.length > 0 && msgs.length !== this.chatMessages.length) {
-        this.chatMessages = this.sortMessages(msgs);
-        this.cdr.detectChanges();
-        setTimeout(() => this.scrollToBottom(), 50);
-      }
-    });
-  }
-
-  sendChatMessage(): void {
-    const text = this.chatInput.trim();
-    if (!text || !this.activeConversation) return;
-
-    const receiverId = this.activeConversation.otherUserId;
-
-    // Aggiunge messaggio localmente subito (UI ottimistica)
-    const localMsg: ChatMessage = {
-      id: Date.now(),
-      senderId: this.currentUser.id,
-      senderName: `${this.currentUser.firstName} ${this.currentUser.lastName}`,
-      receiverId: receiverId,
-      receiverName: this.activeConversation.otherUserName,
-      content: text,
-      status: 'SENT',
-      createdAt: new Date().toISOString()
-    };
-    this.chatMessages = [...this.chatMessages, localMsg];
-    this.chatInput = '';
-    this.cdr.detectChanges();
-    this.scrollToBottom();
-
-    // Aggiorna preview nella lista conversazioni
-    if (this.activeConversation) {
-      this.activeConversation.lastMessage = text;
-      this.activeConversation.lastMessageTime = localMsg.createdAt;
-    }
-
-    // Invia al backend
-    this.chatService.sendMessage({
-      senderId: this.currentUser.id,
-      receiverId: receiverId,
-      content: text
-    }).subscribe({
-      next: (savedMsg) => {
-        // Sostituisci il messaggio locale con quello del server
-        this.chatMessages = this.chatMessages.map(m =>
-          m.id === localMsg.id ? savedMsg : m
-        );
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.warn('Errore invio messaggio, resta in locale', err);
-      }
-    });
-  }
-
-  backToConversations(): void {
-    this.chatView = 'list';
-    this.activeConversation = null;
-    this.chatMessages = [];
-    if (this.chatSubscription) {
-      this.chatSubscription.unsubscribe();
-      this.chatSubscription = null;
-    }
-    this.chatService.clearMessages();
-    this.chatService.stopMessagePolling();
-    this.loadConversations();
-  }
-
-  isMyMessage(msg: ChatMessage): boolean {
-    return msg.senderId === this.currentUser?.id;
-  }
-
-  /** Normalizza date dal backend (arrivano senza Z ma sono UTC su Render) */
-  private parseMessageDate(isoString: string): Date {
-    if (!isoString) return new Date();
-    // Se non ha timezone info (no Z, no +XX:XX), trattala come UTC
-    if (!isoString.endsWith('Z') && !isoString.includes('+') && !/\d{2}-\d{2}$/.test(isoString)) {
-      return new Date(isoString + 'Z');
-    }
-    return new Date(isoString);
-  }
-
-  /** Ordina messaggi dal più vecchio al più nuovo */
-  private sortMessages(msgs: ChatMessage[]): ChatMessage[] {
-    return [...msgs].sort((a, b) =>
-      this.parseMessageDate(a.createdAt).getTime() - this.parseMessageDate(b.createdAt).getTime()
-    );
-  }
-
-  formatChatTime(isoString: string): string {
-    if (!isoString) return '';
-    const d = this.parseMessageDate(isoString);
-    const now = new Date();
-    const isToday = d.toDateString() === now.toDateString();
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const isYesterday = d.toDateString() === yesterday.toDateString();
-
-    const time = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-
-    if (isToday) return time;
-    if (isYesterday) return `Ieri ${time}`;
-    return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }) + ` ${time}`;
-  }
-
-  formatConvTime(isoString?: string): string {
-    if (!isoString) return '';
-    const d = this.parseMessageDate(isoString);
-    const now = new Date();
-    const isToday = d.toDateString() === now.toDateString();
-    if (isToday) return d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-    if (d.toDateString() === yesterday.toDateString()) return 'Ieri';
-    return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' });
-  }
-
-  getConversationInitials(conv: Conversation): string {
-    const parts = conv.otherUserName.split(' ');
-    return parts.map(p => p.charAt(0)).join('').substring(0, 2).toUpperCase();
-  }
+  // ── Chat (solo badge notifiche nella topbar) ──────────────
 
   getTotalUnread(): number {
     return this.globalUnreadCount;
   }
 
-  trackConversation(index: number, conv: Conversation): number {
-    return conv.otherUserId;
-  }
-
-  trackMessage(index: number, msg: ChatMessage): number {
-    return msg.id;
-  }
-
-  private scrollToBottom(): void {
-    try {
-      if (this.messagesContainer) {
-        const el = this.messagesContainer.nativeElement;
-        el.scrollTop = el.scrollHeight;
-      }
-    } catch (e) {}
-  }
-
-  autoGrow(event: Event): void {
-    const el = event.target as HTMLTextAreaElement;
-    el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-  }
-
-  onChatKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      this.sendChatMessage();
-    }
-  }
-
-  // ── Gestione Documenti Clienti ───────────────────────────
-
-  openClientDetail(client: any): void {
-    this.selectedClient = client;
-    this.clientDocuments = [];
-    this.docFilterType = 'ALL';
-    this.loadClientDocuments();
-  }
-
-  closeClientDetail(): void {
-    this.selectedClient = null;
-    this.clientDocuments = [];
-  }
-
-  loadClientDocuments(): void {
-    if (!this.selectedClient) return;
-    this.clientDocsLoading = true;
-    const clientId = this.selectedClient.id;
-
-    const obs = this.docFilterType === 'ALL'
-      ? this.authService.getClientDocuments(clientId)
-      : this.authService.getClientDocumentsByType(clientId, this.docFilterType);
-
-    obs.subscribe({
-      next: (docs) => {
-        this.clientDocuments = docs;
-        this.clientDocsLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.clientDocsLoading = false;
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
-  onDocFilterChange(type: string): void {
-    this.docFilterType = type;
-    this.loadClientDocuments();
-  }
-
-  onFileSelected(event: Event, type: string): void {
-    const input = event.target as HTMLInputElement;
-    if (!input.files || input.files.length === 0 || !this.selectedClient) return;
-
-    const file = input.files[0];
-    if (file.type !== 'application/pdf') {
-      this.openPopup('Errore', 'Puoi caricare solo file PDF.');
-      input.value = '';
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      this.openPopup('Errore', 'Il file non può superare i 10MB.');
-      input.value = '';
-      return;
-    }
-
-    this.isUploading = true;
-    this.authService.uploadDocument(file, this.selectedClient.id, this.currentUser.id, type).subscribe({
-      next: () => {
-        this.isUploading = false;
-        this.openPopup('Caricato!', `${type === 'WORKOUT_PLAN' ? 'Scheda' : 'Dieta'} caricata con successo.`);
-        this.loadClientDocuments();
-        input.value = '';
-      },
-      error: () => {
-        this.isUploading = false;
-        this.openPopup('Errore', 'Impossibile caricare il file. Riprova.');
-        input.value = '';
-      }
-    });
-  }
-
-  viewDocument(doc: any): void {
-    this.authService.downloadDocument(doc.id).subscribe({
-      next: (blob) => {
-        const url = URL.createObjectURL(blob);
-        window.open(url, '_blank');
-      },
-      error: () => {
-        this.openPopup('Errore', 'Impossibile aprire il documento.');
-      }
-    });
-  }
-
-  deleteDoc(doc: any): void {
-    if (!confirm(`Eliminare "${doc.fileName}"?`)) return;
-    this.authService.deleteDocument(doc.id).subscribe({
-      next: () => {
-        this.loadClientDocuments();
-      },
-      error: () => {
-        this.openPopup('Errore', 'Impossibile eliminare il documento.');
-      }
-    });
-  }
-
-  getDocTypeLabel(type: string): string {
-    switch (type) {
-      case 'WORKOUT_PLAN': return 'Scheda';
-      case 'DIET_PLAN': return 'Dieta';
-      case 'MEDICAL_CERT': return 'Certificato';
-      case 'INSURANCE_POLICE': return 'Polizza';
-      default: return type;
-    }
-  }
-
-  getDocTypeIcon(type: string): string {
-    switch (type) {
-      case 'WORKOUT_PLAN': return '💪';
-      case 'DIET_PLAN': return '🥗';
-      case 'MEDICAL_CERT': return '🏥';
-      case 'INSURANCE_POLICE': return '📋';
-      default: return '📄';
-    }
-  }
-
-  formatDocDate(dateStr: string): string {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' });
-  }
 
   // ── Logout ───────────────────────────────────────────────
 

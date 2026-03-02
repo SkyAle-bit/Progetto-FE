@@ -1,0 +1,101 @@
+<div class="px-5 py-6 flex flex-col gap-5 sm:max-w-[900px] sm:mx-auto sm:py-10 sm:px-8">
+  <div class="text-center">
+    <div class="relative inline-block mb-3">
+      <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar" class="w-20 h-20 rounded-full object-cover border-[3px] border-[#c9a96e] shadow-lg">
+      <div *ngIf="!currentUser?.profilePicture" class="w-20 h-20 rounded-full bg-gradient-to-br from-[#1a3462] to-[#2d5fa8] border-[3px] border-[#c9a96e] text-[#e8c97a] flex items-center justify-center text-[1.8rem] font-black font-['Darker_Grotesque'] shadow-lg">{{ getInitials() }}</div>
+    </div>
+    <h2 class="font-['Darker_Grotesque'] text-[1.6rem] font-black text-[#1a2744] leading-tight">Ciao, {{ profile?.firstName }}!</h2>
+    <p class="text-[0.82rem] text-[#8fa3c8] mt-1">{{ isProfessional ? 'Ecco un riepilogo della tua attività' : 'Ecco il tuo riepilogo' }}</p>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-10 h-10 rounded-xl bg-[#1a3462] flex items-center justify-center text-[1.1rem]">{{ isProfessional ? '🏆' : '⭐' }}</div>
+      <div>
+        <div class="text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Il tuo ruolo</div>
+        <div class="text-[0.95rem] font-bold text-[#1a2744]">{{ profile?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : profile?.role === 'NUTRITIONIST' ? 'Nutrizionista' : 'Cliente' }}</div>
+      </div>
+    </div>
+    <div class="text-[0.78rem] text-[#8fa3c8]">{{ profile?.email }}</div>
+  </div>
+
+  <!-- Abbonamento -->
+  <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm" *ngIf="isClient && subscription">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center text-[1.1rem]" [ngClass]="subscription.active ? 'bg-amber-100' : 'bg-gray-100'">{{ subscription.active ? '👑' : '⏸️' }}</div>
+        <div>
+          <div class="text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Il tuo piano</div>
+          <div class="text-[0.95rem] font-bold text-[#1a2744]">{{ subscription.planName || 'Piano attivo' }}</div>
+        </div>
+      </div>
+      <span class="text-[0.65rem] font-bold px-2.5 py-1 rounded-full" [class.bg-emerald-50]="subscription.active" [class.text-emerald-600]="subscription.active" [class.bg-red-50]="!subscription.active" [class.text-red-500]="!subscription.active">{{ subscription.active ? 'Attivo' : 'Scaduto' }}</span>
+    </div>
+    <div class="flex gap-3 mb-4" *ngIf="subscription.active">
+      <div class="flex-1 bg-gradient-to-br from-[#1a3462] to-[#2d5fa8] rounded-xl p-3.5 text-center relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-16 h-16 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+        <div class="text-[1.6rem] font-black text-white leading-none">{{ subscription.remainingPtCredits }}</div>
+        <div class="text-[0.6rem] text-white/60 uppercase tracking-[0.08em] mt-[5px] font-semibold">Crediti PT</div>
+        <div class="mt-2 text-[1rem]">💪</div>
+      </div>
+      <div class="flex-1 bg-gradient-to-br from-[#c9a96e] to-[#a88a53] rounded-xl p-3.5 text-center relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+        <div class="text-[1.6rem] font-black text-[#1a2744] leading-none">{{ subscription.remainingNutritionistCredits }}</div>
+        <div class="text-[0.6rem] text-[#1a2744]/60 uppercase tracking-[0.08em] mt-[5px] font-semibold">Crediti Nutrizionista</div>
+        <div class="mt-2 text-[1rem]">🥗</div>
+      </div>
+    </div>
+    <div class="bg-[#f2f6fc] rounded-xl p-3 border border-[#ccd8ed]/60" *ngIf="subscription.active">
+      <div class="flex items-center justify-between mb-2"><span class="text-[0.72rem] text-[#8fa3c8] font-medium">Giorni rimanenti</span><span class="text-[0.88rem] font-black text-[#1a2744]">{{ getSubscriptionDaysLeft() }}</span></div>
+      <div class="w-full h-[6px] bg-[#ccd8ed]/40 rounded-full overflow-hidden">
+        <div class="h-full rounded-full transition-all duration-500" [style.width.%]="getSubscriptionDaysLeft() > 30 ? 100 : (getSubscriptionDaysLeft() / 30) * 100" [class.bg-emerald-500]="getSubscriptionDaysLeft() > 10" [class.bg-amber-500]="getSubscriptionDaysLeft() <= 10 && getSubscriptionDaysLeft() > 3" [class.bg-red-500]="getSubscriptionDaysLeft() <= 3"></div>
+      </div>
+      <div class="flex items-center justify-between mt-2"><span class="text-[0.65rem] text-[#8fa3c8]">{{ subscription.startDate | date:'dd MMM yyyy' }}</span><span class="text-[0.65rem] text-[#8fa3c8]">{{ subscription.endDate | date:'dd MMM yyyy' }}</span></div>
+    </div>
+    <div class="bg-red-50 rounded-xl p-4 border border-red-200 text-center" *ngIf="!subscription.active">
+      <p class="text-[0.82rem] text-red-600 font-medium">Il tuo abbonamento è scaduto.</p>
+      <p class="text-[0.72rem] text-red-400 mt-1">Contatta il supporto per rinnovare il piano.</p>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-[#ccd8ed] border-dashed p-5 shadow-sm text-center" *ngIf="isClient && !subscription">
+    <div class="text-[2rem] mb-2 opacity-50">📋</div>
+    <h4 class="text-[0.95rem] font-bold text-[#1a2744] mb-1">Nessun abbonamento attivo</h4>
+    <p class="text-[0.78rem] text-[#8fa3c8]">Non hai ancora un piano. Contatta il supporto per attivarne uno.</p>
+  </div>
+
+  <!-- Prossimo appuntamento -->
+  <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm" *ngIf="bookings.length > 0">
+    <div class="flex items-center gap-2 mb-3"><span class="text-[1.1rem]">📅</span><span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Prossimo appuntamento</span></div>
+    <div class="flex items-center gap-3 bg-[#f2f6fc] rounded-xl p-3 border border-[#ccd8ed]/60">
+      <div class="w-12 text-center flex-shrink-0">
+        <div class="text-[1.2rem] font-black text-[#1a2744] leading-none">{{ getDayNumber(toDate(bookings[0].date)) }}</div>
+        <div class="text-[0.55rem] font-semibold uppercase text-[#8fa3c8] mt-[2px]">{{ getMonthShort(toDate(bookings[0].date)) }}</div>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-[0.88rem] font-bold text-[#1a2744] truncate">{{ getBookingLabel(bookings[0]) }}</div>
+        <div class="text-[0.75rem] text-[#8fa3c8]">{{ bookings[0].startTime }} – {{ bookings[0].endTime }}</div>
+      </div>
+      <span class="text-[0.65rem] font-bold px-2 py-0.5 rounded-full" [class.bg-emerald-50]="bookings[0].status === 'CONFIRMED'" [class.text-emerald-600]="bookings[0].status === 'CONFIRMED'" [class.bg-amber-50]="bookings[0].status === 'PENDING'" [class.text-amber-600]="bookings[0].status === 'PENDING'">{{ bookings[0].status === 'CONFIRMED' ? 'Confermato' : 'In attesa' }}</span>
+    </div>
+  </div>
+
+  <!-- Statistiche (professionisti) -->
+  <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm" *ngIf="isProfessional">
+    <div class="flex items-center gap-2 mb-3"><span class="text-[1.1rem]">📊</span><span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Questa settimana</span></div>
+    <div class="flex gap-3">
+      <div class="flex-1 bg-[#f2f6fc] rounded-xl p-3 text-center border border-[#ccd8ed]/60"><div class="text-[1.5rem] font-black text-[#1a3462]">{{ weekBookingsCount }}</div><div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.08em] mt-[2px]">Appuntamenti</div></div>
+      <div class="flex-1 bg-[#f2f6fc] rounded-xl p-3 text-center border border-[#ccd8ed]/60"><div class="text-[1.5rem] font-black text-[#1a3462]">{{ myClients.length }}</div><div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.08em] mt-[2px]">Clienti</div></div>
+    </div>
+  </div>
+
+  <!-- Azioni rapide -->
+  <div class="flex gap-3" *ngIf="isProfessional">
+    <button class="flex-1 bg-[#1a3462] text-white rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-semibold transition-all active:scale-[0.97]" (click)="openAvailabilityEvent.emit()"><span class="text-[1.2rem]">📅</span>Disponibilità</button>
+    <button class="flex-1 bg-[#c9a96e] text-[#1a2744] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-bold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('clients')"><span class="text-[1.2rem]">👥</span>I Miei Clienti</button>
+  </div>
+  <div class="flex gap-3" *ngIf="isClient && professionals.length > 0">
+    <button class="flex-1 bg-[#1a3462] text-white rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-semibold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('calendar')"><span class="text-[1.2rem]">📅</span>Calendario</button>
+    <button class="flex-1 bg-[#c9a96e] text-[#1a2744] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-bold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('professionals')"><span class="text-[1.2rem]">💪</span>Prenota</button>
+  </div>
+</div>
