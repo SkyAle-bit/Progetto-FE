@@ -43,6 +43,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   chatInput: string = '';
   chatLoading: boolean = false;
   chatView: 'list' | 'conversation' = 'list';
+  globalUnreadCount: number = 0;
 
   // ── Modale Successo Globale ───────────────────────────────
   isPopupOpen: boolean = false;
@@ -100,6 +101,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.buildTimeSlots();
       this.updateVisibleDays();
       this.loadDashboardData();
+
+      // Avvia polling globale notifiche (gira sempre)
+      this.chatService.startGlobalPolling(this.currentUser.id);
+
+      // Sottoscrizione al conteggio globale non letti
+      this.chatService.unreadCount$.subscribe(count => {
+        this.globalUnreadCount = count;
+        this.cdr.detectChanges();
+      });
+
+      // Sottoscrizione alle conversazioni aggiornate dal polling
+      this.chatService.conversations$.subscribe(convs => {
+        if (convs && convs.length > 0) {
+          // Merge backend + contatti locali senza messaggi
+          const backendIds = new Set(convs.map(c => c.otherUserId));
+          const localContacts = this.buildLocalConversations();
+          const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
+          this.chatConversations = [...convs, ...localOnly];
+          this.cdr.detectChanges();
+        }
+      });
     } else {
       this.router.navigate(['/login']);
     }
@@ -109,7 +131,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.timeCheckInterval) {
       clearInterval(this.timeCheckInterval);
     }
-    this.chatService.stopPolling();
+    this.chatService.stopMessagePolling();
+    this.chatService.stopGlobalPolling();
   }
 
   // ── Responsive ───────────────────────────────────────────
@@ -226,8 +249,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.activeConversation = null;
       this.loadConversations();
     } else {
-      // Se si esce dal chat, ferma il polling
-      this.chatService.stopPolling();
+      // Se si esce dal chat, ferma il polling messaggi
+      this.chatService.stopMessagePolling();
     }
     // Se si entra nel tab clienti, resetta il dettaglio
     if (tab === 'clients') {
@@ -780,11 +803,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.chatLoading = true;
     this.chatService.getConversations(this.currentUser.id).subscribe({
       next: (convs) => {
-        // Se il backend restituisce conversazioni, usale; altrimenti genera da dati locali
+        const localContacts = this.buildLocalConversations();
         if (convs && convs.length > 0) {
-          this.chatConversations = convs;
+          const backendIds = new Set(convs.map(c => c.otherUserId));
+          const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
+          this.chatConversations = [...convs, ...localOnly];
         } else {
-          this.chatConversations = this.buildLocalConversations();
+          this.chatConversations = localContacts;
         }
         this.chatLoading = false;
         this.cdr.detectChanges();
@@ -844,7 +869,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Carica messaggi tra me e l'altro utente
     this.chatService.getMessages(this.currentUser.id, conv.otherUserId).subscribe({
       next: (msgs) => {
-        this.chatMessages = msgs;
+        this.chatMessages = this.sortMessages(msgs);
         this.chatLoading = false;
         this.cdr.detectChanges();
         setTimeout(() => this.scrollToBottom(), 50);
@@ -859,17 +884,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.chatService.markAsRead(this.currentUser.id, conv.otherUserId).subscribe();
     conv.unreadCount = 0;
 
-    // Avvia polling per aggiornamenti in tempo reale
-    this.chatService.startPolling(this.currentUser.id, conv.otherUserId);
+    // Avvia polling SOLO per i messaggi della conversazione attiva
+    this.chatService.startMessagePolling(this.currentUser.id, conv.otherUserId);
     this.chatSubscription = this.chatService.messages$.subscribe(msgs => {
       if (msgs.length > 0 && msgs.length !== this.chatMessages.length) {
-        const hadMessages = this.chatMessages.length;
-        this.chatMessages = msgs;
+        this.chatMessages = this.sortMessages(msgs);
         this.cdr.detectChanges();
-        // Scrolla solo se ci sono nuovi messaggi (non al primo caricamento del polling)
-        if (hadMessages > 0) {
-          this.scrollToBottom();
-        }
+        setTimeout(() => this.scrollToBottom(), 50);
       }
     });
   }
@@ -930,7 +951,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.chatSubscription = null;
     }
     this.chatService.clearMessages();
-    this.chatService.stopPolling();
+    this.chatService.stopMessagePolling();
     this.loadConversations();
   }
 
@@ -938,9 +959,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return msg.senderId === this.currentUser?.id;
   }
 
+  /** Normalizza date dal backend (arrivano senza Z ma sono UTC su Render) */
+  private parseMessageDate(isoString: string): Date {
+    if (!isoString) return new Date();
+    // Se non ha timezone info (no Z, no +XX:XX), trattala come UTC
+    if (!isoString.endsWith('Z') && !isoString.includes('+') && !/\d{2}-\d{2}$/.test(isoString)) {
+      return new Date(isoString + 'Z');
+    }
+    return new Date(isoString);
+  }
+
+  /** Ordina messaggi dal più vecchio al più nuovo */
+  private sortMessages(msgs: ChatMessage[]): ChatMessage[] {
+    return [...msgs].sort((a, b) =>
+      this.parseMessageDate(a.createdAt).getTime() - this.parseMessageDate(b.createdAt).getTime()
+    );
+  }
+
   formatChatTime(isoString: string): string {
     if (!isoString) return '';
-    const d = new Date(isoString);
+    const d = this.parseMessageDate(isoString);
     const now = new Date();
     const isToday = d.toDateString() === now.toDateString();
     const yesterday = new Date(now);
@@ -956,7 +994,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   formatConvTime(isoString?: string): string {
     if (!isoString) return '';
-    const d = new Date(isoString);
+    const d = this.parseMessageDate(isoString);
     const now = new Date();
     const isToday = d.toDateString() === now.toDateString();
     if (isToday) return d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
@@ -972,7 +1010,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getTotalUnread(): number {
-    return this.chatConversations.reduce((sum, c) => sum + c.unreadCount, 0);
+    return this.globalUnreadCount;
   }
 
   trackConversation(index: number, conv: Conversation): number {

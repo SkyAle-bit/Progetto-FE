@@ -43,12 +43,22 @@ export class ChatService {
   private http = inject(HttpClient);
   private apiUrl = environment.apiUrl;
 
+  // ── Subjects e Observables ─────────────────────────────────
   private conversationsSubject = new BehaviorSubject<Conversation[]>([]);
   private messagesSubject = new BehaviorSubject<ChatMessage[]>([]);
-  messages$ = this.messagesSubject.asObservable();
+  private unreadCountSubject = new BehaviorSubject<number>(0);
 
-  private pollingActive = false;
-  private pollInterval: any;
+  conversations$ = this.conversationsSubject.asObservable();
+  messages$ = this.messagesSubject.asObservable();
+  unreadCount$ = this.unreadCountSubject.asObservable();
+
+  // ── Polling messaggi (solo dentro una conversazione attiva) ──
+  private msgPollingActive = false;
+  private msgPollInterval: any;
+
+  // ── Polling globale notifiche (gira SEMPRE) ────────────────
+  private globalPollInterval: any;
+  private globalPollingActive = false;
 
   // ── API — allineate al ChatController backend ──────────────
 
@@ -91,49 +101,86 @@ export class ChatService {
     ).pipe(catchError(() => of(null)));
   }
 
-  // ── Polling ────────────────────────────────────────────────
-
-  startPolling(currentUserId: number, otherUserId?: number): void {
-    this.stopPolling();
-    this.pollingActive = true;
-
-    this.pollInterval = setInterval(() => {
-      if (!this.pollingActive) return;
-
-      // Aggiorna lista conversazioni
-      this.getConversations(currentUserId).subscribe(convs => {
-        if (convs.length > 0) {
-          this.conversationsSubject.next(convs);
-        }
-      });
-
-      // Aggiorna messaggi della conversazione attiva
-      if (otherUserId) {
-        this.getMessages(currentUserId, otherUserId).subscribe(msgs => {
-          this.messagesSubject.next(msgs);
-        });
-      }
-    }, 4000);
+  /** GET /api/chat/unread/{userId} — conteggio totale non letti */
+  getUnreadCount(userId: number): Observable<number> {
+    return this.http.get<number>(
+      `${this.apiUrl}/api/chat/unread/${userId}`
+    ).pipe(catchError(() => of(0)));
   }
 
-  stopPolling(): void {
-    this.pollingActive = false;
-    if (this.pollInterval) {
-      clearInterval(this.pollInterval);
-      this.pollInterval = null;
+  // ── Polling globale (notifiche) — gira SEMPRE ──────────────
+
+  startGlobalPolling(userId: number): void {
+    if (this.globalPollingActive) return;
+    this.globalPollingActive = true;
+
+    // Carica subito
+    this.refreshUnreadCount(userId);
+    this.refreshConversations(userId);
+
+    this.globalPollInterval = setInterval(() => {
+      if (!this.globalPollingActive) return;
+      this.refreshUnreadCount(userId);
+      this.refreshConversations(userId);
+    }, 5000);
+  }
+
+  stopGlobalPolling(): void {
+    this.globalPollingActive = false;
+    if (this.globalPollInterval) {
+      clearInterval(this.globalPollInterval);
+      this.globalPollInterval = null;
+    }
+  }
+
+  private refreshUnreadCount(userId: number): void {
+    this.getUnreadCount(userId).subscribe(count => {
+      if (count !== this.unreadCountSubject.value) {
+        this.unreadCountSubject.next(count);
+      }
+    });
+  }
+
+  private refreshConversations(userId: number): void {
+    this.getConversations(userId).subscribe(convs => {
+      if (convs.length > 0) {
+        this.conversationsSubject.next(convs);
+      }
+    });
+  }
+
+  // ── Polling messaggi (dentro una conversazione) ────────────
+
+  startMessagePolling(currentUserId: number, otherUserId: number): void {
+    this.stopMessagePolling();
+    this.msgPollingActive = true;
+
+    this.msgPollInterval = setInterval(() => {
+      if (!this.msgPollingActive) return;
+      this.getMessages(currentUserId, otherUserId).subscribe(msgs => {
+        if (msgs.length > 0) {
+          this.messagesSubject.next(msgs);
+        }
+      });
+    }, 3000);
+  }
+
+  stopMessagePolling(): void {
+    this.msgPollingActive = false;
+    if (this.msgPollInterval) {
+      clearInterval(this.msgPollInterval);
+      this.msgPollInterval = null;
     }
   }
 
   // ── Helpers ────────────────────────────────────────────────
 
-  refreshConversations(userId: number): void {
-    this.getConversations(userId).subscribe(convs => {
-      this.conversationsSubject.next(convs);
-    });
-  }
-
   clearMessages(): void {
     this.messagesSubject.next([]);
+  }
+
+  getConversationsSnapshot(): Conversation[] {
+    return this.conversationsSubject.value;
   }
 }
 
