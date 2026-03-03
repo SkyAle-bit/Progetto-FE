@@ -93,4 +93,21 @@ export class ClientsTabComponent {
     const d = new Date(dateStr);
     return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' });
   }
+
+  /** PT può caricare solo schede */
+  canUploadWorkout(): boolean {
+    return this.currentUser?.role === 'PERSONAL_TRAINER';
+  }
+
+  /** Nutrizionista può caricare solo diete */
+  canUploadDiet(): boolean {
+    return this.currentUser?.role === 'NUTRITIONIST';
+  }
+
+  /** Si può eliminare solo il tipo di documento che il proprio ruolo può caricare */
+  canDeleteDoc(doc: any): boolean {
+    if (this.currentUser?.role === 'PERSONAL_TRAINER') return doc.type === 'WORKOUT_PLAN';
+    if (this.currentUser?.role === 'NUTRITIONIST') return doc.type === 'DIET_PLAN';
+    return false;
+  }
 }
