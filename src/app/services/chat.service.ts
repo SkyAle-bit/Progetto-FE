@@ -192,16 +192,24 @@ export class ChatService {
 
     if (currentRoom === msgRoom) {
       const currentMsgs = this.messagesSubject.value;
-      const exists = currentMsgs.some(m =>
-        (m.id > 0 && m.id === msg.id) ||
-        (m.id < 0 && m.senderId === msg.senderId && m.content === msg.content)
+
+      // Cerca se esiste un messaggio locale ottimistico (id < 0) con stessa content e sender
+      const localOptimisticIdx = currentMsgs.findIndex(m =>
+        m.id < 0 && m.senderId === msg.senderId && m.content === msg.content
       );
-      if (exists) {
-        const updated = currentMsgs.map(m =>
-          (m.id < 0 && m.senderId === msg.senderId && m.content === msg.content) ? msg : m
-        );
+
+      // Cerca se esiste già con lo stesso id positivo dal server
+      const serverDuplicateIdx = currentMsgs.findIndex(m => m.id > 0 && m.id === msg.id);
+
+      if (localOptimisticIdx >= 0) {
+        // Sostituisci il messaggio locale ottimistico con quello dal server
+        const updated = [...currentMsgs];
+        updated[localOptimisticIdx] = msg;
         this.messagesSubject.next(updated);
+      } else if (serverDuplicateIdx >= 0) {
+        // Messaggio duplicato dal server — ignora
       } else {
+        // Messaggio nuovo
         this.messagesSubject.next([...currentMsgs, msg]);
       }
     }
@@ -281,7 +289,19 @@ export class ChatService {
     this.msgPollInterval = setInterval(() => {
       if (!this.msgPollingActive) return;
       this.getMessages(currentUserId, otherUserId).subscribe(msgs => {
-        if (msgs.length > 0) this.messagesSubject.next(msgs);
+        if (msgs.length > 0) {
+          // Merge: mantieni i messaggi locali ottimistici (id < 0) non ancora confermati
+          const currentMsgs = this.messagesSubject.value;
+          const localOptimistic = currentMsgs.filter(m => m.id < 0);
+          const serverIds = new Set(msgs.map(m => m.id));
+
+          // Filtra i locali ottimistici che non hanno ancora un corrispondente dal server
+          const unresolvedLocal = localOptimistic.filter(local =>
+            !msgs.some(server => server.senderId === local.senderId && server.content === local.content)
+          );
+
+          this.messagesSubject.next([...msgs, ...unresolvedLocal]);
+        }
       });
     }, 3000);
   }

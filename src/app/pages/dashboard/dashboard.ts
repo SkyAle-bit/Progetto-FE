@@ -641,6 +641,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.globalUnreadCount;
   }
 
+  onNotificationBellClick(): void {
+    this.globalUnreadCount = 0;
+    this.setTab('chat');
+  }
+
 
   // ── Logout ───────────────────────────────────────────────
 
