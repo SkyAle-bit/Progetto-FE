@@ -1,0 +1,109 @@
+<div class="px-5 py-6 flex flex-col gap-5 sm:max-w-[900px] sm:mx-auto sm:py-10 sm:px-8">
+
+  <!-- Header -->
+  <div class="text-center" *ngIf="!selectedClient">
+    <div class="relative inline-block mb-3">
+      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[#312e81] to-[#6366f1] border-[3px] border-[#c9a96e] text-white flex items-center justify-center text-[1.8rem] font-black font-['Darker_Grotesque'] shadow-lg">{{ getInitials() }}</div>
+    </div>
+    <h2 class="font-['Darker_Grotesque'] text-[1.6rem] font-black text-[#1a2744] leading-tight">Gestione Polizze</h2>
+    <p class="text-[0.82rem] text-[#8fa3c8] mt-1">Panoramica assicurativa dei clienti Kore</p>
+  </div>
+
+  <!-- KPI -->
+  <div class="grid grid-cols-2 gap-3" *ngIf="!selectedClient">
+    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+      <div class="text-[1.8rem] font-black text-[#6366f1] leading-none">{{ activePolicies }}</div>
+      <div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1.5 font-semibold">Polizze attive</div>
+      <div class="mt-2 text-[1.2rem]">🛡️</div>
+    </div>
+    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+      <div class="text-[1.8rem] font-black text-[#1a3462] leading-none">{{ coveredClients.length }}</div>
+      <div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1.5 font-semibold">Clienti coperti</div>
+      <div class="mt-2 text-[1.2rem]">👥</div>
+    </div>
+  </div>
+
+  <!-- Ricerca -->
+  <div class="relative" *ngIf="!selectedClient">
+    <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8fa3c8]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Cerca cliente..."
+      class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#ccd8ed] text-[0.82rem] text-[#1a2744] placeholder-[#8fa3c8] focus:outline-none focus:border-[#c9a96e] transition-all">
+  </div>
+
+  <!-- Lista clienti con polizza -->
+  <div class="flex flex-col gap-2.5" *ngIf="!selectedClient && filteredClients.length > 0">
+    <div class="flex items-center gap-3 bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm cursor-pointer hover:border-[#6366f1]/40 hover:shadow-md transition-all active:scale-[0.98]"
+      *ngFor="let sub of filteredClients" (click)="openClientDocs(sub)">
+      <div class="w-11 h-11 rounded-full bg-[#1a3462] flex items-center justify-center border-2 border-[#c9a96e]/40 flex-shrink-0">
+        <span class="text-[#e8c97a] text-[0.65rem] font-bold">{{ sub.user.firstName?.charAt(0) }}{{ sub.user.lastName?.charAt(0) }}</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-[0.88rem] font-bold text-[#1a2744] truncate">{{ sub.user.firstName }} {{ sub.user.lastName }}</div>
+        <div class="text-[0.68rem] text-[#8fa3c8] truncate">{{ sub.planName }} • Scade: {{ formatDate(sub.endDate) }}</div>
+      </div>
+      <div class="flex items-center gap-1 flex-shrink-0">
+        <span class="text-[0.6rem] font-bold px-2 py-0.5 rounded-full" [ngClass]="sub.active ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'">{{ sub.active ? 'Attiva' : 'Scaduta' }}</span>
+        <svg class="w-4 h-4 text-[#c9a96e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </div>
+    </div>
+  </div>
+  <div class="text-center py-12" *ngIf="!selectedClient && filteredClients.length === 0">
+    <div class="text-[2.5rem] mb-3 opacity-35">🛡️</div>
+    <p class="text-[0.85rem] text-[#ccd8ed] italic">Nessun cliente con polizza attiva</p>
+  </div>
+
+  <!-- Dettaglio cliente polizza -->
+  <ng-container *ngIf="selectedClient">
+    <div class="flex items-center gap-3 mb-4">
+      <button class="w-8 h-8 rounded-lg bg-[#f2f6fc] border border-[#ccd8ed] flex items-center justify-center text-[#8fa3c8] hover:text-[#1a2744] transition-all" (click)="closeClientDocs()">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <h3 class="font-['Darker_Grotesque'] text-[1.4rem] font-black text-[#1a2744]">{{ selectedClient.user.firstName }} {{ selectedClient.user.lastName }}</h3>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm mb-5">
+      <div class="grid grid-cols-2 gap-4">
+        <div><div class="text-[0.62rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-0.5">Piano</div><div class="text-[0.88rem] font-bold text-[#1a2744]">{{ selectedClient.planName }}</div></div>
+        <div><div class="text-[0.62rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-0.5">Stato</div><span class="text-[0.72rem] font-bold px-2 py-0.5 rounded-full" [ngClass]="selectedClient.active ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'">{{ selectedClient.active ? 'Attiva' : 'Scaduta' }}</span></div>
+        <div><div class="text-[0.62rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-0.5">Inizio</div><div class="text-[0.82rem] text-[#1a2744]">{{ formatDate(selectedClient.startDate) }}</div></div>
+        <div><div class="text-[0.62rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-0.5">Scadenza</div><div class="text-[0.82rem] text-[#1a2744]">{{ formatDate(selectedClient.endDate) }}</div></div>
+      </div>
+    </div>
+
+    <h4 class="text-[0.78rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold mb-3">📄 Documenti assicurativi</h4>
+    <div class="flex items-center justify-center py-8" *ngIf="docsLoading"><div class="w-6 h-6 border-2 border-[#6366f1] border-t-transparent rounded-full animate-spin"></div></div>
+    <div class="flex flex-col gap-2.5" *ngIf="!docsLoading && clientDocs.length > 0">
+      <div class="flex items-center gap-3 bg-white rounded-xl border border-[#ccd8ed] p-4 shadow-sm" *ngFor="let doc of clientDocs">
+        <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-[1.1rem] flex-shrink-0">📋</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-[0.85rem] font-bold text-[#1a2744] truncate">{{ doc.fileName }}</div>
+          <div class="text-[0.68rem] text-[#8fa3c8]">{{ formatDate(doc.uploadDate) }}</div>
+        </div>
+        <button class="w-8 h-8 rounded-lg bg-[#f2f6fc] border border-[#ccd8ed] flex items-center justify-center text-[#1a3462] hover:bg-[#1a3462] hover:text-white transition-all" (click)="viewPdf(doc)">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="text-center py-8 bg-white rounded-2xl border border-[#ccd8ed] border-dashed" *ngIf="!docsLoading && clientDocs.length === 0">
+      <div class="text-[2rem] mb-2 opacity-40">📄</div>
+      <p class="text-[0.82rem] text-[#8fa3c8]">Nessun documento assicurativo</p>
+    </div>
+  </ng-container>
+
+  <!-- PDF Viewer -->
+  <div class="fixed inset-0 bg-[#1a2744]/50 backdrop-blur-[4px] z-[200] flex items-center justify-center p-3 sm:p-6" *ngIf="pdfOpen" (click)="closePdf()">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl h-[85vh] sm:h-[88vh] flex flex-col overflow-hidden" (click)="$event.stopPropagation()">
+      <div class="flex items-center justify-between px-4 sm:px-6 py-3 bg-[#312e81] flex-shrink-0">
+        <div class="flex items-center gap-3 min-w-0 flex-1"><div class="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[1rem] flex-shrink-0">📄</div><span class="text-white text-[0.85rem] font-semibold truncate">{{ pdfName }}</span></div>
+        <div class="flex items-center gap-2 flex-shrink-0 ml-3">
+          <button class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white/80 hover:bg-white/20 transition-all" (click)="openPdfNewTab()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg></button>
+          <button class="w-8 h-8 rounded-lg bg-white/10 border border-white/20 flex items-center justify-center text-white/80 hover:bg-red-500/80 transition-all" (click)="closePdf()"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+        </div>
+      </div>
+      <div class="flex-1 bg-[#525659] relative overflow-hidden">
+        <div class="absolute inset-0 flex flex-col items-center justify-center gap-3" *ngIf="pdfLoading"><div class="w-8 h-8 border-2 border-[#6366f1] border-t-transparent rounded-full animate-spin"></div><span class="text-white/60 text-[0.82rem]">Caricamento...</span></div>
+        <iframe *ngIf="pdfUrl && !pdfLoading" [src]="pdfUrl" class="w-full h-full border-0"></iframe>
+      </div>
+    </div>
+  </div>
+</div>

@@ -10,11 +10,15 @@ import { CalendarTabComponent } from './components/calendar-tab/calendar-tab';
 import { ChatTabComponent } from './components/chat-tab/chat-tab';
 import { ClientsTabComponent } from './components/clients-tab/clients-tab';
 import { ProfessionalsTabComponent } from './components/professionals-tab/professionals-tab';
+import { AdminHomeTabComponent } from './components/admin-home-tab/admin-home-tab';
+import { AdminUsersTabComponent } from './components/admin-users-tab/admin-users-tab';
+import { AdminPlansTabComponent } from './components/admin-plans-tab/admin-plans-tab';
+import { InsuranceHomeTabComponent } from './components/insurance-home-tab/insurance-home-tab';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, ProfessionalsTabComponent],
+  imports: [CommonModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, ProfessionalsTabComponent, AdminHomeTabComponent, AdminUsersTabComponent, AdminPlansTabComponent, InsuranceHomeTabComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -29,6 +33,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isLoading: boolean = true;
   isProfileOpen: boolean = false;
   myClients: any[] = []; // Array per la quick view nel profilo
+
+  // ── Admin / Insurance data ────────────────────────────────
+  allUsers: any[] = [];
+  allPlans: any[] = [];
+  allSubscriptions: any[] = [];
 
   // ── Tab mobile ────────────────────────────────────────────
   activeTab: string = 'home'; // 'home' | 'calendar' | 'chat' | 'clients' | 'professionals'
@@ -139,6 +148,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // ── Caricamento dati ─────────────────────────────────────
 
   loadDashboardData(): void {
+    // Admin e Insurance Manager caricano dati diversi
+    if (this.isAdmin() || this.isInsuranceManager()) {
+      this.loadAdminInsuranceData();
+      return;
+    }
+
     this.authService.getDashboard(this.currentUser.id).subscribe({
       next: (data) => {
         this.dashboardData = data;
@@ -170,6 +185,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  private loadAdminInsuranceData(): void {
+    let loaded = 0;
+    const total = 3;
+    const checkDone = () => { loaded++; if (loaded >= total) { this.isLoading = false; this.cdr.detectChanges(); } };
+
+    this.authService.getAllUsers().subscribe({
+      next: (users) => { this.allUsers = users ?? []; checkDone(); },
+      error: () => { this.allUsers = []; checkDone(); }
+    });
+    this.authService.getPlans().subscribe({
+      next: (plans) => { this.allPlans = plans ?? []; checkDone(); },
+      error: () => { this.allPlans = []; checkDone(); }
+    });
+    this.authService.getAllSubscriptions().subscribe({
+      next: (subs) => { this.allSubscriptions = subs ?? []; checkDone(); },
+      error: () => { this.allSubscriptions = []; checkDone(); }
+    });
+  }
+
   // ── Accessori dati ───────────────────────────────────────
 
   get profile() { return this.dashboardData?.profile; }
@@ -182,6 +216,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const r = this.currentUser?.role;
     return r === 'PERSONAL_TRAINER' || r === 'NUTRITIONIST';
   }
+  isAdmin(): boolean { return this.currentUser?.role === 'ADMIN'; }
+  isInsuranceManager(): boolean { return this.currentUser?.role === 'INSURANCE_MANAGER'; }
 
   setTab(tab: string): void {
     this.activeTab = tab;

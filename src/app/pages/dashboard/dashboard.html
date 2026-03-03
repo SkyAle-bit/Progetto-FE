@@ -68,6 +68,38 @@
           </svg>
           I Miei Professionisti
         </button>
+        <!-- ADMIN tabs -->
+        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap"
+          *ngIf="isAdmin()"
+          [class.active]="activeTab === 'admin-users'"
+          (click)="setTab('admin-users')">
+          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Utenti
+        </button>
+        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap"
+          *ngIf="isAdmin()"
+          [class.active]="activeTab === 'admin-plans'"
+          (click)="setTab('admin-plans')">
+          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+          </svg>
+          Piani
+        </button>
+        <!-- INSURANCE tabs -->
+        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap"
+          *ngIf="isInsuranceManager()"
+          [class.active]="activeTab === 'insurance'"
+          (click)="setTab('insurance')">
+          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+          Polizze
+        </button>
       </nav>
 
     <!-- Destra -->
@@ -138,7 +170,7 @@
          │  Visibile su mobile quando activeTab === 'home'      │
          │  Su desktop il calendario è sempre visibile          │
          └──────────────────────────────────────────────────────┘ -->
-    <div class="tab-home flex-1 overflow-y-auto" *ngIf="activeTab === 'home'">
+    <div class="tab-home flex-1 overflow-y-auto" *ngIf="activeTab === 'home' && !isAdmin() && !isInsuranceManager()">
       <app-home-tab *ngIf="!isLoading && dashboardData"
         [currentUser]="currentUser"
         [profile]="profile"
@@ -197,6 +229,44 @@
       [professionals]="professionals"
       (bookProfessional)="openBooking($event)">
     </app-professionals-tab>
+
+    <!-- ┌──────────────────────────────────────────────────────┐
+         │  TAB: ADMIN HOME (solo admin)                        │
+         └──────────────────────────────────────────────────────┘ -->
+    <app-admin-home-tab class="flex-1 overflow-y-auto"
+      *ngIf="activeTab === 'home' && isAdmin()"
+      [currentUser]="currentUser"
+      [allUsers]="allUsers"
+      [allPlans]="allPlans"
+      [allSubscriptions]="allSubscriptions">
+    </app-admin-home-tab>
+
+    <!-- ┌──────────────────────────────────────────────────────┐
+         │  TAB: ADMIN UTENTI (solo admin)                      │
+         └──────────────────────────────────────────────────────┘ -->
+    <app-admin-users-tab class="flex-1 overflow-y-auto"
+      *ngIf="activeTab === 'admin-users' && isAdmin()"
+      [allUsers]="allUsers">
+    </app-admin-users-tab>
+
+    <!-- ┌──────────────────────────────────────────────────────┐
+         │  TAB: ADMIN PIANI (solo admin)                       │
+         └──────────────────────────────────────────────────────┘ -->
+    <app-admin-plans-tab class="flex-1 overflow-y-auto"
+      *ngIf="activeTab === 'admin-plans' && isAdmin()"
+      [allPlans]="allPlans"
+      [allSubscriptions]="allSubscriptions">
+    </app-admin-plans-tab>
+
+    <!-- ┌──────────────────────────────────────────────────────┐
+         │  TAB: INSURANCE HOME (solo insurance manager)        │
+         └──────────────────────────────────────────────────────┘ -->
+    <app-insurance-home-tab class="flex-1 overflow-y-auto"
+      *ngIf="(activeTab === 'home' || activeTab === 'insurance') && isInsuranceManager()"
+      [currentUser]="currentUser"
+      [allSubscriptions]="allSubscriptions"
+      [allUsers]="allUsers">
+    </app-insurance-home-tab>
   </div>
 
   <!-- ══════════════════════════════════════════════════════════
@@ -258,6 +328,36 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
       </svg>
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Professionisti</span>
+    </button>
+
+    <!-- Tab: Utenti (admin) -->
+    <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
+      *ngIf="isAdmin()"
+      [class.active]="activeTab === 'admin-users'" (click)="setTab('admin-users')">
+      <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+      </svg>
+      <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Utenti</span>
+    </button>
+
+    <!-- Tab: Piani (admin) -->
+    <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
+      *ngIf="isAdmin()"
+      [class.active]="activeTab === 'admin-plans'" (click)="setTab('admin-plans')">
+      <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+      </svg>
+      <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Piani</span>
+    </button>
+
+    <!-- Tab: Polizze (insurance) -->
+    <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
+      *ngIf="isInsuranceManager()"
+      [class.active]="activeTab === 'insurance'" (click)="setTab('insurance')">
+      <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+      </svg>
+      <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Polizze</span>
     </button>
   </nav>
 

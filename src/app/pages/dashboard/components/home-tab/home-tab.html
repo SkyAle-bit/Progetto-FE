@@ -13,7 +13,7 @@
       <div class="w-10 h-10 rounded-xl bg-[#1a3462] flex items-center justify-center text-[1.1rem]">{{ isProfessional ? '🏆' : '⭐' }}</div>
       <div>
         <div class="text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Il tuo ruolo</div>
-        <div class="text-[0.95rem] font-bold text-[#1a2744]">{{ profile?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : profile?.role === 'NUTRITIONIST' ? 'Nutrizionista' : 'Cliente' }}</div>
+        <div class="text-[0.95rem] font-bold text-[#1a2744]">{{ profile?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : profile?.role === 'NUTRITIONIST' ? 'Nutrizionista' : profile?.role === 'ADMIN' ? 'Amministratore' : profile?.role === 'INSURANCE_MANAGER' ? 'Gestore Polizze' : 'Cliente' }}</div>
       </div>
     </div>
     <div class="text-[0.78rem] text-[#8fa3c8]">{{ profile?.email }}</div>

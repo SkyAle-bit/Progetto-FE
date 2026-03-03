@@ -109,4 +109,14 @@ export class AuthService {
   deleteDocument(documentId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/api/documents/${documentId}`);
   }
+
+  // ── Admin API ──────────────────────────────────────────────
+
+  getAllUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/admin/users`);
+  }
+
+  getAllSubscriptions(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/admin/subscriptions`);
+  }
 }

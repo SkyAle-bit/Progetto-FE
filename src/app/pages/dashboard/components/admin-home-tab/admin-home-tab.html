@@ -1,0 +1,83 @@
+<div class="px-5 py-6 flex flex-col gap-5 sm:max-w-[900px] sm:mx-auto sm:py-10 sm:px-8">
+
+  <!-- Saluto -->
+  <div class="text-center">
+    <div class="relative inline-block mb-3">
+      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[#6b21a8] to-[#9333ea] border-[3px] border-[#c9a96e] text-white flex items-center justify-center text-[1.8rem] font-black font-['Darker_Grotesque'] shadow-lg">{{ getInitials() }}</div>
+    </div>
+    <h2 class="font-['Darker_Grotesque'] text-[1.6rem] font-black text-[#1a2744] leading-tight">Pannello Admin</h2>
+    <p class="text-[0.82rem] text-[#8fa3c8] mt-1">Supervisione globale della piattaforma Kore</p>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+      <div class="text-[1.8rem] font-black text-[#1a3462] leading-none">{{ totalUsers }}</div>
+      <div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1.5 font-semibold">Utenti totali</div>
+      <div class="mt-2 text-[1.2rem]">👥</div>
+    </div>
+    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+      <div class="text-[1.8rem] font-black text-[#1a3462] leading-none">{{ totalClients }}</div>
+      <div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1.5 font-semibold">Clienti</div>
+      <div class="mt-2 text-[1.2rem]">🧑</div>
+    </div>
+    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+      <div class="text-[1.8rem] font-black text-emerald-600 leading-none">{{ activeSubscriptions }}</div>
+      <div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1.5 font-semibold">Abbonamenti attivi</div>
+      <div class="mt-2 text-[1.2rem]">👑</div>
+    </div>
+    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+      <div class="text-[1.8rem] font-black text-[#c9a96e] leading-none">{{ totalProfessionals }}</div>
+      <div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1.5 font-semibold">Professionisti</div>
+      <div class="mt-2 text-[1.2rem]">🏆</div>
+    </div>
+  </div>
+
+  <!-- Ultimi utenti registrati -->
+  <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="text-[1.1rem]">🧑‍💼</span>
+      <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Utenti recenti</span>
+    </div>
+    <div class="flex flex-col gap-2" *ngIf="allUsers.length > 0">
+      <div class="flex items-center gap-3 p-3 bg-[#f2f6fc] rounded-xl border border-[#ccd8ed]/60"
+        *ngFor="let user of allUsers | slice:0:6">
+        <div class="w-9 h-9 rounded-full bg-[#1a3462] flex items-center justify-center text-[0.65rem] font-bold text-[#e8c97a] flex-shrink-0">
+          {{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="text-[0.85rem] font-bold text-[#1a2744] truncate">{{ user.firstName }} {{ user.lastName }}</div>
+          <div class="text-[0.68rem] text-[#8fa3c8] truncate">{{ user.email }}</div>
+        </div>
+        <span class="text-[0.6rem] font-bold px-2 py-0.5 rounded-full flex-shrink-0"
+          [ngClass]="getRoleBadgeClass(user.role)">{{ getRoleLabel(user.role) }}</span>
+      </div>
+    </div>
+    <div class="text-center py-6" *ngIf="allUsers.length === 0">
+      <p class="text-[0.82rem] text-[#8fa3c8]">Nessun utente trovato</p>
+    </div>
+  </div>
+
+  <!-- Piani disponibili -->
+  <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="text-[1.1rem]">📋</span>
+      <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Piani attivi</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" *ngIf="allPlans.length > 0">
+      <div class="p-4 bg-gradient-to-br from-[#f2f6fc] to-white rounded-xl border border-[#ccd8ed]/60"
+        *ngFor="let plan of allPlans">
+        <div class="text-[0.88rem] font-bold text-[#1a2744] mb-2">{{ plan.name }}</div>
+        <div class="flex items-baseline gap-1 mb-2">
+          <span class="text-[1.2rem] font-black text-[#c9a96e]">€{{ plan.monthlyInstallmentPrice }}</span>
+          <span class="text-[0.65rem] text-[#8fa3c8]">/mese</span>
+        </div>
+        <div class="flex gap-2">
+          <span class="text-[0.6rem] font-semibold px-2 py-0.5 rounded-full bg-[#1a3462]/10 text-[#1a3462]">💪 {{ plan.monthlyCreditsPT }} PT</span>
+          <span class="text-[0.6rem] font-semibold px-2 py-0.5 rounded-full bg-[#c9a96e]/15 text-[#a88a53]">🥗 {{ plan.monthlyCreditsNutri }} Nutri</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

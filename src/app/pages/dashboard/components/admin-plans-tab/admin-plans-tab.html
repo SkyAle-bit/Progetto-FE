@@ -1,0 +1,35 @@
+<div class="px-4 py-5 sm:max-w-[900px] sm:mx-auto sm:py-8 sm:px-8">
+  <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[#1a2744] mb-1">Gestione Piani</h3>
+  <p class="text-[0.78rem] sm:text-[0.85rem] text-[#8fa3c8] mb-4 sm:mb-6">{{ allPlans.length }} piani configurati</p>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" *ngIf="allPlans.length > 0">
+    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm hover:border-[#c9a96e]/50 hover:shadow-md transition-all" *ngFor="let plan of allPlans">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-[1rem] font-bold text-[#1a2744]">{{ plan.name }}</div>
+        <span class="text-[0.6rem] font-bold px-2 py-0.5 rounded-full bg-[#c9a96e]/15 text-[#a88a53]">{{ getDurationLabel(plan.duration) }}</span>
+      </div>
+      <div class="flex items-baseline gap-1 mb-4">
+        <span class="text-[1.6rem] font-black text-[#1a3462]">€{{ plan.fullPrice }}</span>
+        <span class="text-[0.72rem] text-[#8fa3c8]">totale</span>
+        <span class="text-[0.72rem] text-[#8fa3c8] ml-2">(€{{ plan.monthlyInstallmentPrice }}/mese)</span>
+      </div>
+      <div class="flex gap-3 mb-3">
+        <div class="flex-1 bg-[#1a3462]/5 rounded-xl p-3 text-center">
+          <div class="text-[1.2rem] font-black text-[#1a3462]">{{ plan.monthlyCreditsPT }}</div>
+          <div class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.06em] font-semibold mt-0.5">💪 Crediti PT/mese</div>
+        </div>
+        <div class="flex-1 bg-[#c9a96e]/8 rounded-xl p-3 text-center">
+          <div class="text-[1.2rem] font-black text-[#c9a96e]">{{ plan.monthlyCreditsNutri }}</div>
+          <div class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.06em] font-semibold mt-0.5">🥗 Crediti Nutri/mese</div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between pt-3 border-t border-[#ccd8ed]/60">
+        <span class="text-[0.72rem] text-[#8fa3c8]">👑 {{ getActiveSubsForPlan(plan.name) }} abbonati attivi</span>
+        <span class="text-[0.65rem] text-emerald-600 font-semibold" *ngIf="plan.insuranceCoverageDetails">✅ Polizza inclusa</span>
+      </div>
+    </div>
+  </div>
+  <div class="text-center py-12" *ngIf="allPlans.length === 0">
+    <div class="text-[2.5rem] mb-3 opacity-35">📋</div>
+    <p class="text-[0.85rem] text-[#ccd8ed] italic">Nessun piano configurato</p>
+  </div>
+</div>

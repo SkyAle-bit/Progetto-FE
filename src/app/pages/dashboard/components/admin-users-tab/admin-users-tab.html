@@ -1,0 +1,51 @@
+<div class="px-4 py-5 sm:max-w-[900px] sm:mx-auto sm:py-8 sm:px-8">
+  <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[#1a2744] mb-1">Gestione Utenti</h3>
+  <p class="text-[0.78rem] sm:text-[0.85rem] text-[#8fa3c8] mb-4 sm:mb-6">{{ filteredUsers.length }} utenti{{ roleFilter !== 'ALL' ? ' (' + getRoleLabel(roleFilter) + ')' : '' }}</p>
+
+  <!-- Ricerca + Filtro -->
+  <div class="flex flex-col sm:flex-row gap-3 mb-5">
+    <div class="flex-1 relative">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8fa3c8]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Cerca per nome o email..."
+        class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#ccd8ed] text-[0.82rem] text-[#1a2744] placeholder-[#8fa3c8] focus:outline-none focus:border-[#c9a96e] transition-all">
+    </div>
+    <div class="flex gap-2 overflow-x-auto pb-1">
+      <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
+        [ngClass]="roleFilter === 'ALL' ? 'bg-[#1a3462] text-white border-[#1a3462]' : 'bg-white text-[#8fa3c8] border-[#ccd8ed]'"
+        (click)="roleFilter = 'ALL'">Tutti</button>
+      <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
+        [ngClass]="roleFilter === 'CLIENT' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-[#8fa3c8] border-[#ccd8ed]'"
+        (click)="roleFilter = 'CLIENT'">🧑 Clienti</button>
+      <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
+        [ngClass]="roleFilter === 'PERSONAL_TRAINER' ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-[#8fa3c8] border-[#ccd8ed]'"
+        (click)="roleFilter = 'PERSONAL_TRAINER'">💪 PT</button>
+      <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
+        [ngClass]="roleFilter === 'NUTRITIONIST' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-[#8fa3c8] border-[#ccd8ed]'"
+        (click)="roleFilter = 'NUTRITIONIST'">🥗 Nutri</button>
+    </div>
+  </div>
+
+  <!-- Lista utenti -->
+  <div class="flex flex-col gap-2.5" *ngIf="filteredUsers.length > 0">
+    <div class="flex items-center gap-3 bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm hover:border-[#c9a96e]/40 transition-all"
+      *ngFor="let user of filteredUsers">
+      <div class="w-11 h-11 rounded-full bg-[#1a3462] flex items-center justify-center overflow-hidden border-2 border-[#c9a96e]/40 flex-shrink-0">
+        <span class="text-[#e8c97a] text-[0.7rem] font-bold">{{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-[0.88rem] font-bold text-[#1a2744] truncate">{{ user.firstName }} {{ user.lastName }}</div>
+        <div class="text-[0.72rem] text-[#8fa3c8] truncate">{{ user.email }}</div>
+      </div>
+      <div class="flex flex-col items-end gap-1 flex-shrink-0">
+        <span class="text-[0.6rem] font-bold px-2 py-0.5 rounded-full"
+          [ngClass]="getRoleBadgeClass(user.role)">{{ getRoleEmoji(user.role) }} {{ getRoleLabel(user.role) }}</span>
+        <span class="text-[0.58rem] text-[#8fa3c8]" *ngIf="user.averageRating">⭐ {{ user.averageRating | number:'1.1-1' }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="text-center py-12" *ngIf="filteredUsers.length === 0">
+    <div class="text-[2.5rem] mb-3 opacity-35">🔍</div>
+    <p class="text-[0.85rem] text-[#ccd8ed] italic">Nessun utente trovato</p>
+  </div>
+</div>
+
