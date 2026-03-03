@@ -1,0 +1,12 @@
+.gitignore
+.mvn
+docker-compose.yml
+Dockerfile
+HELP.md
+mvnw
+mvnw.cmd
+pom.xml
+src
+target
+test-classes
+uploads
