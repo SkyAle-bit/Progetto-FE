@@ -1,13 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, BehaviorSubject, catchError } from 'rxjs';
+import { Observable, of, BehaviorSubject, Subject, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { SocketService, WsIncomingMessage } from './socket.service';
 
-/**
- * Interfacce allineate ai DTO del backend Spring Boot:
- * - ChatMessageResponse
- * - ConversationPreviewResponse
- */
+// ── Interfacce DTO ──────────────────────────────────────────
 
 export interface ChatMessage {
   id: number;
@@ -17,14 +14,14 @@ export interface ChatMessage {
   receiverName: string;
   content: string;
   status: 'SENT' | 'DELIVERED' | 'READ';
-  createdAt: string;  // LocalDateTime dal backend → ISO string
+  createdAt: string;
 }
 
 export interface Conversation {
   otherUserId: number;
   otherUserName: string;
   otherUserRole: string;
-  otherUserProfilePicture?: string; // Non presente nel DTO backend, campo opzionale
+  otherUserProfilePicture?: string;
   lastMessage?: string;
   lastMessageTime?: string;
   unreadCount: number;
@@ -36,14 +33,13 @@ export interface SendMessageRequest {
   content: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ChatService {
   private http = inject(HttpClient);
+  private socketService = inject(SocketService);
   private apiUrl = environment.apiUrl;
 
-  // ── Subjects e Observables ─────────────────────────────────
+  // ── State ──────────────────────────────────────────────────
   private conversationsSubject = new BehaviorSubject<Conversation[]>([]);
   private messagesSubject = new BehaviorSubject<ChatMessage[]>([]);
   private unreadCountSubject = new BehaviorSubject<number>(0);
@@ -52,77 +48,204 @@ export class ChatService {
   messages$ = this.messagesSubject.asObservable();
   unreadCount$ = this.unreadCountSubject.asObservable();
 
-  // ── Polling messaggi (solo dentro una conversazione attiva) ──
+  /** Emesso quando arriva un nuovo messaggio real-time */
+  private newMessageSubject = new Subject<ChatMessage>();
+  newMessage$ = this.newMessageSubject.asObservable();
+
+  // ── Polling fallback ───────────────────────────────────────
   private msgPollingActive = false;
   private msgPollInterval: any;
-
-  // ── Polling globale notifiche (gira SEMPRE) ────────────────
   private globalPollInterval: any;
   private globalPollingActive = false;
 
-  // ── API — allineate al ChatController backend ──────────────
+  // ── WebSocket subscription tracking ────────────────────────
+  private wsSubscriptions: any[] = [];
 
-  /** GET /api/chat/conversations/{userId} — lista conversazioni */
+  // ══════════════════════════════════════════════════════════════
+  //  API REST (caricamento iniziale e fallback)
+  // ══════════════════════════════════════════════════════════════
+
   getConversations(userId: number): Observable<Conversation[]> {
     return this.http.get<Conversation[]>(
       `${this.apiUrl}/api/chat/conversations/${userId}`
-    ).pipe(
-      catchError(err => {
-        console.warn('Chat API non disponibile', err);
-        return of([]);
-      })
-    );
+    ).pipe(catchError(() => of([])));
   }
 
-  /** GET /api/chat/conversation/{userId1}/{userId2}?page=0&size=50 — messaggi tra due utenti */
-  getMessages(userId1: number, userId2: number, page: number = 0, size: number = 50): Observable<ChatMessage[]> {
+  getMessages(userId1: number, userId2: number, page = 0, size = 50): Observable<ChatMessage[]> {
     return this.http.get<ChatMessage[]>(
       `${this.apiUrl}/api/chat/conversation/${userId1}/${userId2}?page=${page}&size=${size}`
-    ).pipe(
-      catchError(err => {
-        console.warn('Messaggi API non disponibile', err);
-        return of([]);
-      })
-    );
+    ).pipe(catchError(() => of([])));
   }
 
-  /** POST /api/chat/send — invia messaggio */
   sendMessage(request: SendMessageRequest): Observable<ChatMessage> {
-    return this.http.post<ChatMessage>(
-      `${this.apiUrl}/api/chat/send`,
-      request
-    );
+    return this.http.post<ChatMessage>(`${this.apiUrl}/api/chat/send`, request);
   }
 
-  /** PUT /api/chat/read/{receiverId}/{senderId} — segna come letti */
   markAsRead(receiverId: number, senderId: number): Observable<any> {
     return this.http.put(
       `${this.apiUrl}/api/chat/read/${receiverId}/${senderId}`, {}
     ).pipe(catchError(() => of(null)));
   }
 
-  /** GET /api/chat/unread/{userId} — conteggio totale non letti */
   getUnreadCount(userId: number): Observable<number> {
     return this.http.get<number>(
       `${this.apiUrl}/api/chat/unread/${userId}`
     ).pipe(catchError(() => of(0)));
   }
 
-  // ── Polling globale (notifiche) — gira SEMPRE ──────────────
+  // ══════════════════════════════════════════════════════════════
+  //  INIZIALIZZAZIONE REAL-TIME
+  // ══════════════════════════════════════════════════════════════
+
+  /**
+   * Inizializza la chat real-time:
+   * 1) Connette il WebSocket
+   * 2) Sottoscrive agli eventi in arrivo
+   * 3) Avvia polling globale come fallback
+   */
+  init(userId: number): void {
+    // Connetti WebSocket
+    this.socketService.connect(userId);
+
+    // Sottoscrivi ai messaggi in arrivo dal WebSocket
+    const msgSub = this.socketService.incomingMessage$.subscribe(wsMsg => {
+      this.handleIncomingWsMessage(wsMsg, userId);
+    });
+    this.wsSubscriptions.push(msgSub);
+
+    // Sottoscrivi agli aggiornamenti unread dal WebSocket
+    const unreadSub = this.socketService.unreadUpdate$.subscribe(update => {
+      if (update.userId === userId) {
+        this.unreadCountSubject.next(update.unreadCount);
+      }
+    });
+    this.wsSubscriptions.push(unreadSub);
+
+    // Avvia polling globale leggero come fallback
+    this.startGlobalPolling(userId);
+  }
+
+  /**
+   * Cleanup completo — chiamare al logout/destroy
+   */
+  destroy(): void {
+    this.wsSubscriptions.forEach(s => s.unsubscribe());
+    this.wsSubscriptions = [];
+    this.socketService.disconnect();
+    this.stopGlobalPolling();
+    this.stopMessagePolling();
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  //  GESTIONE STANZE
+  // ══════════════════════════════════════════════════════════════
+
+  joinRoom(otherUserId: number): void {
+    this.socketService.joinRoom(otherUserId);
+  }
+
+  leaveRoom(): void {
+    this.socketService.leaveRoom();
+  }
+
+  /**
+   * Invia messaggio via WebSocket (real-time).
+   * Ritorna il messaggio locale per UI ottimistica.
+   */
+  sendMessageRealTime(senderId: number, receiverId: number, content: string, senderName: string, receiverName: string): ChatMessage {
+    const localMsg: ChatMessage = {
+      id: -Date.now(),
+      senderId,
+      senderName,
+      receiverId,
+      receiverName,
+      content,
+      status: 'SENT',
+      createdAt: new Date().toISOString()
+    };
+    this.socketService.sendMessage(senderId, receiverId, content);
+    return localMsg;
+  }
+
+  markAsReadRealTime(otherUserId: number): void {
+    this.socketService.markAsRead(otherUserId);
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  //  HANDLER MESSAGGI IN ARRIVO
+  // ══════════════════════════════════════════════════════════════
+
+  private handleIncomingWsMessage(wsMsg: WsIncomingMessage, currentUserId: number): void {
+    const msg: ChatMessage = {
+      id: wsMsg.id,
+      senderId: wsMsg.senderId,
+      senderName: wsMsg.senderName,
+      receiverId: wsMsg.receiverId,
+      receiverName: wsMsg.receiverName,
+      content: wsMsg.content,
+      status: wsMsg.status,
+      createdAt: wsMsg.createdAt
+    };
+
+    const currentRoom = this.socketService.currentRoomId;
+    const msgRoom = wsMsg.roomId || this.socketService.getRoomId(wsMsg.senderId, wsMsg.receiverId);
+
+    if (currentRoom === msgRoom) {
+      const currentMsgs = this.messagesSubject.value;
+      const exists = currentMsgs.some(m =>
+        (m.id > 0 && m.id === msg.id) ||
+        (m.id < 0 && m.senderId === msg.senderId && m.content === msg.content)
+      );
+      if (exists) {
+        const updated = currentMsgs.map(m =>
+          (m.id < 0 && m.senderId === msg.senderId && m.content === msg.content) ? msg : m
+        );
+        this.messagesSubject.next(updated);
+      } else {
+        this.messagesSubject.next([...currentMsgs, msg]);
+      }
+    }
+
+    this.newMessageSubject.next(msg);
+    this.updateConversationPreview(wsMsg, currentUserId);
+  }
+
+  private updateConversationPreview(wsMsg: WsIncomingMessage, currentUserId: number): void {
+    const convs = this.conversationsSubject.value;
+    const otherUserId = wsMsg.senderId === currentUserId ? wsMsg.receiverId : wsMsg.senderId;
+    const idx = convs.findIndex(c => c.otherUserId === otherUserId);
+    if (idx >= 0) {
+      const updated = [...convs];
+      updated[idx] = {
+        ...updated[idx],
+        lastMessage: wsMsg.content,
+        lastMessageTime: wsMsg.createdAt,
+        unreadCount: (wsMsg.senderId !== currentUserId && this.socketService.currentRoomId !== wsMsg.roomId)
+          ? updated[idx].unreadCount + 1
+          : updated[idx].unreadCount
+      };
+      this.conversationsSubject.next(updated);
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  //  POLLING GLOBALE (fallback + sync periodico)
+  // ══════════════════════════════════════════════════════════════
 
   startGlobalPolling(userId: number): void {
     if (this.globalPollingActive) return;
     this.globalPollingActive = true;
 
-    // Carica subito
     this.refreshUnreadCount(userId);
     this.refreshConversations(userId);
 
+    // Polling più lento quando WS è connesso, più veloce se WS è down
+    const getInterval = () => this.socketService.isConnected ? 15000 : 5000;
     this.globalPollInterval = setInterval(() => {
       if (!this.globalPollingActive) return;
       this.refreshUnreadCount(userId);
       this.refreshConversations(userId);
-    }, 5000);
+    }, getInterval());
   }
 
   stopGlobalPolling(): void {
@@ -149,18 +272,16 @@ export class ChatService {
     });
   }
 
-  // ── Polling messaggi (dentro una conversazione) ────────────
+  // ── Polling messaggi (fallback per quando WS non è connesso) ──
 
   startMessagePolling(currentUserId: number, otherUserId: number): void {
+    if (this.socketService.isConnected) return;
     this.stopMessagePolling();
     this.msgPollingActive = true;
-
     this.msgPollInterval = setInterval(() => {
       if (!this.msgPollingActive) return;
       this.getMessages(currentUserId, otherUserId).subscribe(msgs => {
-        if (msgs.length > 0) {
-          this.messagesSubject.next(msgs);
-        }
+        if (msgs.length > 0) this.messagesSubject.next(msgs);
       });
     }, 3000);
   }
@@ -183,4 +304,3 @@ export class ChatService {
     return this.conversationsSubject.value;
   }
 }
-

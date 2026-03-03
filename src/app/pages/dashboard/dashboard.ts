@@ -81,7 +81,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   visibleDayCount: number = 7;
   dayOffset: number = 0;
-  agendaView: boolean = false;
   // ── Accesso Call (Modal) ──────────────────────────────────
   isCallModalOpen: boolean = false;
   selectedCallBooking: any = null;
@@ -97,8 +96,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.updateVisibleDays();
       this.loadDashboardData();
 
-      // Avvia polling globale notifiche (gira sempre)
-      this.chatService.startGlobalPolling(this.currentUser.id);
+      // Inizializza chat real-time (WebSocket + polling fallback)
+      this.chatService.init(this.currentUser.id);
 
       // Sottoscrizione al conteggio globale non letti
       this.chatService.unreadCount$.subscribe(count => {
@@ -114,8 +113,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this.timeCheckInterval) {
       clearInterval(this.timeCheckInterval);
     }
-    this.chatService.stopMessagePolling();
-    this.chatService.stopGlobalPolling();
+    this.chatService.destroy();
   }
 
   // ── Responsive ───────────────────────────────────────────
@@ -624,8 +622,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const startDateTime = new Date(`${dateStr}T${timeStr}:00`);
-    const now = new Date();
 
     // allow join se (startTime - now) <= 30 minuti
     this.canJoinCallNow = true;

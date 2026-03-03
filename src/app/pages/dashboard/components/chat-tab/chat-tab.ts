@@ -2,6 +2,7 @@ import { Component, Input, inject, OnInit, OnDestroy, ChangeDetectorRef, ViewChi
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService, ChatMessage, Conversation } from '../../../../services/chat.service';
+import { SocketService } from '../../../../services/socket.service';
 
 @Component({
   selector: 'app-chat-tab',
@@ -13,6 +14,7 @@ import { ChatService, ChatMessage, Conversation } from '../../../../services/cha
 })
 export class ChatTabComponent implements OnInit, OnDestroy {
   private chatService = inject(ChatService);
+  private socketService = inject(SocketService);
   private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
@@ -29,12 +31,13 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   chatInput: string = '';
   chatLoading: boolean = false;
   chatView: 'list' | 'conversation' = 'list';
-  private chatSubscription: any = null;
+  private subscriptions: any[] = [];
 
   ngOnInit(): void {
     this.loadConversations();
-    // Subscribe to conversation updates from global polling
-    this.chatService.conversations$.subscribe(convs => {
+
+    // Subscribe to conversation updates (da polling globale + WS)
+    const convSub = this.chatService.conversations$.subscribe(convs => {
       if (convs && convs.length > 0) {
         const backendIds = new Set(convs.map(c => c.otherUserId));
         const localContacts = this.buildLocalConversations();
@@ -43,10 +46,28 @@ export class ChatTabComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       }
     });
+    this.subscriptions.push(convSub);
+
+    // Subscribe a messaggi real-time dal WebSocket (per la conversazione attiva)
+    const msgSub = this.chatService.messages$.subscribe(msgs => {
+      if (this.activeConversation && msgs.length > 0) {
+        // Ordina i messaggi e aggiorna solo se c'è una variazione
+        const sorted = this.sortMessages(msgs);
+        if (sorted.length !== this.chatMessages.length ||
+            (sorted.length > 0 && sorted[sorted.length - 1].id !== this.chatMessages[this.chatMessages.length - 1]?.id)) {
+          this.chatMessages = sorted;
+          this.cdr.detectChanges();
+          setTimeout(() => this.scrollToBottom(), 50);
+        }
+      }
+    });
+    this.subscriptions.push(msgSub);
   }
 
   ngOnDestroy(): void {
-    if (this.chatSubscription) { this.chatSubscription.unsubscribe(); this.chatSubscription = null; }
+    this.subscriptions.forEach(s => s.unsubscribe());
+    this.subscriptions = [];
+    this.chatService.leaveRoom();
     this.chatService.stopMessagePolling();
   }
 
@@ -90,43 +111,98 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     this.chatView = 'conversation';
     this.chatMessages = [];
     this.chatLoading = true;
-    if (this.chatSubscription) { this.chatSubscription.unsubscribe(); this.chatSubscription = null; }
+
+    // Entra nella stanza WebSocket
+    this.chatService.joinRoom(conv.otherUserId);
+
+    // Carica storico messaggi via REST
     this.chatService.getMessages(this.currentUser.id, conv.otherUserId).subscribe({
-      next: (msgs) => { this.chatMessages = this.sortMessages(msgs); this.chatLoading = false; this.cdr.detectChanges(); setTimeout(() => this.scrollToBottom(), 50); },
-      error: () => { this.chatLoading = false; this.cdr.detectChanges(); }
-    });
-    this.chatService.markAsRead(this.currentUser.id, conv.otherUserId).subscribe();
-    conv.unreadCount = 0;
-    this.chatService.startMessagePolling(this.currentUser.id, conv.otherUserId);
-    this.chatSubscription = this.chatService.messages$.subscribe(msgs => {
-      if (msgs.length > 0 && msgs.length !== this.chatMessages.length) {
+      next: (msgs) => {
         this.chatMessages = this.sortMessages(msgs);
+        this.chatLoading = false;
         this.cdr.detectChanges();
         setTimeout(() => this.scrollToBottom(), 50);
-      }
+      },
+      error: () => { this.chatLoading = false; this.cdr.detectChanges(); }
     });
+
+    // Segna come letti (via WS se connesso, altrimenti REST)
+    if (this.socketService.isConnected) {
+      this.chatService.markAsReadRealTime(conv.otherUserId);
+    } else {
+      this.chatService.markAsRead(this.currentUser.id, conv.otherUserId).subscribe();
+    }
+    conv.unreadCount = 0;
+
+    // Avvia polling messaggi solo come fallback se WS non è connesso
+    this.chatService.startMessagePolling(this.currentUser.id, conv.otherUserId);
   }
 
   sendChatMessage(): void {
     const text = this.chatInput.trim();
     if (!text || !this.activeConversation) return;
+
     const receiverId = this.activeConversation.otherUserId;
-    const localMsg: ChatMessage = { id: Date.now(), senderId: this.currentUser.id, senderName: `${this.currentUser.firstName} ${this.currentUser.lastName}`, receiverId, receiverName: this.activeConversation.otherUserName, content: text, status: 'SENT', createdAt: new Date().toISOString() };
-    this.chatMessages = [...this.chatMessages, localMsg];
-    this.chatInput = '';
-    this.cdr.detectChanges();
-    this.scrollToBottom();
-    if (this.activeConversation) { this.activeConversation.lastMessage = text; this.activeConversation.lastMessageTime = localMsg.createdAt; }
-    this.chatService.sendMessage({ senderId: this.currentUser.id, receiverId, content: text }).subscribe({
-      next: (savedMsg) => { this.chatMessages = this.chatMessages.map(m => m.id === localMsg.id ? savedMsg : m); this.cdr.detectChanges(); },
-      error: (err) => { console.warn('Errore invio messaggio', err); }
-    });
+    const senderName = `${this.currentUser.firstName} ${this.currentUser.lastName}`;
+    const receiverName = this.activeConversation.otherUserName;
+
+    if (this.socketService.isConnected) {
+      // ── Real-time via WebSocket ──
+      const localMsg = this.chatService.sendMessageRealTime(
+        this.currentUser.id, receiverId, text, senderName, receiverName
+      );
+      this.chatMessages = [...this.chatMessages, localMsg];
+      this.chatInput = '';
+      this.cdr.detectChanges();
+      this.scrollToBottom();
+
+      // Aggiorna preview conversazione
+      if (this.activeConversation) {
+        this.activeConversation.lastMessage = text;
+        this.activeConversation.lastMessageTime = localMsg.createdAt;
+      }
+    } else {
+      // ── Fallback REST ──
+      const localMsg: ChatMessage = {
+        id: -Date.now(),
+        senderId: this.currentUser.id,
+        senderName,
+        receiverId,
+        receiverName,
+        content: text,
+        status: 'SENT',
+        createdAt: new Date().toISOString()
+      };
+      this.chatMessages = [...this.chatMessages, localMsg];
+      this.chatInput = '';
+      this.cdr.detectChanges();
+      this.scrollToBottom();
+
+      if (this.activeConversation) {
+        this.activeConversation.lastMessage = text;
+        this.activeConversation.lastMessageTime = localMsg.createdAt;
+      }
+
+      this.chatService.sendMessage({ senderId: this.currentUser.id, receiverId, content: text }).subscribe({
+        next: (savedMsg) => {
+          this.chatMessages = this.chatMessages.map(m => m.id === localMsg.id ? savedMsg : m);
+          this.cdr.detectChanges();
+        },
+        error: (err) => { console.warn('Errore invio messaggio', err); }
+      });
+    }
   }
 
   backToConversations(): void {
-    this.chatView = 'list'; this.activeConversation = null; this.chatMessages = [];
-    if (this.chatSubscription) { this.chatSubscription.unsubscribe(); this.chatSubscription = null; }
-    this.chatService.clearMessages(); this.chatService.stopMessagePolling(); this.loadConversations();
+    this.chatView = 'list';
+    this.activeConversation = null;
+    this.chatMessages = [];
+
+    // Lascia la stanza WebSocket
+    this.chatService.leaveRoom();
+    this.chatService.clearMessages();
+    this.chatService.stopMessagePolling();
+    this.loadConversations();
   }
 
   isMyMessage(msg: ChatMessage): boolean { return msg.senderId === this.currentUser?.id; }
