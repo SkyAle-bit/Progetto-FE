@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthService } from '../../../../services/auth.service';
 
 @Component({
@@ -12,6 +13,7 @@ import { AuthService } from '../../../../services/auth.service';
 export class ClientsTabComponent {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
+  private sanitizer = inject(DomSanitizer);
 
   @Input() myClients: any[] = [];
   @Input() currentUser: any;
@@ -22,6 +24,13 @@ export class ClientsTabComponent {
   clientDocsLoading: boolean = false;
   docFilterType: string = 'ALL';
   isUploading: boolean = false;
+
+  // PDF Viewer inline
+  pdfViewerOpen: boolean = false;
+  pdfViewerUrl: SafeResourceUrl | null = null;
+  pdfViewerFileName: string = '';
+  pdfViewerLoading: boolean = false;
+  private currentBlobUrl: string | null = null;
 
   openClientDetail(client: any): void {
     this.selectedClient = client;
@@ -67,10 +76,41 @@ export class ClientsTabComponent {
   }
 
   viewDocument(doc: any): void {
+    this.pdfViewerLoading = true;
+    this.pdfViewerFileName = doc.fileName;
+    this.pdfViewerOpen = true;
+    this.cdr.detectChanges();
+
     this.authService.downloadDocument(doc.id).subscribe({
-      next: (blob) => { const url = URL.createObjectURL(blob); window.open(url, '_blank'); },
-      error: () => { this.showPopup.emit({title: 'Errore', message: 'Impossibile aprire il documento.'}); }
+      next: (blob) => {
+        // Revoca URL precedente se esiste
+        if (this.currentBlobUrl) URL.revokeObjectURL(this.currentBlobUrl);
+        this.currentBlobUrl = URL.createObjectURL(blob);
+        this.pdfViewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.currentBlobUrl);
+        this.pdfViewerLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.pdfViewerOpen = false;
+        this.pdfViewerLoading = false;
+        this.showPopup.emit({title: 'Errore', message: 'Impossibile aprire il documento.'});
+        this.cdr.detectChanges();
+      }
     });
+  }
+
+  closePdfViewer(): void {
+    this.pdfViewerOpen = false;
+    this.pdfViewerUrl = null;
+    this.pdfViewerFileName = '';
+    if (this.currentBlobUrl) {
+      URL.revokeObjectURL(this.currentBlobUrl);
+      this.currentBlobUrl = null;
+    }
+  }
+
+  openPdfInNewTab(): void {
+    if (this.currentBlobUrl) window.open(this.currentBlobUrl, '_blank');
   }
 
   deleteDoc(doc: any): void {
