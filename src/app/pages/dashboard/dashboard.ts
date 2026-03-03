@@ -128,9 +128,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   updateVisibleDays(): void {
     const w = window.innerWidth;
-    if (w <= 640) {
-      this.visibleDayCount = 3;          // mobile: 3 giorni (come tablet)
-    } else if (w <= 1024) {
+    if (w < 640) {
+      this.visibleDayCount = 3;          // mobile
+    } else if (w < 1024) {
       this.visibleDayCount = 3;          // tablet
     } else {
       this.visibleDayCount = 7;          // desktop

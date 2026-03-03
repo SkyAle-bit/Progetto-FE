@@ -39,7 +39,7 @@ export class CalendarTabComponent implements OnInit {
 
   updateVisibleDays(): void {
     const w = window.innerWidth;
-    this.visibleDayCount = w <= 1024 ? 3 : 7;
+    this.visibleDayCount = w < 1024 ? 3 : 7;
     this.buildWeekDays();
   }
 

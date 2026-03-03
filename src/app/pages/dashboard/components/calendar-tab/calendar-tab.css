@@ -1,0 +1,252 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   CALENDARIO — stili specifici del calendar-tab
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Nav buttons ────────────────────────────────────────────────────────── */
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(201, 169, 110, 0.50);
+  color: #e8c97a;
+}
+
+.today-btn:hover {
+  background: rgba(201, 169, 110, 0.26);
+  box-shadow: 0 0 12px rgba(201, 169, 110, 0.20);
+}
+
+/* ── Toggle vista Agenda (solo mobile) ─────────────────────────────────── */
+.agenda-toggle-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.60);
+  font-size: 1rem;
+}
+
+.agenda-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(201, 169, 110, 0.40);
+  color: #e8c97a;
+}
+
+.agenda-toggle-btn.active {
+  background: rgba(201, 169, 110, 0.18);
+  border-color: rgba(201, 169, 110, 0.55);
+  color: #e8c97a;
+  box-shadow: 0 0 10px rgba(201, 169, 110, 0.18);
+}
+
+/* ── Agenda view: booking row hover ────────────────────────────────────── */
+.agenda-booking-row {
+  transition: box-shadow 0.15s, transform 0.1s;
+  cursor: default;
+}
+
+.agenda-booking-row:active {
+  transform: scale(0.99);
+  box-shadow: 0 1px 4px rgba(26, 52, 98, 0.08);
+}
+
+/* Badge data "oggi" — highlight champagne */
+.today-badge {
+  border-color: #c9a96e !important;
+  background: rgba(201, 169, 110, 0.08);
+}
+
+/* ── Scrollbar nascosta ─────────────────────────────────────────────────── */
+.calendar-grid-scroll {
+  scrollbar-width: none;
+}
+
+.calendar-grid-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Slot labels e celle ────────────────────────────────────────────────── */
+.time-slot-label {
+  height: 50px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 0.25rem 0.6rem 0 0;
+  font-size: 0.62rem;
+  color: #ccd8ed;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.time-slot-label.full-hour {
+  border-top: 1px solid #ccd8ed;
+  color: #8fa3c8;
+}
+
+.time-slot-label.half-hour {
+  border-top: 1px dashed rgba(204, 216, 237, 0.50);
+  color: transparent;
+}
+
+.hour-cell {
+  height: 50px;
+  padding: 2px 4px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hour-cell.full-hour {
+  border-top: 1px solid #ccd8ed;
+}
+
+.hour-cell.half-hour {
+  border-top: 1px dashed rgba(204, 216, 237, 0.45);
+}
+
+/* ── nth-child: nascondi colonne eccedenti per breakpoint ──────────────── */
+@media (max-width: 1023px) and (min-width: 640px) {
+  .day-header:nth-child(n+5),
+  .day-col:nth-child(n+5) {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .day-header:nth-child(n+5),
+  .day-col:nth-child(n+5) {
+    display: none;
+  }
+
+  .hour-cell {
+    height: 54px;
+    padding: 1px 2px;
+  }
+
+  .time-slot-label {
+    height: 54px;
+    font-size: 0.55rem;
+    padding: 0.2rem 0.3rem 0 0;
+  }
+
+  .booking-card {
+    font-size: 0.60rem;
+    padding: 2px 5px;
+    line-height: 1.25;
+  }
+
+  .booking-time {
+    font-size: 0.52rem;
+  }
+
+  .booking-name {
+    font-size: 0.60rem;
+  }
+
+  .booking-status {
+    font-size: 0.52rem;
+  }
+}
+
+/* ── Today highlight ────────────────────────────────────────────────────── */
+.day-name {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.day-number {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.day-header.today .day-name {
+  color: #e8c97a;
+}
+
+.day-number.today-circle {
+  background: linear-gradient(135deg, #c9a96e, #e8c97a);
+  color: #1a3462;
+  font-weight: 700;
+  box-shadow: 0 2px 12px rgba(201, 169, 110, 0.40);
+}
+
+.day-col.today-col {
+  background: rgba(201, 169, 110, 0.04);
+}
+
+/* ── Booking cards ──────────────────────────────────────────────────────── */
+.booking-card {
+  border-radius: 5px;
+  padding: 3px 7px;
+  font-size: 0.67rem;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  border-left: 2px solid;
+  overflow: hidden;
+  flex-shrink: 0;
+  line-height: 1.35;
+}
+
+.booking-card:hover {
+  opacity: 0.85;
+  transform: translateX(2px);
+  box-shadow: 0 2px 8px rgba(26, 52, 98, 0.12);
+}
+
+.booking-pt {
+  background: rgba(26, 52, 98, 0.10);
+  border-color: #1a3462;
+  color: #1a3462;
+}
+
+.booking-nutrition {
+  background: rgba(45, 95, 168, 0.10);
+  border-color: #2d5fa8;
+  color: #1e4080;
+}
+
+.booking-cancelled {
+  background: rgba(143, 163, 200, 0.08);
+  border-color: #ccd8ed;
+  color: #8fa3c8;
+  opacity: 0.60;
+}
+
+.booking-time {
+  font-size: 0.59rem;
+  opacity: 0.68;
+  white-space: nowrap;
+}
+
+.booking-name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.booking-status {
+  font-size: 0.59rem;
+  opacity: 0.78;
+}
+
+/* ── Small phones (<360px) ─────────────────────────────────────────────── */
+@media (max-width: 360px) {
+  .time-slot-label {
+    font-size: 0.50rem;
+    padding: 0.15rem 0.2rem 0 0;
+  }
+
+  .booking-card {
+    font-size: 0.55rem;
+    padding: 2px 3px;
+  }
+
+  .booking-time {
+    font-size: 0.48rem;
+  }
+}
+
+/* ── Loading spinner ───────────────────────────────────────────────────── */
+.loading-spinner {
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
