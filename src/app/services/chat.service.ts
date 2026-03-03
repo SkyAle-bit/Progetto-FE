@@ -323,4 +323,8 @@ export class ChatService {
   getConversationsSnapshot(): Conversation[] {
     return this.conversationsSubject.value;
   }
+
+  getMessagesSnapshot(): ChatMessage[] {
+    return this.messagesSubject.value;
+  }
 }

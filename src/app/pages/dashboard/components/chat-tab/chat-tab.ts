@@ -36,6 +36,14 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadConversations();
 
+    // Se c'era una conversazione attiva (ritorno da altro tab), ripristina
+    const currentMsgs = this.chatService.getMessagesSnapshot();
+    if (this.activeConversation && currentMsgs.length > 0) {
+      this.chatMessages = this.sortMessages(currentMsgs);
+      this.chatView = 'conversation';
+      setTimeout(() => this.scrollToBottom(), 100);
+    }
+
     // Subscribe to conversation updates (da polling globale + WS)
     const convSub = this.chatService.conversations$.subscribe(convs => {
       if (convs && convs.length > 0) {
@@ -67,7 +75,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = [];
-    this.chatService.leaveRoom();
+    // NON chiamare leaveRoom/clearMessages qui — l'utente potrebbe tornare alla chat
     this.chatService.stopMessagePolling();
   }
 
@@ -109,16 +117,18 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   openConversation(conv: Conversation): void {
     this.activeConversation = conv;
     this.chatView = 'conversation';
-    this.chatMessages = [];
     this.chatLoading = true;
 
     // Entra nella stanza WebSocket
     this.chatService.joinRoom(conv.otherUserId);
 
-    // Carica storico messaggi via REST
+    // Carica storico messaggi via REST e unisci con eventuali messaggi locali ottimistici
     this.chatService.getMessages(this.currentUser.id, conv.otherUserId).subscribe({
-      next: (msgs) => {
-        this.chatMessages = this.sortMessages(msgs);
+      next: (serverMsgs) => {
+        // Mantieni i messaggi locali ottimistici (id < 0) non ancora confermati dal server
+        const localOptimistic = this.chatMessages.filter(m => m.id < 0 &&
+          !serverMsgs.some(sm => sm.senderId === m.senderId && sm.content === m.content));
+        this.chatMessages = this.sortMessages([...serverMsgs, ...localOptimistic]);
         this.chatLoading = false;
         this.cdr.detectChanges();
         setTimeout(() => this.scrollToBottom(), 50);
