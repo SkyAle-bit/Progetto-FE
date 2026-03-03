@@ -1,6 +1,5 @@
 import { Injectable, inject, NgZone } from '@angular/core';
 import { Client, IMessage, StompSubscription } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -74,11 +73,11 @@ export class SocketService {
     if (this.client?.connected) return;
     this.currentUserId = userId;
 
-    const sockJsUrl = environment.apiUrl + '/ws';
+    // Converte http(s) in ws(s) per WebSocket nativo
+    const wsUrl = environment.apiUrl.replace(/^http/, 'ws') + '/ws/websocket';
 
     this.client = new Client({
-      // Usa SockJS come fallback per browser/proxy che bloccano WS
-      webSocketFactory: () => new SockJS(sockJsUrl) as any,
+      brokerURL: wsUrl,
       connectHeaders: {
         userId: userId.toString()
       },

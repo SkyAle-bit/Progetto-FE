@@ -29,8 +29,7 @@
               "src/styles.css"
             ],
             "allowedCommonJsDependencies": [
-              "@stomp/stompjs",
-              "sockjs-client"
+              "@stomp/stompjs"
             ]
           },
           "configurations": {
