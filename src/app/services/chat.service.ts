@@ -44,6 +44,9 @@ export class ChatService {
   private messagesSubject = new BehaviorSubject<ChatMessage[]>([]);
   private unreadCountSubject = new BehaviorSubject<number>(0);
 
+  /** Conversazione attiva — persiste anche quando il componente chat viene distrutto */
+  private _activeConversation: Conversation | null = null;
+
   conversations$ = this.conversationsSubject.asObservable();
   messages$ = this.messagesSubject.asObservable();
   unreadCount$ = this.unreadCountSubject.asObservable();
@@ -326,5 +329,13 @@ export class ChatService {
 
   getMessagesSnapshot(): ChatMessage[] {
     return this.messagesSubject.value;
+  }
+
+  get activeConversation(): Conversation | null {
+    return this._activeConversation;
+  }
+
+  set activeConversation(conv: Conversation | null) {
+    this._activeConversation = conv;
   }
 }

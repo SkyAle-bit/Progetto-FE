@@ -36,9 +36,11 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadConversations();
 
-    // Se c'era una conversazione attiva (ritorno da altro tab), ripristina
+    // Ripristina conversazione attiva dal service (sopravvive alla distruzione del componente)
+    const savedConv = this.chatService.activeConversation;
     const currentMsgs = this.chatService.getMessagesSnapshot();
-    if (this.activeConversation && currentMsgs.length > 0) {
+    if (savedConv && currentMsgs.length > 0) {
+      this.activeConversation = savedConv;
       this.chatMessages = this.sortMessages(currentMsgs);
       this.chatView = 'conversation';
       setTimeout(() => this.scrollToBottom(), 100);
@@ -116,6 +118,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
   openConversation(conv: Conversation): void {
     this.activeConversation = conv;
+    this.chatService.activeConversation = conv;  // Persisti nel service
     this.chatView = 'conversation';
     this.chatLoading = true;
 
@@ -206,6 +209,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   backToConversations(): void {
     this.chatView = 'list';
     this.activeConversation = null;
+    this.chatService.activeConversation = null;  // Pulisci nel service
     this.chatMessages = [];
 
     // Lascia la stanza WebSocket
