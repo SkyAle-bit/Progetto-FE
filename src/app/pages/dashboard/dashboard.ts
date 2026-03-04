@@ -15,11 +15,15 @@ import { AdminPlansTabComponent } from './components/admin-plans-tab/admin-plans
 import { InsuranceHomeTabComponent } from './components/insurance-home-tab/insurance-home-tab';
 import { BookCallTabComponent } from './components/book-call-tab/book-call-tab';
 import { MyServicesTabComponent } from './components/my-services-tab/my-services-tab';
+import { AdminStatsTabComponent } from './components/admin-stats-tab/admin-stats-tab';
+import { ToastComponent } from '../../components/toast/toast';
+import { ToastService } from '../../services/toast.service';
+import { PullToRefreshDirective } from '../../directives/pull-to-refresh.directive';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, AdminHomeTabComponent, AdminUsersTabComponent, AdminPlansTabComponent, InsuranceHomeTabComponent, BookCallTabComponent, MyServicesTabComponent],
+  imports: [CommonModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, AdminHomeTabComponent, AdminUsersTabComponent, AdminPlansTabComponent, InsuranceHomeTabComponent, BookCallTabComponent, MyServicesTabComponent, AdminStatsTabComponent, ToastComponent, PullToRefreshDirective],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -28,6 +32,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private chatService = inject(ChatService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private toast = inject(ToastService);
 
   currentUser: any = null;
   dashboardData: any = null;
@@ -46,6 +51,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // ── Chat (solo badge globale) ───────────────────────────
   globalUnreadCount: number = 0;
 
+  // ── Statistiche professionista ─────────────────────────
+  proStats: any = null;
+
+  // ── Cronologia attività ────────────────────────────────
+  activityFeed: any[] = [];
+
   // ── Modale Successo Globale ───────────────────────────────
   isPopupOpen: boolean = false;
   popupTitle: string = '';
@@ -58,7 +69,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   showPopupMessage(title: string, message: string): void {
-    this.openPopup(title, message);
+    // Determina il tipo di toast dal titolo
+    const t = title.toLowerCase();
+    if (t.includes('errore') || t.includes('error')) {
+      this.toast.error(title, message);
+    } else if (t.includes('attenzione') || t.includes('warning')) {
+      this.toast.warning(title, message);
+    } else {
+      this.toast.success(title, message);
+    }
   }
 
   closePopup(): void {
@@ -166,6 +185,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
               this.myClients = Array.isArray(res) ? res : (res && res.value) ? res.value : [];
               this.isLoading = false;
               this.cdr.detectChanges();
+              // Carica statistiche professionista
+              this.loadProStats();
+              this.loadActivityFeed();
             },
             error: (err) => {
               console.error('Errore caricamento mini-lista clienti', err);
@@ -176,6 +198,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         } else {
           this.isLoading = false;
           this.cdr.detectChanges();
+          this.loadActivityFeed();
         }
       },
       error: (err) => {
@@ -207,6 +230,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   reloadAdminData(): void {
     this.loadAdminInsuranceData();
+  }
+
+  private loadProStats(): void {
+    if (!this.isProfessional() || !this.currentUser?.id) return;
+    this.authService.getProfessionalStats(this.currentUser.id).subscribe({
+      next: (stats) => {
+        this.proStats = stats;
+        this.cdr.detectChanges();
+      },
+      error: () => { /* silently ignore */ }
+    });
+  }
+
+  // ── Cronologia Attività ──────────────────────────────────
+
+  private loadActivityFeed(): void {
+    if (!this.currentUser?.id) return;
+    this.authService.getActivityFeed(this.currentUser.id).subscribe({
+      next: (feed) => {
+        this.activityFeed = feed || [];
+        this.cdr.detectChanges();
+      },
+      error: () => { /* silently ignore */ }
+    });
+  }
+
+  // ── Pull-to-Refresh ─────────────────────────────────────
+
+  onPullRefresh(): void {
+    if (this.isAdmin() || this.isInsuranceManager()) {
+      this.loadAdminInsuranceData();
+    } else {
+      this.loadDashboardData();
+    }
   }
 
   // ── Accessori dati ───────────────────────────────────────
@@ -374,7 +431,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (this.existingSlots.has(key)) {
       if (this.lockedSlots.has(key)) {
-        this.openPopup('Slot Prenotato', 'Questo slot è già stato prenotato da un cliente e non può essere rimosso.');
+        this.toast.warning('Slot Prenotato', 'Questo slot è già stato prenotato da un cliente e non può essere rimosso.');
       } else {
         const slotId = this.existingSlotIds.get(key);
         if (slotId && confirm('Vuoi rimuovere questa disponibilità?')) {
@@ -390,7 +447,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             error: (err) => {
               console.error('Errore rimozione slot', err);
               this.isLoading = false;
-              this.openPopup('Errore', 'Impossibile rimuovere lo slot in questo momento.');
+              this.toast.error('Errore', 'Impossibile rimuovere lo slot in questo momento.');
               this.cdr.detectChanges();
             }
           });
@@ -424,7 +481,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   confirmAvailability(): void {
     if (this.selectedSlots.size === 0) {
-      alert("Nessuno slot selezionato.");
+      this.toast.warning('Attenzione', 'Nessuno slot selezionato.');
       return;
     }
 
@@ -450,7 +507,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.authService.createProfessionalSlots(this.currentUser.id, slotsPayload).subscribe({
       next: () => {
-        this.openPopup('Disponibilità Confermate', 'I tuoi slot sono stati salvati con successo. I clienti potranno ora prenotarli.');
+        this.toast.success('Disponibilità Confermate', 'I tuoi slot sono stati salvati con successo. I clienti potranno ora prenotarli.');
         this.selectedSlots.clear();
         this.copiedDay = null;
         this.isLoading = false;
@@ -460,7 +517,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Errore salvataggio disponibilità', err);
-        this.openPopup('Errore', 'Si è verificato un errore durante il salvataggio. Riprova più tardi.');
+        this.toast.error('Errore', 'Si è verificato un errore durante il salvataggio. Riprova più tardi.');
         this.isLoading = false;
       }
     });
@@ -608,7 +665,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.authService.createBooking(request).subscribe({
       next: () => {
-        this.openPopup('Prenotazione Confermata', `Hai prenotato con successo un appuntamento per il ${this.selectedBookingDay?.toLocaleDateString('it-IT')} alle ${this.getSlotTimeLabel(this.selectedBookingSlot)}.`);
+        this.toast.success('Prenotazione Confermata', `Hai prenotato con successo un appuntamento per il ${this.selectedBookingDay?.toLocaleDateString('it-IT')} alle ${this.getSlotTimeLabel(this.selectedBookingSlot)}.`);
         this.closeBooking();
         this.loadDashboardData();
       },
@@ -617,7 +674,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         let errMsg = 'Errore durante la prenotazione';
         if (err.error && err.error.message) errMsg = err.error.message;
         else if (err.error && typeof err.error === 'string') errMsg = err.error;
-        this.openPopup('Errore di Prenotazione', errMsg);
+        this.toast.error('Errore di Prenotazione', errMsg);
         this.isLoading = false;
         this.cdr.detectChanges();
       }

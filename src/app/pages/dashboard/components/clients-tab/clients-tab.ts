@@ -26,6 +26,10 @@ export class ClientsTabComponent {
   docFilterType: string = 'ALL';
   isUploading: boolean = false;
 
+  // Drag & Drop
+  isDragOver: boolean = false;
+  dragCounter: number = 0;
+
   // Notes editing
   editingNotesDocId: number | null = null;
   editingNotesText: string = '';
@@ -79,6 +83,88 @@ export class ClientsTabComponent {
       next: () => { this.isUploading = false; this.showPopup.emit({title: 'Caricato!', message: `${type === 'WORKOUT_PLAN' ? 'Scheda' : 'Dieta'} caricata con successo.`}); this.loadClientDocuments(); input.value = ''; },
       error: () => { this.isUploading = false; this.showPopup.emit({title: 'Errore', message: 'Impossibile caricare il file. Riprova.'}); input.value = ''; }
     });
+  }
+
+  // ── Drag & Drop ──────────────────────────────────────────
+
+  onDragEnter(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dragCounter++;
+    if (event.dataTransfer?.types.includes('Files')) {
+      this.isDragOver = true;
+      this.cdr.detectChanges();
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.dragCounter--;
+    if (this.dragCounter === 0) {
+      this.isDragOver = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+    this.dragCounter = 0;
+    this.cdr.detectChanges();
+
+    if (this.isUploading || !this.selectedClient) return;
+
+    const files = event.dataTransfer?.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+
+    if (file.type !== 'application/pdf') {
+      this.showPopup.emit({ title: 'Errore', message: 'Puoi caricare solo file PDF.' });
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      this.showPopup.emit({ title: 'Errore', message: 'Il file non può superare i 10MB.' });
+      return;
+    }
+
+    // Determina il tipo di documento in base al ruolo
+    const type = this.getUploadType();
+    if (!type) return;
+
+    this.isUploading = true;
+    this.cdr.detectChanges();
+    this.authService.uploadDocument(file, this.selectedClient.id, this.currentUser.id, type).subscribe({
+      next: () => {
+        this.isUploading = false;
+        this.showPopup.emit({ title: 'Caricato!', message: `${type === 'WORKOUT_PLAN' ? 'Scheda' : 'Dieta'} caricata con successo.` });
+        this.loadClientDocuments();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isUploading = false;
+        this.showPopup.emit({ title: 'Errore', message: 'Impossibile caricare il file. Riprova.' });
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  getUploadType(): string | null {
+    if (this.currentUser?.role === 'PERSONAL_TRAINER') return 'WORKOUT_PLAN';
+    if (this.currentUser?.role === 'NUTRITIONIST') return 'DIET_PLAN';
+    return null;
+  }
+
+  getDropzoneLabel(): string {
+    if (this.currentUser?.role === 'PERSONAL_TRAINER') return 'Trascina qui una scheda PDF';
+    if (this.currentUser?.role === 'NUTRITIONIST') return 'Trascina qui una dieta PDF';
+    return 'Trascina qui un PDF';
   }
 
   viewDocument(doc: any): void {

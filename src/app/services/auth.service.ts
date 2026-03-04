@@ -139,4 +139,16 @@ export class AuthService {
   updateDocumentNotes(documentId: number, notes: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/api/documents/${documentId}/notes`, { notes });
   }
+
+  getProfessionalStats(professionalId: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/professional/stats/${professionalId}`);
+  }
+
+  getActivityFeed(userId: number, days: number = 14, limit: number = 15): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/activity/feed/${userId}?days=${days}&limit=${limit}`);
+  }
+
+  getAdminStats(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/admin/stats`);
+  }
 }

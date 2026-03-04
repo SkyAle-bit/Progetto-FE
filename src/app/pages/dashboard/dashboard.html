@@ -100,6 +100,16 @@
           </svg>
           Piani
         </button>
+        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap"
+          *ngIf="isAdmin()"
+          [class.active]="activeTab === 'admin-stats'"
+          (click)="setTab('admin-stats')">
+          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+          </svg>
+          Statistiche
+        </button>
         <!-- INSURANCE: nessun tab separato Polizze, tutto in Home -->
       </nav>
 
@@ -184,7 +194,8 @@
          │  Visibile su mobile quando activeTab === 'home'      │
          │  Su desktop il calendario è sempre visibile          │
          └──────────────────────────────────────────────────────┘ -->
-    <div class="tab-home flex-1 overflow-y-auto" *ngIf="activeTab === 'home' && !isAdmin() && !isInsuranceManager()">
+    <div class="tab-home flex-1 overflow-y-auto" *ngIf="activeTab === 'home' && !isAdmin() && !isInsuranceManager()"
+      appPullToRefresh (refresh)="onPullRefresh()">
       <app-home-tab *ngIf="!isLoading && dashboardData"
         [currentUser]="currentUser"
         [profile]="profile"
@@ -195,6 +206,8 @@
         [isProfessional]="isProfessional()"
         [isClient]="isClient()"
         [weekBookingsCount]="countWeekBookings()"
+        [proStats]="proStats"
+        [activityFeed]="activityFeed"
         (openAvailabilityEvent)="openAvailability()"
         (setTabEvent)="setTab($event)">
       </app-home-tab>
@@ -233,6 +246,7 @@
          └──────────────────────────────────────────────────────┘ -->
     <app-clients-tab class="flex-1 overflow-y-auto"
       *ngIf="activeTab === 'clients' && isProfessional()"
+      appPullToRefresh (refresh)="onPullRefresh()"
       [myClients]="myClients"
       [currentUser]="currentUser"
       (showPopup)="showPopupMessage($event.title, $event.message)">
@@ -243,6 +257,7 @@
          └──────────────────────────────────────────────────────┘ -->
     <app-book-call-tab class="flex-1 overflow-y-auto"
       *ngIf="activeTab === 'book-call' && isClient()"
+      appPullToRefresh (refresh)="onPullRefresh()"
       [professionals]="professionals"
       (bookProfessional)="openBooking($event)">
     </app-book-call-tab>
@@ -252,6 +267,7 @@
          └──────────────────────────────────────────────────────┘ -->
     <app-my-services-tab class="flex-1 overflow-y-auto"
       *ngIf="activeTab === 'my-services' && isClient()"
+      appPullToRefresh (refresh)="onPullRefresh()"
       [currentUser]="currentUser">
     </app-my-services-tab>
 
@@ -260,6 +276,7 @@
          └──────────────────────────────────────────────────────┘ -->
     <app-admin-home-tab class="flex-1 overflow-y-auto"
       *ngIf="activeTab === 'home' && isAdmin()"
+      appPullToRefresh (refresh)="onPullRefresh()"
       [currentUser]="currentUser"
       [allUsers]="allUsers"
       [allPlans]="allPlans"
@@ -288,10 +305,19 @@
     </app-admin-plans-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
+         │  TAB: ADMIN STATISTICHE (solo admin)                 │
+         └──────────────────────────────────────────────────────┘ -->
+    <app-admin-stats-tab class="flex-1 overflow-y-auto"
+      *ngIf="activeTab === 'admin-stats' && isAdmin()"
+      appPullToRefresh (refresh)="onPullRefresh()">
+    </app-admin-stats-tab>
+
+    <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: INSURANCE HOME (solo insurance manager)        │
          └──────────────────────────────────────────────────────┘ -->
     <app-insurance-home-tab class="flex-1 overflow-y-auto"
       *ngIf="(activeTab === 'home' || activeTab === 'insurance') && isInsuranceManager()"
+      appPullToRefresh (refresh)="onPullRefresh()"
       [currentUser]="currentUser"
       [allSubscriptions]="allSubscriptions"
       [allUsers]="allUsers">
@@ -388,6 +414,16 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
       </svg>
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Piani</span>
+    </button>
+
+    <!-- Tab: Statistiche (admin) -->
+    <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
+      *ngIf="isAdmin()"
+      [class.active]="activeTab === 'admin-stats'" (click)="setTab('admin-stats')">
+      <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+      </svg>
+      <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Stats</span>
     </button>
 
   </nav>
@@ -655,13 +691,7 @@
     </div>
   </div>
 
-  <!-- ── MODALE SUCCESSO GLOBALE ── -->
-  <div class="fixed inset-0 bg-[#1a2744]/50 z-[3000]" *ngIf="isPopupOpen" (click)="closePopup()"></div>
-  <div class="global-popup fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-8 z-[3001] text-center max-w-sm w-[90%] shadow-[0_24px_80px_rgba(26,52,98,0.25)]" *ngIf="isPopupOpen">
-    <div class="text-[2.5rem] mb-4">✓</div>
-    <div class="font-['Darker_Grotesque'] text-[1.35rem] font-extrabold text-[#1a2744] mb-2">{{ popupTitle }}</div>
-    <div class="text-[0.9rem] text-[#8fa3c8] mb-6">{{ popupMessage }}</div>
-    <button class="btn-avail-confirm w-full" (click)="closePopup()">OK, ho capito</button>
-  </div>
+  <!-- ── TOAST NOTIFICATIONS ── -->
+  <app-toast></app-toast>
 
 </div>

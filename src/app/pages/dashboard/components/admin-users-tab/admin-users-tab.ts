@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, inject, ChangeDetectorRef } fro
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
+import { ToastService } from '../../../../services/toast.service';
 
 @Component({
   selector: 'app-admin-users-tab',
@@ -13,6 +14,7 @@ import { AuthService } from '../../../../services/auth.service';
 export class AdminUsersTabComponent {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
+  private toast = inject(ToastService);
 
   @Input() allUsers: any[] = [];
   @Input() allPlans: any[] = [];
@@ -114,6 +116,7 @@ export class AdminUsersTabComponent {
       next: () => {
         this.creating = false;
         this.showCreateModal = false;
+        this.toast.success('Utente Creato', `${this.newUser.firstName} ${this.newUser.lastName} è stato creato con successo.`);
         this.usersChanged.emit();
       },
       error: (err) => {
@@ -127,8 +130,8 @@ export class AdminUsersTabComponent {
   deleteUser(user: any): void {
     if (!confirm(`Eliminare l'utente ${user.firstName} ${user.lastName}?`)) return;
     this.authService.deleteUser(user.id).subscribe({
-      next: () => { this.usersChanged.emit(); },
-      error: (err) => { alert(err.error?.error || 'Errore nell\'eliminazione'); }
+      next: () => { this.toast.success('Eliminato', 'Utente eliminato con successo.'); this.usersChanged.emit(); },
+      error: (err) => { this.toast.error('Errore', err.error?.error || 'Errore nell\'eliminazione'); }
     });
   }
 

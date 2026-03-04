@@ -19,6 +19,12 @@ export class HomeTabComponent {
   @Input() isClient: boolean = false;
   @Input() weekBookingsCount: number = 0;
 
+  // ── Statistiche professionista ──
+  @Input() proStats: any = null;
+
+  // ── Cronologia attività ──
+  @Input() activityFeed: any[] = [];
+
   @Output() openAvailabilityEvent = new EventEmitter<void>();
   @Output() setTabEvent = new EventEmitter<string>();
 
@@ -44,5 +50,14 @@ export class HomeTabComponent {
       return `${role} – ${b.professionalName ?? ''}`;
     }
     return b.clientName ?? '';
+  }
+
+  getAttentionLabel(client: any): string {
+    if (client.daysSinceLastDoc === -1) return 'Mai caricato';
+    return `${client.daysSinceLastDoc} giorni fa`;
+  }
+
+  getDocTypeLabel(): string {
+    return this.currentUser?.role === 'PERSONAL_TRAINER' ? 'scheda' : 'dieta';
   }
 }
