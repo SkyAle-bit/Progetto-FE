@@ -1,12 +1,13 @@
 import { Component, Input, Output, EventEmitter, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-clients-tab',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './clients-tab.html',
   styleUrls: ['./clients-tab.css']
 })
@@ -24,6 +25,11 @@ export class ClientsTabComponent {
   clientDocsLoading: boolean = false;
   docFilterType: string = 'ALL';
   isUploading: boolean = false;
+
+  // Notes editing
+  editingNotesDocId: number | null = null;
+  editingNotesText: string = '';
+  savingNotes: boolean = false;
 
   // PDF Viewer inline
   pdfViewerOpen: boolean = false;
@@ -149,5 +155,41 @@ export class ClientsTabComponent {
     if (this.currentUser?.role === 'PERSONAL_TRAINER') return doc.type === 'WORKOUT_PLAN';
     if (this.currentUser?.role === 'NUTRITIONIST') return doc.type === 'DIET_PLAN';
     return false;
+  }
+
+  /** Il professionista può modificare le note solo per il tipo di doc che gli compete */
+  canEditNotes(doc: any): boolean {
+    if (this.currentUser?.role === 'PERSONAL_TRAINER') return doc.type === 'WORKOUT_PLAN';
+    if (this.currentUser?.role === 'NUTRITIONIST') return doc.type === 'DIET_PLAN';
+    return false;
+  }
+
+  toggleNotesEdit(doc: any): void {
+    if (this.editingNotesDocId === doc.id) {
+      this.editingNotesDocId = null;
+      this.editingNotesText = '';
+    } else {
+      this.editingNotesDocId = doc.id;
+      this.editingNotesText = doc.notes || '';
+    }
+  }
+
+  saveNotes(doc: any): void {
+    this.savingNotes = true;
+    this.authService.updateDocumentNotes(doc.id, this.editingNotesText).subscribe({
+      next: () => {
+        doc.notes = this.editingNotesText;
+        this.editingNotesDocId = null;
+        this.editingNotesText = '';
+        this.savingNotes = false;
+        this.showPopup.emit({ title: 'Salvato!', message: 'Appunti aggiornati con successo.' });
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.savingNotes = false;
+        this.showPopup.emit({ title: 'Errore', message: 'Impossibile salvare gli appunti.' });
+        this.cdr.detectChanges();
+      }
+    });
   }
 }

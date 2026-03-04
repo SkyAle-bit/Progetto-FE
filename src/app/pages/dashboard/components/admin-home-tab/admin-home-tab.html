@@ -33,32 +33,49 @@
     </div>
   </div>
 
-  <!-- Ultimi utenti registrati -->
-  <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm">
+  <!-- Azioni rapide -->
+  <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm">
     <div class="flex items-center gap-2 mb-4">
-      <span class="text-[1.1rem]">🧑‍💼</span>
-      <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Utenti recenti</span>
+      <span class="text-[1.1rem]">⚡</span>
+      <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Azioni rapide</span>
     </div>
-    <div class="flex flex-col gap-2" *ngIf="allUsers.length > 0">
-      <div class="flex items-center gap-3 p-3 bg-[#f2f6fc] rounded-xl border border-[#ccd8ed]/60"
-        *ngFor="let user of allUsers | slice:0:6">
-        <div class="w-9 h-9 rounded-full bg-[#1a3462] flex items-center justify-center text-[0.65rem] font-bold text-[#e8c97a] flex-shrink-0">
-          {{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}
+    <div class="grid grid-cols-2 gap-3">
+      <button class="flex items-center gap-3 p-4 bg-gradient-to-r from-[#1a3462] to-[#2d5fa8] text-white rounded-xl transition-all active:scale-[0.97] hover:shadow-lg"
+        (click)="setTabEvent.emit('admin-users')">
+        <div class="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center text-[1.2rem] flex-shrink-0">👥</div>
+        <div class="text-left">
+          <div class="text-[0.82rem] font-bold">Gestisci Utenti</div>
+          <div class="text-[0.65rem] text-white/60">Crea, cerca, elimina</div>
         </div>
-        <div class="flex-1 min-w-0">
-          <div class="text-[0.85rem] font-bold text-[#1a2744] truncate">{{ user.firstName }} {{ user.lastName }}</div>
-          <div class="text-[0.68rem] text-[#8fa3c8] truncate">{{ user.email }}</div>
+      </button>
+      <button class="flex items-center gap-3 p-4 bg-gradient-to-r from-[#c9a96e] to-[#a88a53] text-[#1a2744] rounded-xl transition-all active:scale-[0.97] hover:shadow-lg"
+        (click)="setTabEvent.emit('admin-plans')">
+        <div class="w-10 h-10 rounded-lg bg-white/25 flex items-center justify-center text-[1.2rem] flex-shrink-0">📋</div>
+        <div class="text-left">
+          <div class="text-[0.82rem] font-bold">Gestisci Piani</div>
+          <div class="text-[0.65rem] text-[#1a2744]/60">Crea, visualizza, elimina</div>
         </div>
-        <span class="text-[0.6rem] font-bold px-2 py-0.5 rounded-full flex-shrink-0"
-          [ngClass]="getRoleBadgeClass(user.role)">{{ getRoleLabel(user.role) }}</span>
-      </div>
-    </div>
-    <div class="text-center py-6" *ngIf="allUsers.length === 0">
-      <p class="text-[0.82rem] text-[#8fa3c8]">Nessun utente trovato</p>
+      </button>
+      <button class="flex items-center gap-3 p-4 bg-white border border-[#ccd8ed] text-[#1a2744] rounded-xl transition-all active:scale-[0.97] hover:border-[#c9a96e]/50 hover:shadow-md"
+        (click)="setTabEvent.emit('chat')">
+        <div class="w-10 h-10 rounded-lg bg-[#f2f6fc] flex items-center justify-center text-[1.2rem] flex-shrink-0">💬</div>
+        <div class="text-left">
+          <div class="text-[0.82rem] font-bold">Chat</div>
+          <div class="text-[0.65rem] text-[#8fa3c8]">Messaggi e supporto</div>
+        </div>
+      </button>
+      <button class="flex items-center gap-3 p-4 bg-white border border-[#ccd8ed] text-[#1a2744] rounded-xl transition-all active:scale-[0.97] hover:border-[#c9a96e]/50 hover:shadow-md"
+        (click)="setTabEvent.emit('admin-users')">
+        <div class="w-10 h-10 rounded-lg bg-[#f2f6fc] flex items-center justify-center text-[1.2rem] flex-shrink-0">➕</div>
+        <div class="text-left">
+          <div class="text-[0.82rem] font-bold">Nuovo Utente</div>
+          <div class="text-[0.65rem] text-[#8fa3c8]">Qualunque ruolo</div>
+        </div>
+      </button>
     </div>
   </div>
 
-  <!-- Piani disponibili -->
+  <!-- Piani disponibili (preview) -->
   <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm">
     <div class="flex items-center gap-2 mb-4">
       <span class="text-[1.1rem]">📋</span>

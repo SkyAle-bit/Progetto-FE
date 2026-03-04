@@ -2,8 +2,17 @@
   <!-- PANNELLO SINISTRO: LISTA CONVERSAZIONI -->
   <div class="chat-sidebar flex flex-col overflow-hidden bg-white border-r border-[#ccd8ed] w-full sm:w-[340px] lg:w-[380px] sm:flex-shrink-0" [class.hidden]="chatView !== 'list'" [class.sm:flex]="true">
     <div class="flex-shrink-0 px-5 pt-5 pb-3 border-b border-[#ccd8ed]/50">
-      <h3 class="font-['Darker_Grotesque'] text-[1.5rem] font-black text-[#1a2744] leading-none">Chat</h3>
-      <p class="text-[0.75rem] text-[#8fa3c8] mt-1">{{ chatConversations.length }} conversazioni</p>
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="font-['Darker_Grotesque'] text-[1.5rem] font-black text-[#1a2744] leading-none">Chat</h3>
+          <p class="text-[0.75rem] text-[#8fa3c8] mt-1">{{ chatConversations.length }} conversazioni</p>
+        </div>
+        <button *ngIf="isAdmin"
+          class="w-9 h-9 rounded-full bg-[#1a3462] text-white flex items-center justify-center hover:bg-[#112344] transition-all active:scale-[0.93] shadow-md"
+          title="Nuova conversazione" (click)="showUserPicker = true">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        </button>
+      </div>
     </div>
     <div class="flex-1 overflow-y-auto">
       <div class="flex justify-center py-12" *ngIf="chatLoading && chatView === 'list'">
@@ -21,6 +30,11 @@
               <img *ngIf="conv.otherUserProfilePicture" [src]="conv.otherUserProfilePicture" class="w-full h-full object-cover" alt="">
               <span *ngIf="!conv.otherUserProfilePicture" class="text-[#e8c97a] text-[0.85rem] font-bold">{{ getConversationInitials(conv) }}</span>
             </div>
+            <!-- Pallino notifica non letti con counter -->
+            <span *ngIf="conv.unreadCount > 0"
+              class="absolute -top-1 -right-1 min-w-[19px] h-[19px] px-[4px] rounded-full bg-[#c9a96e] text-[#1a2744] text-[0.58rem] font-black flex items-center justify-center border-2 border-white shadow-sm">
+              {{ conv.unreadCount > 9 ? '9+' : conv.unreadCount }}
+            </span>
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between gap-2">
@@ -103,5 +117,34 @@
         </div>
       </div>
     </ng-container>
+  </div>
+
+  <!-- Modale selezione utente (solo Admin) -->
+  <div class="fixed inset-0 bg-[#1a2744]/40 backdrop-blur-[4px] z-[200] flex items-center justify-center p-4" *ngIf="showUserPicker" (click)="showUserPicker = false">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm max-h-[70vh] flex flex-col overflow-hidden" (click)="$event.stopPropagation()">
+      <div class="px-5 py-4 bg-[#1a3462] flex items-center justify-between flex-shrink-0">
+        <h3 class="font-['Darker_Grotesque'] text-[1.2rem] font-black text-white">Nuova conversazione</h3>
+        <button class="w-7 h-7 bg-white/10 border border-white/20 rounded-lg text-white/60 text-[0.75rem] flex items-center justify-center" (click)="showUserPicker = false">✕</button>
+      </div>
+      <div class="px-4 py-3 border-b border-[#ccd8ed]/50 flex-shrink-0">
+        <input type="text" [(ngModel)]="userPickerSearch" placeholder="Cerca utente..."
+          class="w-full px-3 py-2 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] text-[#1a2744] placeholder-[#8fa3c8] focus:outline-none focus:border-[#c9a96e]">
+      </div>
+      <div class="flex-1 overflow-y-auto">
+        <button class="flex items-center gap-3 px-5 py-3 w-full text-left border-b border-[#ccd8ed]/30 hover:bg-[#f7f9fc] transition-all"
+          *ngFor="let user of filteredPickerUsers" (click)="startConversationWith(user)">
+          <div class="w-10 h-10 rounded-full bg-[#1a3462] flex items-center justify-center border-2 border-[#c9a96e]/30 flex-shrink-0">
+            <span class="text-[#e8c97a] text-[0.65rem] font-bold">{{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="text-[0.85rem] font-bold text-[#1a2744] truncate">{{ user.firstName }} {{ user.lastName }}</div>
+            <div class="text-[0.65rem] text-[#8fa3c8]">{{ getRoleLabel(user.role) }}</div>
+          </div>
+        </button>
+        <div class="text-center py-8" *ngIf="filteredPickerUsers.length === 0">
+          <p class="text-[0.82rem] text-[#8fa3c8]">Nessun utente trovato</p>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

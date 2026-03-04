@@ -9,16 +9,17 @@ import { HomeTabComponent } from './components/home-tab/home-tab';
 import { CalendarTabComponent } from './components/calendar-tab/calendar-tab';
 import { ChatTabComponent } from './components/chat-tab/chat-tab';
 import { ClientsTabComponent } from './components/clients-tab/clients-tab';
-import { ProfessionalsTabComponent } from './components/professionals-tab/professionals-tab';
 import { AdminHomeTabComponent } from './components/admin-home-tab/admin-home-tab';
 import { AdminUsersTabComponent } from './components/admin-users-tab/admin-users-tab';
 import { AdminPlansTabComponent } from './components/admin-plans-tab/admin-plans-tab';
 import { InsuranceHomeTabComponent } from './components/insurance-home-tab/insurance-home-tab';
+import { BookCallTabComponent } from './components/book-call-tab/book-call-tab';
+import { MyServicesTabComponent } from './components/my-services-tab/my-services-tab';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, ProfessionalsTabComponent, AdminHomeTabComponent, AdminUsersTabComponent, AdminPlansTabComponent, InsuranceHomeTabComponent],
+  imports: [CommonModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, AdminHomeTabComponent, AdminUsersTabComponent, AdminPlansTabComponent, InsuranceHomeTabComponent, BookCallTabComponent, MyServicesTabComponent],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -204,6 +205,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  reloadAdminData(): void {
+    this.loadAdminInsuranceData();
+  }
+
   // ── Accessori dati ───────────────────────────────────────
 
   get profile() { return this.dashboardData?.profile; }
@@ -221,6 +226,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   setTab(tab: string): void {
     this.activeTab = tab;
+    if (tab === 'chat') {
+      this.globalUnreadCount = 0;
+    }
     this.cdr.detectChanges();
   }
 

@@ -22,8 +22,11 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   @Input() currentUser: any;
   @Input() isProfessional: boolean = false;
   @Input() isClient: boolean = false;
+  @Input() isInsurance: boolean = false;
+  @Input() isAdmin: boolean = false;
   @Input() professionals: any[] = [];
   @Input() myClients: any[] = [];
+  @Input() allUsers: any[] = [];
 
   chatConversations: Conversation[] = [];
   chatMessages: ChatMessage[] = [];
@@ -32,6 +35,49 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   chatLoading: boolean = false;
   chatView: 'list' | 'conversation' = 'list';
   private subscriptions: any[] = [];
+
+  // User picker (admin)
+  showUserPicker: boolean = false;
+  userPickerSearch: string = '';
+
+  get filteredPickerUsers(): any[] {
+    if (!this.allUsers?.length) return [];
+    let users = this.allUsers.filter(u => u.id !== this.currentUser?.id);
+    // Escludi quelli già in conversazione
+    const existingIds = new Set(this.chatConversations.map(c => c.otherUserId));
+    users = users.filter(u => !existingIds.has(u.id));
+    if (this.userPickerSearch.trim()) {
+      const q = this.userPickerSearch.toLowerCase();
+      users = users.filter(u => (u.firstName + ' ' + u.lastName).toLowerCase().includes(q) || u.email?.toLowerCase().includes(q));
+    }
+    return users;
+  }
+
+  startConversationWith(user: any): void {
+    const conv: Conversation = {
+      otherUserId: user.id,
+      otherUserName: `${user.firstName} ${user.lastName}`,
+      otherUserRole: this.getRoleLabel(user.role),
+      lastMessage: undefined,
+      lastMessageTime: undefined,
+      unreadCount: 0
+    };
+    this.chatConversations = [conv, ...this.chatConversations];
+    this.showUserPicker = false;
+    this.userPickerSearch = '';
+    this.openConversation(conv);
+  }
+
+  getRoleLabel(role: string): string {
+    switch (role) {
+      case 'CLIENT': return 'Cliente';
+      case 'PERSONAL_TRAINER': return 'Personal Trainer';
+      case 'NUTRITIONIST': return 'Nutrizionista';
+      case 'ADMIN': return 'Admin';
+      case 'INSURANCE_MANAGER': return 'Assicurazione';
+      default: return role;
+    }
+  }
 
   ngOnInit(): void {
     this.loadConversations();
@@ -111,6 +157,18 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     if (this.isProfessional && this.myClients?.length > 0) {
       this.myClients.forEach((c: any) => {
         convs.push({ otherUserId: c.id, otherUserName: `${c.firstName} ${c.lastName}`, otherUserRole: 'Cliente', lastMessage: undefined, lastMessageTime: undefined, unreadCount: 0 });
+      });
+    }
+    // Insurance Manager: può chattare solo con Admin
+    if (this.isInsurance && this.allUsers?.length > 0) {
+      this.allUsers.filter(u => u.role === 'ADMIN').forEach((a: any) => {
+        convs.push({ otherUserId: a.id, otherUserName: `${a.firstName} ${a.lastName}`, otherUserRole: 'Admin', lastMessage: undefined, lastMessageTime: undefined, unreadCount: 0 });
+      });
+    }
+    // Admin: può chattare con Insurance Manager (e gli altri contatti se servono)
+    if (this.isAdmin && this.allUsers?.length > 0) {
+      this.allUsers.filter(u => u.role === 'INSURANCE_MANAGER').forEach((im: any) => {
+        convs.push({ otherUserId: im.id, otherUserName: `${im.firstName} ${im.lastName}`, otherUserRole: 'Assicurazione', lastMessage: undefined, lastMessageTime: undefined, unreadCount: 0 });
       });
     }
     return convs;

@@ -119,4 +119,24 @@ export class AuthService {
   getAllSubscriptions(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/api/admin/subscriptions`);
   }
+
+  createUser(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/api/admin/users`, data);
+  }
+
+  deleteUser(userId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/api/admin/users/${userId}`);
+  }
+
+  createPlan(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/api/admin/plans`, data);
+  }
+
+  deletePlan(planId: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/api/admin/plans/${planId}`);
+  }
+
+  updateDocumentNotes(documentId: number, notes: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/api/documents/${documentId}/notes`, { notes });
+  }
 }

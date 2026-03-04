@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -13,6 +13,7 @@ export class AdminHomeTabComponent {
   @Input() allUsers: any[] = [];
   @Input() allPlans: any[] = [];
   @Input() allSubscriptions: any[] = [];
+  @Output() setTabEvent = new EventEmitter<string>();
 
   get totalUsers(): number { return this.allUsers.length; }
   get totalClients(): number { return this.allUsers.filter(u => u.role === 'CLIENT').length; }

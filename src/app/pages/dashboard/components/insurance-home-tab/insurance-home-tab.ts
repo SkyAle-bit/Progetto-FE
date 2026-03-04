@@ -24,6 +24,7 @@ export class InsuranceHomeTabComponent {
   selectedClient: any = null;
   clientDocs: any[] = [];
   docsLoading: boolean = false;
+  isUploading: boolean = false;
 
   // PDF viewer
   pdfOpen: boolean = false;
@@ -33,8 +34,9 @@ export class InsuranceHomeTabComponent {
   private blobUrl: string | null = null;
 
   get activePolicies(): number { return this.allSubscriptions.filter(s => s.active).length; }
+  get expiredPolicies(): number { return this.allSubscriptions.filter(s => !s.active).length; }
   get coveredClients(): any[] {
-    return this.allSubscriptions.filter(s => s.active).map(s => ({
+    return this.allSubscriptions.map(s => ({
       ...s,
       user: this.allUsers.find(u => u.id === s.userId)
     })).filter(s => s.user);
@@ -82,6 +84,29 @@ export class InsuranceHomeTabComponent {
   }
 
   openPdfNewTab(): void { if (this.blobUrl) window.open(this.blobUrl, '_blank'); }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file || !this.selectedClient || !this.currentUser) return;
+    this.isUploading = true;
+    this.authService.uploadDocument(file, this.selectedClient.userId, this.currentUser.id, 'INSURANCE_POLICE').subscribe({
+      next: () => {
+        this.isUploading = false;
+        input.value = '';
+        this.openClientDocs(this.selectedClient); // ricarica docs
+      },
+      error: () => { this.isUploading = false; input.value = ''; }
+    });
+  }
+
+  deleteDoc(doc: any): void {
+    if (!confirm('Eliminare questo documento?')) return;
+    this.authService.deleteDocument(doc.id).subscribe({
+      next: () => { this.clientDocs = this.clientDocs.filter(d => d.id !== doc.id); this.cdr.detectChanges(); },
+      error: () => {}
+    });
+  }
 
   formatDate(d: string): string { return new Date(d).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' }); }
 }

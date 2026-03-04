@@ -28,6 +28,7 @@
         </button>
         <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
                        transition-all whitespace-nowrap"
+          *ngIf="!isInsuranceManager() && !isAdmin()"
           [class.active]="activeTab === 'calendar'"
           (click)="setTab('calendar')">
           <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -61,12 +62,22 @@
         <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
                        transition-all whitespace-nowrap"
           *ngIf="isClient()"
-          [class.active]="activeTab === 'professionals'"
-          (click)="setTab('professionals')">
+          [class.active]="activeTab === 'book-call'"
+          (click)="setTab('book-call')">
           <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
           </svg>
-          I Miei Professionisti
+          Prenota Call
+        </button>
+        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap"
+          *ngIf="isClient()"
+          [class.active]="activeTab === 'my-services'"
+          (click)="setTab('my-services')">
+          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+          </svg>
+          I Miei Servizi
         </button>
         <!-- ADMIN tabs -->
         <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
@@ -89,17 +100,7 @@
           </svg>
           Piani
         </button>
-        <!-- INSURANCE tabs -->
-        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap"
-          *ngIf="isInsuranceManager()"
-          [class.active]="activeTab === 'insurance'"
-          (click)="setTab('insurance')">
-          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-          </svg>
-          Polizze
-        </button>
+        <!-- INSURANCE: nessun tab separato Polizze, tutto in Home -->
       </nav>
 
     <!-- Destra -->
@@ -137,14 +138,27 @@
         <span class="hidden sm:inline">Disponibilità</span>
       </button>
 
-      <!-- Profile button (sempre visibile) -->
-      <button class="profile-btn w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full border-2 border-[#c9a96e]/50
+      <!-- Profile button (clienti e professionisti) -->
+      <button *ngIf="!isAdmin() && !isInsuranceManager()"
+        class="profile-btn w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full border-2 border-[#c9a96e]/50
                      bg-[#c9a96e]/12 cursor-pointer flex items-center justify-center
                      transition-all overflow-hidden p-0 flex-shrink-0" (click)="toggleProfile()"
         [class.active]="isProfileOpen">
         <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar"
           class="w-full h-full object-cover">
         <span *ngIf="!currentUser?.profilePicture" class="text-[0.78rem] font-bold text-[#c9a96e]">{{ getInitials() }}</span>
+      </button>
+
+      <!-- Logout button (Admin e Insurance Manager) -->
+      <button *ngIf="isAdmin() || isInsuranceManager()"
+        class="flex items-center gap-1.5 px-3 py-[0.35rem] rounded-lg border border-[#c9a96e]/40
+               bg-[#c9a96e]/10 text-[#c9a96e] text-[0.78rem] font-semibold
+               hover:bg-[#c9a96e]/20 transition-all flex-shrink-0"
+        (click)="logout()">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        <span class="hidden sm:inline">Esci</span>
       </button>
     </div>
   </header>
@@ -207,8 +221,11 @@
       [currentUser]="currentUser"
       [isProfessional]="isProfessional()"
       [isClient]="isClient()"
+      [isInsurance]="isInsuranceManager()"
+      [isAdmin]="isAdmin()"
       [professionals]="professionals"
-      [myClients]="myClients">
+      [myClients]="myClients"
+      [allUsers]="allUsers">
     </app-chat-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
@@ -222,13 +239,21 @@
     </app-clients-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
-         │  TAB: I MIEI PROFESSIONISTI (solo clienti)           │
+         │  TAB: PRENOTA CALL (solo clienti)                    │
          └──────────────────────────────────────────────────────┘ -->
-    <app-professionals-tab class="flex-1 overflow-y-auto"
-      *ngIf="activeTab === 'professionals' && isClient()"
+    <app-book-call-tab class="flex-1 overflow-y-auto"
+      *ngIf="activeTab === 'book-call' && isClient()"
       [professionals]="professionals"
       (bookProfessional)="openBooking($event)">
-    </app-professionals-tab>
+    </app-book-call-tab>
+
+    <!-- ┌──────────────────────────────────────────────────────┐
+         │  TAB: I MIEI SERVIZI (solo clienti)                  │
+         └──────────────────────────────────────────────────────┘ -->
+    <app-my-services-tab class="flex-1 overflow-y-auto"
+      *ngIf="activeTab === 'my-services' && isClient()"
+      [currentUser]="currentUser">
+    </app-my-services-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: ADMIN HOME (solo admin)                        │
@@ -238,7 +263,8 @@
       [currentUser]="currentUser"
       [allUsers]="allUsers"
       [allPlans]="allPlans"
-      [allSubscriptions]="allSubscriptions">
+      [allSubscriptions]="allSubscriptions"
+      (setTabEvent)="setTab($event)">
     </app-admin-home-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
@@ -246,7 +272,9 @@
          └──────────────────────────────────────────────────────┘ -->
     <app-admin-users-tab class="flex-1 overflow-y-auto"
       *ngIf="activeTab === 'admin-users' && isAdmin()"
-      [allUsers]="allUsers">
+      [allUsers]="allUsers"
+      [allPlans]="allPlans"
+      (usersChanged)="reloadAdminData()">
     </app-admin-users-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
@@ -255,7 +283,8 @@
     <app-admin-plans-tab class="flex-1 overflow-y-auto"
       *ngIf="activeTab === 'admin-plans' && isAdmin()"
       [allPlans]="allPlans"
-      [allSubscriptions]="allSubscriptions">
+      [allSubscriptions]="allSubscriptions"
+      (plansChanged)="reloadAdminData()">
     </app-admin-plans-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
@@ -286,8 +315,9 @@
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Home</span>
     </button>
 
-    <!-- Tab: Calendario -->
+    <!-- Tab: Calendario (non per insurance e admin) -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
+      *ngIf="!isInsuranceManager() && !isAdmin()"
       [class.active]="activeTab === 'calendar'" (click)="setTab('calendar')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -320,14 +350,24 @@
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Clienti</span>
     </button>
 
-    <!-- Tab: Professionisti (clienti) -->
+    <!-- Tab: Prenota Call (clienti) -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
       *ngIf="isClient()"
-      [class.active]="activeTab === 'professionals'" (click)="setTab('professionals')">
+      [class.active]="activeTab === 'book-call'" (click)="setTab('book-call')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
       </svg>
-      <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Professionisti</span>
+      <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Prenota</span>
+    </button>
+
+    <!-- Tab: I Miei Servizi (clienti) -->
+    <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
+      *ngIf="isClient()"
+      [class.active]="activeTab === 'my-services'" (click)="setTab('my-services')">
+      <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+      </svg>
+      <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Servizi</span>
     </button>
 
     <!-- Tab: Utenti (admin) -->
@@ -350,15 +390,6 @@
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Piani</span>
     </button>
 
-    <!-- Tab: Polizze (insurance) -->
-    <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
-      *ngIf="isInsuranceManager()"
-      [class.active]="activeTab === 'insurance'" (click)="setTab('insurance')">
-      <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-      </svg>
-      <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Polizze</span>
-    </button>
   </nav>
 
   <!-- ══════════════════════════════════════════════════════════

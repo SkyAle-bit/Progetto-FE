@@ -80,22 +80,25 @@
     </div>
   </div>
 
+  <!-- Azioni rapide (clienti) -->
+  <div class="grid grid-cols-3 gap-3" *ngIf="isClient">
+    <button class="bg-[#1a3462] text-white rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.72rem] font-semibold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('book-call')"><span class="text-[1.2rem]">📞</span>Prenota</button>
+    <button class="bg-[#c9a96e] text-[#1a2744] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.72rem] font-bold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('my-services')"><span class="text-[1.2rem]">📂</span>Servizi</button>
+    <button class="bg-white border border-[#ccd8ed] text-[#1a2744] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.72rem] font-semibold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('calendar')"><span class="text-[1.2rem]">📅</span>Calendario</button>
+  </div>
+
   <!-- Statistiche (professionisti) -->
   <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm" *ngIf="isProfessional">
     <div class="flex items-center gap-2 mb-3"><span class="text-[1.1rem]">📊</span><span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Questa settimana</span></div>
     <div class="flex gap-3">
-      <div class="flex-1 bg-[#f2f6fc] rounded-xl p-3 text-center border border-[#ccd8ed]/60"><div class="text-[1.5rem] font-black text-[#1a3462]">{{ weekBookingsCount }}</div><div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.08em] mt-[2px]">Appuntamenti</div></div>
-      <div class="flex-1 bg-[#f2f6fc] rounded-xl p-3 text-center border border-[#ccd8ed]/60"><div class="text-[1.5rem] font-black text-[#1a3462]">{{ myClients.length }}</div><div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.08em] mt-[2px]">Clienti</div></div>
+      <div class="flex-1 bg-[#f2f6fc] rounded-xl p-3 text-center border border-[#ccd8ed]/60"><div class="text-[1.5rem] font-black text-[#1a2744]">{{ weekBookingsCount }}</div><div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.08em] mt-[2px]">Appuntamenti</div></div>
+      <div class="flex-1 bg-[#f2f6fc] rounded-xl p-3 text-center border border-[#ccd8ed]/60"><div class="text-[1.5rem] font-black text-[#1a2744]">{{ myClients.length }}</div><div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.08em] mt-[2px]">Clienti</div></div>
     </div>
   </div>
 
-  <!-- Azioni rapide -->
+  <!-- Azioni rapide (professionisti) -->
   <div class="flex gap-3" *ngIf="isProfessional">
     <button class="flex-1 bg-[#1a3462] text-white rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-semibold transition-all active:scale-[0.97]" (click)="openAvailabilityEvent.emit()"><span class="text-[1.2rem]">📅</span>Disponibilità</button>
     <button class="flex-1 bg-[#c9a96e] text-[#1a2744] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-bold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('clients')"><span class="text-[1.2rem]">👥</span>I Miei Clienti</button>
-  </div>
-  <div class="flex gap-3" *ngIf="isClient && professionals.length > 0">
-    <button class="flex-1 bg-[#1a3462] text-white rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-semibold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('calendar')"><span class="text-[1.2rem]">📅</span>Calendario</button>
-    <button class="flex-1 bg-[#c9a96e] text-[#1a2744] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-bold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('professionals')"><span class="text-[1.2rem]">💪</span>Prenota</button>
   </div>
 </div>
