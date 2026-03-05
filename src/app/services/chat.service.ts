@@ -85,6 +85,7 @@ export class ChatService {
   }
 
   markAsRead(receiverId: number, senderId: number): Observable<any> {
+    this.optimisticMarkAsRead(senderId);
     return this.http.put(
       `${this.apiUrl}/api/chat/read/${receiverId}/${senderId}`, {}
     ).pipe(catchError(() => of(null)));
@@ -172,6 +173,26 @@ export class ChatService {
 
   markAsReadRealTime(otherUserId: number): void {
     this.socketService.markAsRead(otherUserId);
+    this.optimisticMarkAsRead(otherUserId);
+  }
+
+  private optimisticMarkAsRead(otherUserId: number): void {
+    const convs = this.conversationsSubject.value;
+    const idx = convs.findIndex(c => c.otherUserId === otherUserId);
+    if (idx >= 0 && convs[idx].unreadCount > 0) {
+      const readMessages = convs[idx].unreadCount;
+
+      // Azzera conteggio locale 
+      const updated = [...convs];
+      updated[idx] = { ...updated[idx], unreadCount: 0 };
+      this.conversationsSubject.next(updated);
+
+      // Sottrai dal contatore globale immediatamente
+      const currentGlobal = this.unreadCountSubject.value;
+      if (currentGlobal >= readMessages) {
+        this.unreadCountSubject.next(currentGlobal - readMessages);
+      }
+    }
   }
 
   // ══════════════════════════════════════════════════════════════
@@ -291,7 +312,31 @@ export class ChatService {
 
   private refreshConversations(userId: number): void {
     this.getConversations(userId).subscribe(convs => {
-      this.conversationsSubject.next(convs ?? []);
+      let currentConvs = convs ?? [];
+
+      // Assicurati che se c'è una conversazione attiva (es: appena creata dall'admin locale) non vada persa se non ancora restituita dal DB
+      if (this._activeConversation) {
+        const activeId = this._activeConversation.otherUserId;
+
+        // Forza l'azzeramento delle notifiche (optimistic) per la chat che stai guardando
+        // per evitare che il polling asincrono sovrascriva temporaneamente l'UI
+        const activeConv = currentConvs.find(c => c.otherUserId === activeId);
+        if (activeConv) {
+          activeConv.unreadCount = 0;
+        }
+
+        if (!currentConvs.some(c => c.otherUserId === activeId)) {
+          // Cercala nei messaggi correnti subject
+          const existingLocal = this.conversationsSubject.value.find(c => c.otherUserId === activeId);
+          if (existingLocal) {
+            currentConvs = [existingLocal, ...currentConvs];
+          } else {
+            currentConvs = [this._activeConversation, ...currentConvs];
+          }
+        }
+      }
+
+      this.conversationsSubject.next(currentConvs);
     });
   }
 

@@ -41,10 +41,27 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   showUserPicker: boolean = false;
   userPickerSearch: string = '';
 
+  private get emptyConvsCacheKey(): string {
+    return `chat_empty_convs_${this.currentUser?.id}`;
+  }
+
+  private loadStoredEmptyConvs(): Conversation[] {
+    try {
+      const stored = localStorage.getItem(this.emptyConvsCacheKey);
+      return stored ? JSON.parse(stored) : [];
+    } catch { return []; }
+  }
+
+  private saveStoredEmptyConvs(convs: Conversation[]): void {
+    try {
+      localStorage.setItem(this.emptyConvsCacheKey, JSON.stringify(convs));
+    } catch { }
+  }
+
   get filteredPickerUsers(): any[] {
     if (!this.allUsers?.length) return [];
     let users = this.allUsers.filter(u => u.id !== this.currentUser?.id);
-    // Escludi quelli già in conversazione
+    // Escludi quelli già in conversazione o tra i contatti locali vuoti
     const existingIds = new Set(this.chatConversations.map(c => c.otherUserId));
     users = users.filter(u => !existingIds.has(u.id));
     if (this.userPickerSearch.trim()) {
@@ -63,6 +80,13 @@ export class ChatTabComponent implements OnInit, OnDestroy {
       lastMessageTime: undefined,
       unreadCount: 0
     };
+
+    // Salva nei contatti vuoti locali per persistenza
+    const stored = this.loadStoredEmptyConvs();
+    if (!stored.some(c => c.otherUserId === conv.otherUserId)) {
+      this.saveStoredEmptyConvs([conv, ...stored]);
+    }
+
     this.chatConversations = [conv, ...this.chatConversations];
     this.showUserPicker = false;
     this.userPickerSearch = '';
@@ -100,14 +124,40 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
       const backendConvs = convs ?? [];
       const backendIds = new Set(backendConvs.map(c => c.otherUserId));
-      const localContacts = this.buildLocalConversations();
+
+      // I contatti locali includono ora anche quelli dal localStorage
+      const baseLocalContacts = this.buildLocalConversations();
+      let storedEmpty = this.loadStoredEmptyConvs();
+
+      // RIMUOVI dal localStorage le conversazioni che ora esistono nel backend (hanno ricevuto il loro primo messaggio)
+      const cachedLength = storedEmpty.length;
+      storedEmpty = storedEmpty.filter(sc => !backendIds.has(sc.otherUserId));
+      if (storedEmpty.length !== cachedLength) {
+        this.saveStoredEmptyConvs(storedEmpty);
+      }
+
+      // Unisci base local e stored
+      const localMap = new Map<number, Conversation>();
+      [...baseLocalContacts, ...storedEmpty].forEach(c => localMap.set(c.otherUserId, c));
+      const localContacts = Array.from(localMap.values());
+
+      // Filtra quelli che sono già nel backend (quindi non più "vuoti")
       const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
 
-      // Preserva conversazioni aggiunte localmente (es. admin con picker +) non ancora nel backend
+      // Array to track manually created picker-only contacts
+      // Only keep them if they are not already in backendConvs and localOnly
       const currentLocalIds = new Set([...backendIds, ...localOnly.map(l => l.otherUserId)]);
       const pickerOnly = this.chatConversations.filter(c => !currentLocalIds.has(c.otherUserId));
 
-      this.chatConversations = [...backendConvs, ...localOnly, ...pickerOnly];
+      // To avoid losing the active conversation while typing, ensure it is always present
+      const mergedConversations = [...backendConvs, ...localOnly, ...pickerOnly];
+
+      // If there is an active conversation, make sure it's in the list
+      if (this.activeConversation && !mergedConversations.some(c => c.otherUserId === this.activeConversation!.otherUserId)) {
+        mergedConversations.unshift(this.activeConversation);
+      }
+
+      this.chatConversations = mergedConversations;
       this.cdr.detectChanges();
     });
     this.subscriptions.push(convSub);
@@ -118,7 +168,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
         // Ordina i messaggi e aggiorna solo se c'è una variazione
         const sorted = this.sortMessages(msgs);
         if (sorted.length !== this.chatMessages.length ||
-            (sorted.length > 0 && sorted[sorted.length - 1].id !== this.chatMessages[this.chatMessages.length - 1]?.id)) {
+          (sorted.length > 0 && sorted[sorted.length - 1].id !== this.chatMessages[this.chatMessages.length - 1]?.id)) {
           this.chatMessages = sorted;
           this.cdr.detectChanges();
           setTimeout(() => this.scrollToBottom(), 50);
@@ -140,19 +190,51 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     this.chatLoading = true;
     this.chatService.getConversations(this.currentUser.id).subscribe({
       next: (convs) => {
-        const localContacts = this.buildLocalConversations();
-        if (convs && convs.length > 0) {
-          const backendIds = new Set(convs.map(c => c.otherUserId));
-          const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
-          this.chatConversations = [...convs, ...localOnly];
-        } else {
-          this.chatConversations = localContacts;
+        const backendConvs = convs ?? [];
+        const backendIds = new Set(backendConvs.map(c => c.otherUserId));
+
+        // Unisci contatti locali base e quelli vuoti salvati in localStorage
+        const baseLocalContacts = this.buildLocalConversations();
+        let storedEmpty = this.loadStoredEmptyConvs();
+
+        // Pulisci subito eventuali chat vuote che ora sono nel backend
+        const cachedLength = storedEmpty.length;
+        storedEmpty = storedEmpty.filter(sc => !backendIds.has(sc.otherUserId));
+        if (storedEmpty.length !== cachedLength) {
+          this.saveStoredEmptyConvs(storedEmpty);
         }
+
+        const localMap = new Map<number, Conversation>();
+        [...baseLocalContacts, ...storedEmpty].forEach(c => localMap.set(c.otherUserId, c));
+        const localContacts = Array.from(localMap.values());
+
+        const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
+
+        let mergedObj = [...backendConvs, ...localOnly];
+        // Assicura che la conversazione attiva (se presente) non venga persa
+        if (this.activeConversation && !mergedObj.some(c => c.otherUserId === this.activeConversation!.otherUserId)) {
+          mergedObj.unshift(this.activeConversation);
+        }
+
+        this.chatConversations = mergedObj;
         this.chatLoading = false;
         this.conversationsLoaded = true;
         this.cdr.detectChanges();
       },
-      error: () => { this.chatConversations = this.buildLocalConversations(); this.chatLoading = false; this.conversationsLoaded = true; this.cdr.detectChanges(); }
+      error: () => {
+        const baseLocalContacts = this.buildLocalConversations();
+        const storedEmpty = this.loadStoredEmptyConvs();
+        const localMap = new Map<number, Conversation>();
+        [...baseLocalContacts, ...storedEmpty].forEach(c => localMap.set(c.otherUserId, c));
+
+        this.chatConversations = Array.from(localMap.values());
+        if (this.activeConversation && !this.chatConversations.some(c => c.otherUserId === this.activeConversation!.otherUserId)) {
+          this.chatConversations.unshift(this.activeConversation);
+        }
+        this.chatLoading = false;
+        this.conversationsLoaded = true;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -327,7 +409,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   trackMessage(index: number, msg: ChatMessage): number { return msg.id; }
 
   private scrollToBottom(): void {
-    try { if (this.messagesContainer) { const el = this.messagesContainer.nativeElement; el.scrollTop = el.scrollHeight; } } catch (e) {}
+    try { if (this.messagesContainer) { const el = this.messagesContainer.nativeElement; el.scrollTop = el.scrollHeight; } } catch (e) { }
   }
 
   autoGrow(event: Event): void { const el = event.target as HTMLTextAreaElement; el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
