@@ -224,8 +224,11 @@ export class ChatService {
   private updateConversationPreview(wsMsg: WsIncomingMessage, currentUserId: number): void {
     const convs = this.conversationsSubject.value;
     const otherUserId = wsMsg.senderId === currentUserId ? wsMsg.receiverId : wsMsg.senderId;
+    const otherUserName = wsMsg.senderId === currentUserId ? wsMsg.receiverName : wsMsg.senderName;
     const idx = convs.findIndex(c => c.otherUserId === otherUserId);
+
     if (idx >= 0) {
+      // Aggiorna conversazione esistente
       const updated = [...convs];
       updated[idx] = {
         ...updated[idx],
@@ -236,6 +239,17 @@ export class ChatService {
           : updated[idx].unreadCount
       };
       this.conversationsSubject.next(updated);
+    } else {
+      // Nuova conversazione da utente non ancora in lista (es. admin → cliente)
+      const newConv: Conversation = {
+        otherUserId,
+        otherUserName: otherUserName || 'Utente',
+        otherUserRole: '',
+        lastMessage: wsMsg.content,
+        lastMessageTime: wsMsg.createdAt,
+        unreadCount: wsMsg.senderId !== currentUserId ? 1 : 0
+      };
+      this.conversationsSubject.next([newConv, ...convs]);
     }
   }
 
@@ -277,9 +291,7 @@ export class ChatService {
 
   private refreshConversations(userId: number): void {
     this.getConversations(userId).subscribe(convs => {
-      if (convs.length > 0) {
-        this.conversationsSubject.next(convs);
-      }
+      this.conversationsSubject.next(convs ?? []);
     });
   }
 

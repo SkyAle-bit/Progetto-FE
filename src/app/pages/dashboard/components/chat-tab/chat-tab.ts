@@ -94,13 +94,12 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
     // Subscribe to conversation updates (da polling globale + WS)
     const convSub = this.chatService.conversations$.subscribe(convs => {
-      if (convs && convs.length > 0) {
-        const backendIds = new Set(convs.map(c => c.otherUserId));
-        const localContacts = this.buildLocalConversations();
-        const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
-        this.chatConversations = [...convs, ...localOnly];
-        this.cdr.detectChanges();
-      }
+      const backendConvs = convs ?? [];
+      const backendIds = new Set(backendConvs.map(c => c.otherUserId));
+      const localContacts = this.buildLocalConversations();
+      const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
+      this.chatConversations = [...backendConvs, ...localOnly];
+      this.cdr.detectChanges();
     });
     this.subscriptions.push(convSub);
 

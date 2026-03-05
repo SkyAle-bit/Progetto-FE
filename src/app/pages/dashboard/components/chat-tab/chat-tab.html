@@ -45,7 +45,7 @@
               <span class="text-[0.65rem] flex-shrink-0" [class.text-[#c9a96e]]="conv.unreadCount > 0" [class.font-bold]="conv.unreadCount > 0" [class.text-[#8fa3c8]]="conv.unreadCount === 0">{{ formatConvTime(conv.lastMessageTime) }}</span>
             </div>
             <div class="flex items-center justify-between gap-2 mt-[3px]">
-              <p class="text-[0.78rem] truncate" [class.text-[#1a2744]]="conv.unreadCount > 0" [class.font-medium]="conv.unreadCount > 0" [class.text-[#8fa3c8]]="conv.unreadCount === 0">{{ conv.lastMessage || conv.otherUserRole }}</p>
+              <p class="text-[0.78rem] truncate" [class.text-[#1a2744]]="conv.unreadCount > 0" [class.font-medium]="conv.unreadCount > 0" [class.text-[#8fa3c8]]="conv.unreadCount === 0">{{ conv.lastMessage || getRoleLabel(conv.otherUserRole) }}</p>
             </div>
           </div>
         </button>
@@ -75,7 +75,7 @@
         </div>
         <div class="flex-1 min-w-0">
           <div class="text-[0.92rem] font-bold text-[#1a2744] truncate">{{ activeConversation.otherUserName }}</div>
-          <div class="text-[0.65rem] text-[#8fa3c8]">{{ activeConversation.otherUserRole }}</div>
+          <div class="text-[0.65rem] text-[#8fa3c8]">{{ getRoleLabel(activeConversation.otherUserRole) }}</div>
         </div>
       </div>
       <div class="chat-messages-area flex-1 overflow-y-auto px-4 sm:px-8 py-4 flex flex-col gap-[6px]" #messagesContainer>
