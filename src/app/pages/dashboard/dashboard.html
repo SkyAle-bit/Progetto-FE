@@ -562,10 +562,10 @@
           Supporto
         </div>
         <div class="w-full flex flex-col gap-2">
-          <a href="mailto:amministrazione@kore.com?subject=Richiesta%20di%20Supporto"
+          <button (click)="contactAdmin()"
             class="w-full py-[0.65rem] rounded-xl bg-gradient-to-r from-[#1a3462] to-[#2d5fa8] text-white text-[0.8rem] font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
             <span class="text-[1.1rem]">📞</span> Contatta Amministrazione
-          </a>
+          </button>
         </div>
 
         <ng-container *ngIf="isClient() && subscription">
