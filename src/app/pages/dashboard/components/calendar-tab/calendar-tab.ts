@@ -32,6 +32,9 @@ export class CalendarTabComponent implements OnInit {
     this.initWeek();
     this.buildTimeSlots();
     this.updateVisibleDays();
+    if (this.visibleDayCount < 7) {
+      this.goToToday();
+    }
   }
 
   @HostListener('window:resize')
@@ -46,8 +49,8 @@ export class CalendarTabComponent implements OnInit {
   toggleAgendaView(): void { this.agendaView = !this.agendaView; }
 
   getAgendaDays(): Date[] {
-    const days: Date[] = []; const today = new Date(); today.setHours(0,0,0,0);
-    for (let i = 0; i < 30; i++) { const d = new Date(today); d.setDate(today.getDate()+i); if (this.getBookingsForAgendaDay(d).length > 0 || i < 3) days.push(d); }
+    const days: Date[] = []; const today = new Date(); today.setHours(0, 0, 0, 0);
+    for (let i = 0; i < 30; i++) { const d = new Date(today); d.setDate(today.getDate() + i); if (this.getBookingsForAgendaDay(d).length > 0 || i < 3) days.push(d); }
     return days;
   }
 
@@ -58,7 +61,7 @@ export class CalendarTabComponent implements OnInit {
 
   initWeek(): void {
     const today = new Date(); const day = today.getDay(); const diff = day === 0 ? -6 : 1 - day;
-    this.currentWeekStart = new Date(today); this.currentWeekStart.setDate(today.getDate() + diff); this.currentWeekStart.setHours(0,0,0,0);
+    this.currentWeekStart = new Date(today); this.currentWeekStart.setDate(today.getDate() + diff); this.currentWeekStart.setHours(0, 0, 0, 0);
     this.dayOffset = 0; this.buildWeekDays();
   }
 
@@ -69,19 +72,19 @@ export class CalendarTabComponent implements OnInit {
 
   buildTimeSlots(): void {
     this.timeSlots = [];
-    for (let h = this.START_HOUR; h < this.END_HOUR; h++) { this.timeSlots.push(`${h.toString().padStart(2,'0')}:00`); this.timeSlots.push(`${h.toString().padStart(2,'0')}:30`); }
+    for (let h = this.START_HOUR; h < this.END_HOUR; h++) { this.timeSlots.push(`${h.toString().padStart(2, '0')}:00`); this.timeSlots.push(`${h.toString().padStart(2, '0')}:30`); }
   }
 
   isFullHour(slot: string): boolean { return slot.endsWith(':00'); }
 
   prevWeek(): void {
-    if (this.visibleDayCount === 7) { const d = new Date(this.currentWeekStart); d.setDate(d.getDate()-7); this.currentWeekStart = d; this.dayOffset = 0; }
+    if (this.visibleDayCount === 7) { const d = new Date(this.currentWeekStart); d.setDate(d.getDate() - 7); this.currentWeekStart = d; this.dayOffset = 0; }
     else { this.dayOffset -= this.visibleDayCount; if (this.dayOffset < -28) this.dayOffset = -28; }
     this.buildWeekDays();
   }
 
   nextWeek(): void {
-    if (this.visibleDayCount === 7) { const d = new Date(this.currentWeekStart); d.setDate(d.getDate()+7); this.currentWeekStart = d; this.dayOffset = 0; }
+    if (this.visibleDayCount === 7) { const d = new Date(this.currentWeekStart); d.setDate(d.getDate() + 7); this.currentWeekStart = d; this.dayOffset = 0; }
     else { this.dayOffset += this.visibleDayCount; if (this.dayOffset > 56) this.dayOffset = 56; }
     this.buildWeekDays();
   }
@@ -89,8 +92,8 @@ export class CalendarTabComponent implements OnInit {
   goToToday(): void {
     this.initWeek(); this.updateVisibleDays();
     if (this.visibleDayCount < 7) {
-      const today = new Date(); today.setHours(0,0,0,0);
-      const diffDays = Math.round((today.getTime() - this.currentWeekStart.getTime()) / (1000*60*60*24));
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const diffDays = Math.round((today.getTime() - this.currentWeekStart.getTime()) / (1000 * 60 * 60 * 24));
       this.dayOffset = Math.floor(diffDays / this.visibleDayCount) * this.visibleDayCount;
       this.buildWeekDays();
     }
@@ -100,7 +103,7 @@ export class CalendarTabComponent implements OnInit {
 
   getWeekLabel(): string {
     if (this.weekDays.length === 0) return '';
-    const first = this.weekDays[0]; const last = this.weekDays[this.weekDays.length-1];
+    const first = this.weekDays[0]; const last = this.weekDays[this.weekDays.length - 1];
     const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'short' };
     if (this.visibleDayCount === 1) return first.toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
     if (this.visibleDayCount === 3) return `${first.toLocaleDateString('it-IT', opts)} – ${last.toLocaleDateString('it-IT', opts)}`;
@@ -108,7 +111,7 @@ export class CalendarTabComponent implements OnInit {
     return `${first.toLocaleDateString('it-IT', optsLong)} – ${last.toLocaleDateString('it-IT', { ...optsLong, year: 'numeric' })}`;
   }
 
-  formatDate(date: Date): string { const y=date.getFullYear(); const m=(date.getMonth()+1).toString().padStart(2,'0'); const d=date.getDate().toString().padStart(2,'0'); return `${y}-${m}-${d}`; }
+  formatDate(date: Date): string { const y = date.getFullYear(); const m = (date.getMonth() + 1).toString().padStart(2, '0'); const d = date.getDate().toString().padStart(2, '0'); return `${y}-${m}-${d}`; }
   getDayName(date: Date): string { return date.toLocaleDateString('it-IT', { weekday: 'short' }).toUpperCase(); }
   getDayNumber(date: Date): number { return date.getDate(); }
   getMonthShort(date: Date): string { return date.toLocaleDateString('it-IT', { month: 'short' }).replace('.', ''); }

@@ -25,6 +25,7 @@ export class InsuranceHomeTabComponent {
   clientDocs: any[] = [];
   docsLoading: boolean = false;
   isUploading: boolean = false;
+  isDragOver: boolean = false;
 
   // PDF viewer
   pdfOpen: boolean = false;
@@ -85,18 +86,55 @@ export class InsuranceHomeTabComponent {
 
   openPdfNewTab(): void { if (this.blobUrl) window.open(this.blobUrl, '_blank'); }
 
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = true;
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      if (files[0].type === 'application/pdf') {
+        this.uploadFile(files[0]);
+      } else {
+        alert("Per favore, carica solo file in formato PDF.");
+      }
+    }
+  }
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (!file || !this.selectedClient || !this.currentUser) return;
+    if (file) {
+      if (file.type === 'application/pdf') {
+        this.uploadFile(file);
+      } else {
+        alert("Per favore, carica solo file in formato PDF.");
+      }
+    }
+    input.value = ''; // Reset input per permmettere il ricaricamento dello stesso file se necessario
+  }
+
+  private uploadFile(file: File): void {
+    if (!this.selectedClient || !this.currentUser) return;
     this.isUploading = true;
     this.authService.uploadDocument(file, this.selectedClient.userId, this.currentUser.id, 'INSURANCE_POLICE').subscribe({
       next: () => {
         this.isUploading = false;
-        input.value = '';
         this.openClientDocs(this.selectedClient); // ricarica docs
       },
-      error: () => { this.isUploading = false; input.value = ''; }
+      error: () => { this.isUploading = false; }
     });
   }
 
@@ -104,7 +142,7 @@ export class InsuranceHomeTabComponent {
     if (!confirm('Eliminare questo documento?')) return;
     this.authService.deleteDocument(doc.id).subscribe({
       next: () => { this.clientDocs = this.clientDocs.filter(d => d.id !== doc.id); this.cdr.detectChanges(); },
-      error: () => {}
+      error: () => { }
     });
   }
 

@@ -58,6 +58,10 @@ export class AuthService {
     return this.http.get(`${this.apiUrl}/api/users/dashboard/${userId}`);
   }
 
+  updateProfile(userId: number, profileData: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/api/users/${userId}/profile`, profileData);
+  }
+
   getProfessionalSlots(professionalId: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/api/professionals/${professionalId}/slots`);
   }

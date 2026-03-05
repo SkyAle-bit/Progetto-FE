@@ -1,18 +1,25 @@
 <div class="px-4 py-5 sm:max-w-[900px] sm:mx-auto sm:py-8 sm:px-8">
   <div class="flex items-center justify-between mb-1">
     <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[#1a2744]">Gestione Utenti</h3>
-    <button class="flex items-center gap-1.5 px-3.5 py-2 bg-[#1a3462] text-white text-[0.78rem] font-bold rounded-xl hover:bg-[#112344] transition-all active:scale-[0.97]"
+    <button
+      class="flex items-center gap-1.5 px-3.5 py-2 bg-[#1a3462] text-white text-[0.78rem] font-bold rounded-xl hover:bg-[#112344] transition-all active:scale-[0.97]"
       (click)="openCreateModal()">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+      </svg>
       Nuovo Utente
     </button>
   </div>
-  <p class="text-[0.78rem] sm:text-[0.85rem] text-[#8fa3c8] mb-4 sm:mb-6">{{ filteredUsers.length }} utenti{{ roleFilter !== 'ALL' ? ' (' + getRoleLabel(roleFilter) + ')' : '' }}</p>
+  <p class="text-[0.78rem] sm:text-[0.85rem] text-[#8fa3c8] mb-4 sm:mb-6">{{ filteredUsers.length }} utenti{{ roleFilter
+    !== 'ALL' ? ' (' + getRoleLabel(roleFilter) + ')' : '' }}</p>
 
   <!-- Ricerca + Filtro -->
   <div class="flex flex-col sm:flex-row gap-3 mb-5">
     <div class="flex-1 relative">
-      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8fa3c8]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8fa3c8]" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
       <input type="text" [(ngModel)]="searchQuery" placeholder="Cerca per nome o email..."
         class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#ccd8ed] text-[0.82rem] text-[#1a2744] placeholder-[#8fa3c8] focus:outline-none focus:border-[#c9a96e] transition-all">
     </div>
@@ -34,20 +41,28 @@
 
   <!-- Lista utenti -->
   <div class="flex flex-col gap-2.5" *ngIf="filteredUsers.length > 0">
-    <div class="flex items-center gap-3 bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm hover:border-[#c9a96e]/40 transition-all"
+    <div
+      class="flex items-center gap-3 bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm hover:border-[#c9a96e]/40 transition-all"
       *ngFor="let user of filteredUsers">
-      <div class="w-11 h-11 rounded-full bg-[#1a3462] flex items-center justify-center overflow-hidden border-2 border-[#c9a96e]/40 flex-shrink-0">
-        <span class="text-[#e8c97a] text-[0.7rem] font-bold">{{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0) }}</span>
+      <div
+        class="w-11 h-11 rounded-full bg-[#1a3462] flex items-center justify-center overflow-hidden border-2 border-[#c9a96e]/40 flex-shrink-0">
+        <span class="text-[#e8c97a] text-[0.7rem] font-bold">{{ user.firstName?.charAt(0) }}{{ user.lastName?.charAt(0)
+          }}</span>
       </div>
       <div class="flex-1 min-w-0">
         <div class="text-[0.88rem] font-bold text-[#1a2744] truncate">{{ user.firstName }} {{ user.lastName }}</div>
         <div class="text-[0.72rem] text-[#8fa3c8] truncate">{{ user.email }}</div>
       </div>
       <div class="flex items-center gap-2 flex-shrink-0">
-        <span class="text-[0.6rem] font-bold px-2 py-0.5 rounded-full"
-          [ngClass]="getRoleBadgeClass(user.role)">{{ getRoleEmoji(user.role) }} {{ getRoleLabel(user.role) }}</span>
-        <button class="w-7 h-7 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all" title="Elimina utente" (click)="deleteUser(user)">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        <span class="text-[0.6rem] font-bold px-2 py-0.5 rounded-full" [ngClass]="getRoleBadgeClass(user.role)">{{
+          getRoleEmoji(user.role) }} {{ getRoleLabel(user.role) }}</span>
+        <button
+          class="w-7 h-7 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all"
+          title="Elimina utente" (click)="deleteUser(user)">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
         </button>
       </div>
     </div>
@@ -58,21 +73,29 @@
   </div>
 
   <!-- Modale Crea Utente (Wizard) — Responsive -->
-  <div class="fixed inset-0 bg-[#1a2744]/40 backdrop-blur-[4px] z-[200] flex items-end sm:items-center justify-center sm:p-4" *ngIf="showCreateModal" (click)="closeCreateModal()">
-    <div class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] overflow-hidden" (click)="$event.stopPropagation()">
+  <div
+    class="fixed inset-0 bg-[#1a2744]/40 backdrop-blur-[4px] z-[200] flex items-start sm:items-center justify-center pt-[4vh] sm:pt-0 sm:p-4"
+    *ngIf="showCreateModal" (click)="closeCreateModal()">
+    <div
+      class="bg-white w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl sm:rounded-b-2xl shadow-2xl flex flex-col max-h-[92vh] sm:max-h-[88vh] overflow-hidden"
+      (click)="$event.stopPropagation()">
       <!-- Header -->
       <div class="px-5 sm:px-6 py-4 sm:py-5 bg-[#1a3462] flex items-center justify-between flex-shrink-0">
         <div>
           <h3 class="font-['Darker_Grotesque'] text-[1.15rem] sm:text-[1.3rem] font-black text-white">Nuovo Utente</h3>
           <div class="flex items-center gap-2 mt-1" *ngIf="totalSteps > 1">
             <div class="flex gap-1">
-              <div class="w-8 h-1 rounded-full transition-all" [ngClass]="currentStep >= 1 ? 'bg-[#c9a96e]' : 'bg-white/20'"></div>
-              <div class="w-8 h-1 rounded-full transition-all" [ngClass]="currentStep >= 2 ? 'bg-[#c9a96e]' : 'bg-white/20'"></div>
+              <div class="w-8 h-1 rounded-full transition-all"
+                [ngClass]="currentStep >= 1 ? 'bg-[#c9a96e]' : 'bg-white/20'"></div>
+              <div class="w-8 h-1 rounded-full transition-all"
+                [ngClass]="currentStep >= 2 ? 'bg-[#c9a96e]' : 'bg-white/20'"></div>
             </div>
             <span class="text-[0.6rem] text-white/50 font-medium">Step {{ currentStep }}/{{ totalSteps }}</span>
           </div>
         </div>
-        <button class="w-7 h-7 bg-white/10 border border-white/20 rounded-lg text-white/60 text-[0.75rem] flex items-center justify-center" (click)="closeCreateModal()">✕</button>
+        <button
+          class="w-7 h-7 bg-white/10 border border-white/20 rounded-lg text-white/60 text-[0.75rem] flex items-center justify-center"
+          (click)="closeCreateModal()">✕</button>
       </div>
 
       <!-- STEP 1: Dati base -->
@@ -80,25 +103,39 @@
         <div class="p-5 sm:p-6 flex flex-col gap-3.5 sm:gap-4">
           <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
             <div>
-              <label class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1 block">Nome</label>
-              <input type="text" [(ngModel)]="newUser.firstName" class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[#1a2744] focus:outline-none focus:border-[#c9a96e]" placeholder="Mario">
+              <label
+                class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1 block">Nome</label>
+              <input type="text" [(ngModel)]="newUser.firstName"
+                class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[#1a2744] focus:outline-none focus:border-[#c9a96e]"
+                placeholder="Mario">
             </div>
             <div>
-              <label class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1 block">Cognome</label>
-              <input type="text" [(ngModel)]="newUser.lastName" class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[#1a2744] focus:outline-none focus:border-[#c9a96e]" placeholder="Rossi">
+              <label
+                class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1 block">Cognome</label>
+              <input type="text" [(ngModel)]="newUser.lastName"
+                class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[#1a2744] focus:outline-none focus:border-[#c9a96e]"
+                placeholder="Rossi">
             </div>
           </div>
           <div>
-            <label class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1 block">Email</label>
-            <input type="email" [(ngModel)]="newUser.email" class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[#1a2744] focus:outline-none focus:border-[#c9a96e]" placeholder="mario&#64;example.com">
+            <label
+              class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1 block">Email</label>
+            <input type="email" [(ngModel)]="newUser.email"
+              class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[#1a2744] focus:outline-none focus:border-[#c9a96e]"
+              placeholder="mario&#64;example.com">
           </div>
           <div>
-            <label class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1 block">Password</label>
-            <input type="password" [(ngModel)]="newUser.password" class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[#1a2744] focus:outline-none focus:border-[#c9a96e]" placeholder="••••••••">
+            <label
+              class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1 block">Password</label>
+            <input type="password" [(ngModel)]="newUser.password"
+              class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[#1a2744] focus:outline-none focus:border-[#c9a96e]"
+              placeholder="••••••••">
           </div>
           <div>
-            <label class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1 block">Ruolo</label>
-            <select [(ngModel)]="newUser.role" class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[#1a2744] focus:outline-none focus:border-[#c9a96e]">
+            <label
+              class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1 block">Ruolo</label>
+            <select [(ngModel)]="newUser.role"
+              class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[#1a2744] focus:outline-none focus:border-[#c9a96e]">
               <option value="CLIENT">🧑 Cliente</option>
               <option value="PERSONAL_TRAINER">💪 Personal Trainer</option>
               <option value="NUTRITIONIST">🥗 Nutrizionista</option>
@@ -111,7 +148,8 @@
       </div>
       <!-- Footer Step 1 -->
       <div class="px-5 sm:px-6 pb-5 sm:pb-6 pt-0 flex-shrink-0" *ngIf="currentStep === 1">
-        <button class="w-full py-2.5 sm:py-3 rounded-xl bg-[#1a3462] text-white text-[0.82rem] sm:text-[0.88rem] font-bold hover:bg-[#112344] transition-all active:scale-[0.97]"
+        <button
+          class="w-full py-2.5 sm:py-3 rounded-xl bg-[#1a3462] text-white text-[0.82rem] sm:text-[0.88rem] font-bold hover:bg-[#112344] transition-all active:scale-[0.97]"
           [class.opacity-50]="creating" [disabled]="creating" (click)="nextStep()">
           {{ isClientRole ? 'Avanti →' : (creating ? 'Creazione...' : 'Crea Utente') }}
         </button>
@@ -122,18 +160,24 @@
         <div class="p-5 sm:p-6 flex flex-col gap-4 sm:gap-5">
           <!-- Mini riepilogo utente -->
           <div class="flex items-center gap-3 bg-[#f2f6fc] rounded-xl p-3 border border-[#ccd8ed]/60">
-            <div class="w-10 h-10 rounded-full bg-[#c9a96e]/15 flex items-center justify-center text-[1.1rem] flex-shrink-0">🧑</div>
+            <div
+              class="w-10 h-10 rounded-full bg-[#c9a96e]/15 flex items-center justify-center text-[1.1rem] flex-shrink-0">
+              🧑</div>
             <div class="min-w-0">
-              <div class="text-[0.82rem] font-bold text-[#1a2744] truncate">{{ newUser.firstName }} {{ newUser.lastName }}</div>
+              <div class="text-[0.82rem] font-bold text-[#1a2744] truncate">{{ newUser.firstName }} {{ newUser.lastName
+                }}</div>
               <div class="text-[0.65rem] text-[#8fa3c8] truncate">{{ newUser.email }}</div>
             </div>
           </div>
 
           <!-- Piano -->
           <div>
-            <label class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1.5 block">👑 Piano Abbonamento <span class="text-red-400">*</span></label>
+            <label
+              class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1.5 block">👑
+              Piano Abbonamento <span class="text-red-400">*</span></label>
             <div class="flex flex-col gap-1.5 sm:gap-2">
-              <button class="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl border transition-all text-left w-full"
+              <button
+                class="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl border transition-all text-left w-full"
                 *ngFor="let plan of allPlans"
                 [ngClass]="newUser.planId === plan.id ? 'border-[#c9a96e] bg-[#c9a96e]/5' : 'border-[#ccd8ed] bg-white'"
                 (click)="newUser.planId = plan.id">
@@ -143,7 +187,8 @@
                 </div>
                 <div class="flex-1 min-w-0">
                   <div class="text-[0.78rem] sm:text-[0.82rem] font-bold text-[#1a2744] truncate">{{ plan.name }}</div>
-                  <div class="text-[0.6rem] sm:text-[0.65rem] text-[#8fa3c8] truncate">€{{ plan.fullPrice }} · {{ plan.monthlyCreditsPT }} PT · {{ plan.monthlyCreditsNutri }} Nutri</div>
+                  <div class="text-[0.6rem] sm:text-[0.65rem] text-[#8fa3c8] truncate">€{{ plan.fullPrice }} · {{
+                    plan.monthlyCreditsPT }} PT · {{ plan.monthlyCreditsNutri }} Nutri</div>
                 </div>
               </button>
             </div>
@@ -151,36 +196,50 @@
 
           <!-- Personal Trainer -->
           <div>
-            <label class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1.5 block">💪 Personal Trainer <span class="text-red-400">*</span></label>
+            <label
+              class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1.5 block">💪
+              Personal Trainer <span class="text-red-400">*</span></label>
             <div class="flex flex-col gap-1.5 sm:gap-2">
-              <button class="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl border transition-all text-left w-full"
+              <button
+                class="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl border transition-all text-left w-full"
                 *ngFor="let pt of availablePTs"
                 [ngClass]="newUser.assignedPTId === pt.id ? 'border-emerald-400 bg-emerald-50/50' : 'border-[#ccd8ed] bg-white'"
                 (click)="newUser.assignedPTId = pt.id">
                 <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
                   [ngClass]="newUser.assignedPTId === pt.id ? 'border-emerald-500 bg-emerald-500' : 'border-[#ccd8ed]'">
-                  <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white" *ngIf="newUser.assignedPTId === pt.id"></div>
+                  <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white" *ngIf="newUser.assignedPTId === pt.id">
+                  </div>
                 </div>
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#1a3462] flex items-center justify-center text-[#e8c97a] text-[0.5rem] sm:text-[0.55rem] font-bold flex-shrink-0">{{ pt.firstName?.charAt(0) }}{{ pt.lastName?.charAt(0) }}</div>
-                <span class="text-[0.78rem] sm:text-[0.82rem] font-medium text-[#1a2744] truncate">{{ pt.firstName }} {{ pt.lastName }}</span>
+                <div
+                  class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#1a3462] flex items-center justify-center text-[#e8c97a] text-[0.5rem] sm:text-[0.55rem] font-bold flex-shrink-0">
+                  {{ pt.firstName?.charAt(0) }}{{ pt.lastName?.charAt(0) }}</div>
+                <span class="text-[0.78rem] sm:text-[0.82rem] font-medium text-[#1a2744] truncate">{{ pt.firstName }} {{
+                  pt.lastName }}</span>
               </button>
             </div>
           </div>
 
           <!-- Nutrizionista -->
           <div>
-            <label class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1.5 block">🥗 Nutrizionista <span class="text-red-400">*</span></label>
+            <label
+              class="text-[0.62rem] sm:text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1.5 block">🥗
+              Nutrizionista <span class="text-red-400">*</span></label>
             <div class="flex flex-col gap-1.5 sm:gap-2">
-              <button class="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl border transition-all text-left w-full"
+              <button
+                class="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl border transition-all text-left w-full"
                 *ngFor="let nutri of availableNutritionists"
                 [ngClass]="newUser.assignedNutritionistId === nutri.id ? 'border-amber-400 bg-amber-50/50' : 'border-[#ccd8ed] bg-white'"
                 (click)="newUser.assignedNutritionistId = nutri.id">
                 <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
                   [ngClass]="newUser.assignedNutritionistId === nutri.id ? 'border-amber-500 bg-amber-500' : 'border-[#ccd8ed]'">
-                  <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white" *ngIf="newUser.assignedNutritionistId === nutri.id"></div>
+                  <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white"
+                    *ngIf="newUser.assignedNutritionistId === nutri.id"></div>
                 </div>
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#c9a96e] flex items-center justify-center text-[#1a2744] text-[0.5rem] sm:text-[0.55rem] font-bold flex-shrink-0">{{ nutri.firstName?.charAt(0) }}{{ nutri.lastName?.charAt(0) }}</div>
-                <span class="text-[0.78rem] sm:text-[0.82rem] font-medium text-[#1a2744] truncate">{{ nutri.firstName }} {{ nutri.lastName }}</span>
+                <div
+                  class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#c9a96e] flex items-center justify-center text-[#1a2744] text-[0.5rem] sm:text-[0.55rem] font-bold flex-shrink-0">
+                  {{ nutri.firstName?.charAt(0) }}{{ nutri.lastName?.charAt(0) }}</div>
+                <span class="text-[0.78rem] sm:text-[0.82rem] font-medium text-[#1a2744] truncate">{{ nutri.firstName }}
+                  {{ nutri.lastName }}</span>
               </button>
             </div>
           </div>
@@ -189,9 +248,21 @@
           <div class="bg-[#f2f6fc] rounded-xl p-3 border border-[#ccd8ed]/60">
             <div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.08em] font-semibold mb-1.5">Riepilogo</div>
             <div class="flex flex-col gap-1">
-              <div class="flex items-center justify-between"><span class="text-[0.68rem] sm:text-[0.72rem] text-[#8fa3c8]">Piano</span><span class="text-[0.68rem] sm:text-[0.72rem] font-bold truncate ml-3 text-right" [ngClass]="newUser.planId ? 'text-[#1a2744]' : 'text-red-400'">{{ getSelectedPlanName() }}</span></div>
-              <div class="flex items-center justify-between"><span class="text-[0.68rem] sm:text-[0.72rem] text-[#8fa3c8]">PT</span><span class="text-[0.68rem] sm:text-[0.72rem] font-bold truncate ml-3 text-right" [ngClass]="newUser.assignedPTId ? 'text-[#1a2744]' : 'text-red-400'">{{ getSelectedPTName() }}</span></div>
-              <div class="flex items-center justify-between"><span class="text-[0.68rem] sm:text-[0.72rem] text-[#8fa3c8]">Nutrizionista</span><span class="text-[0.68rem] sm:text-[0.72rem] font-bold truncate ml-3 text-right" [ngClass]="newUser.assignedNutritionistId ? 'text-[#1a2744]' : 'text-red-400'">{{ getSelectedNutriName() }}</span></div>
+              <div class="flex items-center justify-between"><span
+                  class="text-[0.68rem] sm:text-[0.72rem] text-[#8fa3c8]">Piano</span><span
+                  class="text-[0.68rem] sm:text-[0.72rem] font-bold truncate ml-3 text-right"
+                  [ngClass]="newUser.planId ? 'text-[#1a2744]' : 'text-red-400'">{{ getSelectedPlanName() }}</span>
+              </div>
+              <div class="flex items-center justify-between"><span
+                  class="text-[0.68rem] sm:text-[0.72rem] text-[#8fa3c8]">PT</span><span
+                  class="text-[0.68rem] sm:text-[0.72rem] font-bold truncate ml-3 text-right"
+                  [ngClass]="newUser.assignedPTId ? 'text-[#1a2744]' : 'text-red-400'">{{ getSelectedPTName() }}</span>
+              </div>
+              <div class="flex items-center justify-between"><span
+                  class="text-[0.68rem] sm:text-[0.72rem] text-[#8fa3c8]">Nutrizionista</span><span
+                  class="text-[0.68rem] sm:text-[0.72rem] font-bold truncate ml-3 text-right"
+                  [ngClass]="newUser.assignedNutritionistId ? 'text-[#1a2744]' : 'text-red-400'">{{
+                  getSelectedNutriName() }}</span></div>
             </div>
           </div>
 
@@ -200,11 +271,13 @@
       </div>
       <!-- Footer Step 2 -->
       <div class="px-5 sm:px-6 pb-5 sm:pb-6 pt-2 flex-shrink-0 flex gap-2.5 sm:gap-3" *ngIf="currentStep === 2">
-        <button class="flex-1 py-2.5 sm:py-3 rounded-xl bg-white border border-[#ccd8ed] text-[#1a2744] text-[0.8rem] sm:text-[0.85rem] font-semibold hover:bg-[#f2f6fc] transition-all active:scale-[0.97]"
+        <button
+          class="flex-1 py-2.5 sm:py-3 rounded-xl bg-white border border-[#ccd8ed] text-[#1a2744] text-[0.8rem] sm:text-[0.85rem] font-semibold hover:bg-[#f2f6fc] transition-all active:scale-[0.97]"
           (click)="prevStep()">
           ← Indietro
         </button>
-        <button class="flex-1 py-2.5 sm:py-3 rounded-xl bg-[#1a3462] text-white text-[0.8rem] sm:text-[0.85rem] font-bold hover:bg-[#112344] transition-all active:scale-[0.97]"
+        <button
+          class="flex-1 py-2.5 sm:py-3 rounded-xl bg-[#1a3462] text-white text-[0.8rem] sm:text-[0.85rem] font-bold hover:bg-[#112344] transition-all active:scale-[0.97]"
           [class.opacity-50]="creating" [disabled]="creating" (click)="createUser()">
           {{ creating ? 'Creazione...' : 'Crea Utente' }}
         </button>

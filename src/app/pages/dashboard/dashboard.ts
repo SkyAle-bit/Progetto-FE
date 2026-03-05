@@ -2,6 +2,7 @@ import {
   Component, inject, OnInit, OnDestroy, ChangeDetectorRef, HostListener
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ChatService } from '../../services/chat.service';
@@ -23,7 +24,7 @@ import { PullToRefreshDirective } from '../../directives/pull-to-refresh.directi
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, AdminHomeTabComponent, AdminUsersTabComponent, AdminPlansTabComponent, InsuranceHomeTabComponent, MyProfessionalsTabComponent, MyServicesTabComponent, AdminStatsTabComponent, ToastComponent, PullToRefreshDirective],
+  imports: [CommonModule, FormsModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, AdminHomeTabComponent, AdminUsersTabComponent, AdminPlansTabComponent, InsuranceHomeTabComponent, MyProfessionalsTabComponent, MyServicesTabComponent, AdminStatsTabComponent, ToastComponent, PullToRefreshDirective],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -115,6 +116,54 @@ export class DashboardComponent implements OnInit, OnDestroy {
   selectedCallBooking: any = null;
   canJoinCallNow: boolean = false;
   private timeCheckInterval: any;
+
+  // ── Modale Modifica Profilo ─────────────────────────────────
+  isProfileEditOpen: boolean = false;
+  isSavingProfile: boolean = false;
+  profileEditData: any = {
+    firstName: '',
+    lastName: '',
+    password: '',
+    profilePicture: ''
+  };
+
+  openProfileEditModal(): void {
+    this.profileEditData = {
+      firstName: this.profile?.firstName || '',
+      lastName: this.profile?.lastName || '',
+      password: '',
+      profilePicture: this.currentUser?.profilePicture || ''
+    };
+    this.isProfileEditOpen = true;
+  }
+
+  closeProfileEditModal(): void {
+    this.isProfileEditOpen = false;
+  }
+
+  saveProfileChanges(): void {
+    if (!this.currentUser) return;
+    this.isSavingProfile = true;
+
+    this.authService.updateProfile(this.currentUser.id, this.profileEditData).subscribe({
+      next: (res) => {
+        this.isSavingProfile = false;
+        this.closeProfileEditModal();
+        this.toast.success('Successo', 'Profilo aggiornato con successo.');
+
+        // Update local session
+        this.currentUser.profilePicture = this.profileEditData.profilePicture;
+        localStorage.setItem('user', JSON.stringify(this.currentUser));
+
+        this.loadDashboardData(); // reload UI profile
+      },
+      error: (err) => {
+        this.isSavingProfile = false;
+        this.toast.error('Errore', 'Impossibile aggiornare il profilo.');
+        console.error(err);
+      }
+    });
+  }
 
   ngOnInit(): void {
     const userString = localStorage.getItem('user');
