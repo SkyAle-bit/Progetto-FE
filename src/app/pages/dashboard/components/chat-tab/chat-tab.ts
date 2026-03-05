@@ -35,6 +35,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   chatLoading: boolean = false;
   chatView: 'list' | 'conversation' = 'list';
   private subscriptions: any[] = [];
+  private conversationsLoaded = false;  // Flag: true dopo il primo load
 
   // User picker (admin)
   showUserPicker: boolean = false;
@@ -94,11 +95,19 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
     // Subscribe to conversation updates (da polling globale + WS)
     const convSub = this.chatService.conversations$.subscribe(convs => {
+      // Ignora l'emit iniziale del BehaviorSubject prima che loadConversations finisca
+      if (!this.conversationsLoaded) return;
+
       const backendConvs = convs ?? [];
       const backendIds = new Set(backendConvs.map(c => c.otherUserId));
       const localContacts = this.buildLocalConversations();
       const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
-      this.chatConversations = [...backendConvs, ...localOnly];
+
+      // Preserva conversazioni aggiunte localmente (es. admin con picker +) non ancora nel backend
+      const currentLocalIds = new Set([...backendIds, ...localOnly.map(l => l.otherUserId)]);
+      const pickerOnly = this.chatConversations.filter(c => !currentLocalIds.has(c.otherUserId));
+
+      this.chatConversations = [...backendConvs, ...localOnly, ...pickerOnly];
       this.cdr.detectChanges();
     });
     this.subscriptions.push(convSub);
@@ -140,9 +149,10 @@ export class ChatTabComponent implements OnInit, OnDestroy {
           this.chatConversations = localContacts;
         }
         this.chatLoading = false;
+        this.conversationsLoaded = true;
         this.cdr.detectChanges();
       },
-      error: () => { this.chatConversations = this.buildLocalConversations(); this.chatLoading = false; this.cdr.detectChanges(); }
+      error: () => { this.chatConversations = this.buildLocalConversations(); this.chatLoading = false; this.conversationsLoaded = true; this.cdr.detectChanges(); }
     });
   }
 

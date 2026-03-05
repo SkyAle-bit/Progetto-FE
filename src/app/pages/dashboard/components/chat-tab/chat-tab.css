@@ -2,6 +2,17 @@
    CHAT — stili specifici del chat-tab
    ══════════════════════════════════════════════════════════════════════════ */
 
+/* Nasconde il pannello solo su mobile — su desktop (sm+) rimane sempre visibile */
+.chat-panel-hidden-mobile {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .chat-panel-hidden-mobile {
+    display: flex !important;
+  }
+}
+
 /* Area messaggi — sfondo con pattern leggero */
 .chat-messages-area {
   background-color: #e8edf5;
