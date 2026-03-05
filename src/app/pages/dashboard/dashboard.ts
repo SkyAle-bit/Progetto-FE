@@ -1,5 +1,5 @@
 import {
-  Component, inject, OnInit, OnDestroy, ChangeDetectorRef, HostListener
+  Component, inject, OnInit, OnDestroy, ChangeDetectorRef, HostListener, ViewChild
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -29,6 +29,8 @@ import { PullToRefreshDirective } from '../../directives/pull-to-refresh.directi
   styleUrls: ['./dashboard.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
+  @ViewChild(ChatTabComponent) chatTabComponent!: ChatTabComponent;
+
   private authService = inject(AuthService);
   private chatService = inject(ChatService);
   private router = inject(Router);
@@ -160,6 +162,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
       error: (err) => {
         this.isSavingProfile = false;
         this.toast.error('Errore', 'Impossibile aggiornare il profilo.');
+        console.error(err);
+      }
+    });
+  }
+
+  contactAdmin(): void {
+    if (this.isAdmin()) {
+      this.toast.warning('Attenzione', 'Sei già un Amministratore.');
+      return;
+    }
+    this.authService.getAdmin().subscribe({
+      next: (adminUser) => {
+        this.setTab('chat');
+        // Wait a tick for the ChatTabComponent to be rendered
+        setTimeout(() => {
+          if (this.chatTabComponent) {
+            this.chatTabComponent.startConversationWith(adminUser);
+          }
+        }, 150);
+      },
+      error: (err) => {
+        this.toast.error('Errore', 'Impossibile recuperare l\'account Amministratore.');
         console.error(err);
       }
     });
