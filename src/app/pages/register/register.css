@@ -18,10 +18,10 @@
 
 .register-page {
   height: 100%;
-  background: #112240;
+  background: #0e1c35;
   background-image:
-    radial-gradient(circle at top right, rgba(201, 169, 110, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at bottom left, rgba(26, 52, 98, 0.8) 0%, transparent 60%);
+    radial-gradient(ellipse at 80% 10%, rgba(201, 169, 110, .10) 0%, transparent 55%),
+    radial-gradient(ellipse at 10% 90%, rgba(26, 52, 98, .70) 0%, transparent 60%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,7 +29,8 @@
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 2rem 1rem;
+  padding: 5rem 1rem 2rem;
+  /* spazio top per il btn-back fisso */
 }
 
 /* Step 2: pagina scrollabile e piana in alto */
@@ -40,7 +41,8 @@
   align-items: flex-start;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 3rem 1rem 4rem;
+  padding: 5rem 1rem 4rem;
+  /* spazio top per il btn-back fisso */
 }
 
 .bg-shapes {
@@ -1050,60 +1052,79 @@
 
 /* Button Back to Home */
 .btn-back {
-  position: absolute;
-  top: 2rem;
-  left: 3rem;
-  z-index: 100;
+  position: fixed;
+  /* fixed = sempre visibile, non si sovrappone alla content */
+  top: 1.1rem;
+  left: 1.1rem;
+  z-index: 200;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #a4b3c6;
-  padding: 0.6rem 1.2rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #8fa3c8;
+  padding: 0.55rem 1rem;
   border-radius: 30px;
   font-family: 'Outfit', sans-serif;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 500;
   cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(12px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   text-decoration: none;
 }
 
 .btn-back:hover {
   background: rgba(201, 169, 110, 0.15);
-  border-color: rgba(201, 169, 110, 0.3);
+  border-color: rgba(201, 169, 110, 0.35);
   color: #c9a96e;
-  transform: translateX(-4px);
+  transform: translateX(-3px);
 }
 
-.back-arrow {
-  transition: transform 0.3s;
+/* Toggle password button */
+.btn-toggle-password {
+  position: absolute;
+  right: 0.55rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(201, 169, 110, 0.10);
+  border: 1px solid rgba(201, 169, 110, 0.25);
+  border-radius: 6px;
+  color: #c9a96e;
+  padding: 0.3rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.2s, color 0.2s;
+  z-index: 5;
 }
 
-.btn-back:hover .back-arrow {
-  transform: translateX(-4px);
+.btn-toggle-password:hover {
+  background: rgba(201, 169, 110, .2);
+  color: #e8c97a;
+}
+
+.field-input.invalid {
+  border-color: rgba(220, 53, 69, 0.5);
+  background: rgba(220, 53, 69, 0.05);
+}
+
+.field-error {
+  font-size: 0.78rem;
+  color: #ff8a93;
+  padding-left: 0.2rem;
 }
 
 /* ===================== RESPONSIVE ===================== */
 
 /* Tablet */
 @media (max-width: 768px) {
-  .btn-back {
-    top: 1.5rem;
-    left: 1.5rem;
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-  }
-
   .register-page {
-    padding: 1.5rem 1rem;
-    padding-top: 2rem;
+    padding: 5rem 0.75rem 2rem;
   }
 
   .register-page.step2 {
-    padding: 2rem 0.75rem 3rem;
+    padding: 5rem 0.75rem 3rem;
   }
 
   .register-wrapper {
@@ -1155,20 +1176,12 @@
 
 /* Mobile */
 @media (max-width: 480px) {
-  .btn-back {
-    top: 1rem;
-    left: 1rem;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8rem;
-  }
-
   .register-page {
-    padding: 1rem 0.5rem;
-    padding-top: 1.5rem;
+    padding: 4.5rem 0.6rem 1.5rem;
   }
 
   .register-page.step2 {
-    padding: 1.5rem 0.5rem 2rem;
+    padding: 4.5rem 0.6rem 2rem;
   }
 
   .glass-card {

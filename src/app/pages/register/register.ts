@@ -1,8 +1,16 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+
+// Validator custom: verifica che password e conferma combacino
+function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+  const parent = control.parent;
+  if (!parent) return null;
+  const pwd = parent.get('password')?.value;
+  return control.value && control.value !== pwd ? { mismatch: true } : null;
+}
 
 @Component({
   selector: 'app-register',
@@ -46,18 +54,30 @@ export class RegisterComponent implements OnInit {
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
 
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+
   constructor() {
     this.registerForm = this.fb.group({
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required, passwordMatchValidator]],
       selectedPlanId: ['', [Validators.required]],
       paymentFrequency: ['UNICA_SOLUZIONE', [Validators.required]],
       selectedPtId: ['', [Validators.required]],
       selectedNutritionistId: ['', [Validators.required]]
     });
+
+    // Re-validate confirmPassword when password changes
+    this.registerForm.get('password')?.valueChanges.subscribe(() => {
+      this.registerForm.get('confirmPassword')?.updateValueAndValidity();
+    });
   }
+
+  togglePasswordVisibility(): void { this.showPassword = !this.showPassword; }
+  toggleConfirmPasswordVisibility(): void { this.showConfirmPassword = !this.showConfirmPassword; }
 
   ngOnInit(): void {
     this.authService.getPlans().subscribe(res => this.plans = res);
@@ -97,13 +117,16 @@ export class RegisterComponent implements OnInit {
       this.registerForm.get('firstName')?.valid &&
       this.registerForm.get('lastName')?.valid &&
       this.registerForm.get('email')?.valid &&
-      this.registerForm.get('password')?.valid;
+      this.registerForm.get('password')?.valid &&
+      this.registerForm.get('confirmPassword')?.valid;
 
     if (step1Valid) {
       this.currentStep = 2;
     } else {
       this.showToast('Compila correttamente tutti i dati prima di procedere.', 'error');
-      this.registerForm.markAllAsTouched();
+      ['firstName', 'lastName', 'email', 'password', 'confirmPassword'].forEach(f =>
+        this.registerForm.get(f)?.markAsTouched()
+      );
     }
   }
 
