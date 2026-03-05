@@ -110,11 +110,27 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     // Ripristina conversazione attiva dal service (sopravvive alla distruzione del componente)
     const savedConv = this.chatService.activeConversation;
     const currentMsgs = this.chatService.getMessagesSnapshot();
-    if (savedConv && currentMsgs.length > 0) {
+    if (savedConv) {
       this.activeConversation = savedConv;
-      this.chatMessages = this.sortMessages(currentMsgs);
       this.chatView = 'conversation';
-      setTimeout(() => this.scrollToBottom(), 100);
+      if (currentMsgs.length > 0) {
+        // Ripristino immediato dallo snapshot, poi aggiorna silenziosamente in background
+        this.chatMessages = this.sortMessages(currentMsgs);
+        setTimeout(() => this.scrollToBottom(), 100);
+        // Ricarica in background per avere eventuali nuovi messaggi
+        this.chatService.getMessages(this.currentUser.id, savedConv.otherUserId).subscribe({
+          next: (serverMsgs) => {
+            if (serverMsgs.length >= this.chatMessages.length) {
+              this.chatMessages = this.sortMessages(serverMsgs);
+              this.cdr.detectChanges();
+              setTimeout(() => this.scrollToBottom(), 50);
+            }
+          }
+        });
+      } else {
+        // Nessuno snapshot: carica normalmente
+        this.openConversation(savedConv);
+      }
     }
 
     // Subscribe to conversation updates (da polling globale + WS)
@@ -357,13 +373,10 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
   backToConversations(): void {
     this.chatView = 'list';
+    // NON azzeriamo activeConversation nel service né i messaggi:
+    // così se l'utente torna sulla stessa chat ritrova tutto intatto.
     this.activeConversation = null;
-    this.chatService.activeConversation = null;  // Pulisci nel service
     this.chatMessages = [];
-
-    // Lascia la stanza WebSocket
-    this.chatService.leaveRoom();
-    this.chatService.clearMessages();
     this.chatService.stopMessagePolling();
     this.loadConversations();
   }
