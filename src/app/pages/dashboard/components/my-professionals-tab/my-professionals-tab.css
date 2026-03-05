@@ -1,0 +1,546 @@
+/* ── Root ── */
+.mp-page {
+    font-family: 'DM Sans', sans-serif;
+    color: #1a2744;
+}
+
+.mp-title {
+    font-family: 'Darker Grotesque', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 900;
+    color: #1a2744;
+    margin-bottom: .25rem;
+}
+
+.mp-subtitle {
+    font-size: .78rem;
+    color: #8fa3c8;
+    margin-bottom: 1.5rem;
+}
+
+/* ── Grid professioni ── */
+.mp-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .mp-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ── Card ── */
+.mp-card {
+    background: #fff;
+    border: 1px solid #ccd8ed;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(26, 52, 98, .07);
+    transition: box-shadow .2s, transform .2s;
+}
+
+.mp-card:hover {
+    box-shadow: 0 8px 24px rgba(26, 52, 98, .13);
+    transform: translateY(-2px);
+}
+
+.mp-card-accent {
+    height: 4px;
+    width: 100%;
+}
+
+.mp-card-accent.blue {
+    background: #1a3462;
+}
+
+.mp-card-accent.gold {
+    background: linear-gradient(90deg, #c9a96e, #a88a53);
+}
+
+.mp-card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: .85rem;
+}
+
+/* ── Prof header ── */
+.mp-prof-header {
+    display: flex;
+    align-items: flex-start;
+    gap: .85rem;
+}
+
+.mp-avatar {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 2.5px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f2f6fc;
+}
+
+.mp-avatar.blue-border {
+    border-color: #1a3462;
+}
+
+.mp-avatar.gold-border {
+    border-color: #c9a96e;
+}
+
+.mp-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mp-avatar-icon {
+    font-size: 1.5rem;
+}
+
+.mp-prof-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.mp-role-badge {
+    display: inline-block;
+    font-size: .6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: .15rem .55rem;
+    border-radius: 20px;
+    margin-bottom: .3rem;
+}
+
+.mp-role-badge.blue {
+    background: #eff4fb;
+    color: #1a3462;
+}
+
+.mp-role-badge.gold {
+    background: #fdf6ec;
+    color: #a88a53;
+}
+
+.mp-prof-name {
+    font-family: 'Darker Grotesque', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1a2744;
+}
+
+.mp-prof-bio {
+    font-size: .72rem;
+    color: #8fa3c8;
+    margin-top: .15rem;
+}
+
+/* ── Rating ── */
+.mp-rating-row {
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    font-size: .82rem;
+}
+
+.mp-star {
+    font-size: .88rem;
+}
+
+.mp-avg-rating {
+    font-weight: 700;
+    color: #1a2744;
+}
+
+.mp-review-count {
+    color: #8fa3c8;
+}
+
+.mp-no-reviews {
+    font-size: .76rem;
+    color: #b8c4d8;
+    font-style: italic;
+}
+
+/* ── Divider ── */
+.mp-divider {
+    height: 1px;
+    background: #e8eef8;
+}
+
+/* ── Book button ── */
+.mp-btn-book {
+    width: 100%;
+    padding: .75rem;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+    font-size: .88rem;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .45rem;
+    transition: transform .15s, box-shadow .15s;
+}
+
+.mp-btn-book.blue {
+    background: #1a3462;
+    color: #fff;
+}
+
+.mp-btn-book.gold {
+    background: linear-gradient(135deg, #c9a96e, #a88a53);
+    color: #1a2744;
+}
+
+.mp-btn-book:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .15);
+}
+
+.mp-btn-book:active {
+    transform: translateY(0);
+}
+
+/* ── Review section ── */
+.mp-review-section {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+}
+
+.mp-my-review {
+    background: #f8faff;
+    border: 1px solid #dde7f5;
+    border-radius: 10px;
+    padding: .75rem;
+}
+
+.mp-my-review-label {
+    font-size: .72rem;
+    font-weight: 700;
+    color: #8fa3c8;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: .35rem;
+}
+
+.mp-stars-display {
+    display: flex;
+    gap: .1rem;
+    margin-bottom: .3rem;
+}
+
+.mp-star-filled {
+    color: #c9a96e;
+    font-size: 1rem;
+}
+
+.mp-star-empty {
+    color: #d9e1ef;
+    font-size: 1rem;
+}
+
+.mp-review-text {
+    font-size: .84rem;
+    color: #4a5e7a;
+    font-style: italic;
+}
+
+.mp-btn-review-toggle {
+    width: 100%;
+    padding: .65rem;
+    border-radius: 10px;
+    background: #f2f6fc;
+    border: 1px dashed #c9a96e;
+    color: #a88a53;
+    font-weight: 600;
+    font-size: .84rem;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+
+.mp-btn-review-toggle.open {
+    background: #fdf6ec;
+}
+
+.mp-btn-review-toggle:hover {
+    background: #fdf6ec;
+    color: #8b6c30;
+}
+
+.mp-review-form {
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    margin-top: .4rem;
+}
+
+.mp-star-picker {
+    display: flex;
+    gap: .2rem;
+}
+
+.mp-star-pick {
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: #d9e1ef;
+    transition: color .15s, transform .15s;
+}
+
+.mp-star-pick.active,
+.mp-star-pick:hover {
+    color: #c9a96e;
+    transform: scale(1.15);
+}
+
+.mp-review-textarea {
+    width: 100%;
+    padding: .7rem;
+    border: 1px solid #ccd8ed;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .88rem;
+    color: #1a2744;
+    resize: vertical;
+    outline: none;
+    transition: border-color .2s;
+    background: #fafbff;
+}
+
+.mp-review-textarea:focus {
+    border-color: #c9a96e;
+    box-shadow: 0 0 0 3px rgba(201, 169, 110, .1);
+}
+
+.mp-review-textarea::placeholder {
+    color: #9fb0c8;
+}
+
+.mp-review-error {
+    color: #e05b5b;
+    font-size: .78rem;
+}
+
+.mp-btn-submit-review {
+    padding: .7rem;
+    width: 100%;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, #c9a96e, #a88a53);
+    color: #1a2744;
+    font-weight: 700;
+    font-size: .9rem;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: opacity .2s;
+}
+
+.mp-btn-submit-review:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.mp-review-locked {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .76rem;
+    color: #8fa3c8;
+    font-style: italic;
+    padding: .55rem;
+    border-radius: 8px;
+    background: #f5f8ff;
+    border: 1px solid #e0e8f5;
+}
+
+.mp-review-locked svg {
+    flex-shrink: 0;
+    color: #b5c5dc;
+}
+
+.mp-review-success {
+    font-size: .82rem;
+    color: #3a8f5e;
+    font-weight: 600;
+    padding: .55rem;
+    border-radius: 8px;
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+}
+
+/* ── Empty ── */
+.mp-empty {
+    text-align: center;
+    padding: 4rem 1rem;
+}
+
+.mp-empty-icon {
+    font-size: 3rem;
+    opacity: .3;
+    margin-bottom: .75rem;
+}
+
+.mp-empty-title {
+    font-family: 'Darker Grotesque', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #1a2744;
+    margin-bottom: .5rem;
+}
+
+.mp-empty-text {
+    font-size: .82rem;
+    color: #8fa3c8;
+    max-width: 280px;
+    margin: 0 auto;
+}
+
+/* ── Modal recensioni pubbliche ── */
+.mp-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 52, 98, .3);
+    backdrop-filter: blur(4px);
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeIn .2s ease;
+}
+
+.mp-modal {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(26, 52, 98, .25);
+    animation: slideUp .3s cubic-bezier(.16, 1, .3, 1);
+}
+
+.mp-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.1rem 1.4rem;
+    background: #1a3462;
+    border-radius: 16px 16px 0 0;
+    flex-shrink: 0;
+}
+
+.mp-modal-title {
+    font-family: 'Darker Grotesque', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #fff;
+}
+
+.mp-modal-close {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, .12);
+    border: 1px solid rgba(255, 255, 255, .2);
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: .8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s;
+}
+
+.mp-modal-close:hover {
+    background: rgba(255, 255, 255, .22);
+}
+
+.mp-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.mp-modal-review {
+    padding: .85rem;
+    border: 1px solid #e8eef8;
+    border-radius: 10px;
+    background: #fafbff;
+}
+
+.mp-modal-review-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .3rem;
+}
+
+.mp-modal-author {
+    font-weight: 700;
+    color: #1a2744;
+    font-size: .88rem;
+}
+
+.mp-modal-stars {
+    display: flex;
+    gap: .1rem;
+}
+
+.mp-modal-comment {
+    font-size: .84rem;
+    color: #4a5e7a;
+    font-style: italic;
+    margin-bottom: .3rem;
+}
+
+.mp-modal-date {
+    font-size: .7rem;
+    color: #b5c5dc;
+}
+
+.mp-modal-empty {
+    text-align: center;
+    color: #8fa3c8;
+    padding: 2rem 0;
+    font-style: italic;
+    font-size: .88rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

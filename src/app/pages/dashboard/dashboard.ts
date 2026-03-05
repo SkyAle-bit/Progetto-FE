@@ -13,7 +13,7 @@ import { AdminHomeTabComponent } from './components/admin-home-tab/admin-home-ta
 import { AdminUsersTabComponent } from './components/admin-users-tab/admin-users-tab';
 import { AdminPlansTabComponent } from './components/admin-plans-tab/admin-plans-tab';
 import { InsuranceHomeTabComponent } from './components/insurance-home-tab/insurance-home-tab';
-import { BookCallTabComponent } from './components/book-call-tab/book-call-tab';
+import { MyProfessionalsTabComponent } from './components/my-professionals-tab/my-professionals-tab';
 import { MyServicesTabComponent } from './components/my-services-tab/my-services-tab';
 import { AdminStatsTabComponent } from './components/admin-stats-tab/admin-stats-tab';
 import { ToastComponent } from '../../components/toast/toast';
@@ -23,7 +23,7 @@ import { PullToRefreshDirective } from '../../directives/pull-to-refresh.directi
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, AdminHomeTabComponent, AdminUsersTabComponent, AdminPlansTabComponent, InsuranceHomeTabComponent, BookCallTabComponent, MyServicesTabComponent, AdminStatsTabComponent, ToastComponent, PullToRefreshDirective],
+  imports: [CommonModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, AdminHomeTabComponent, AdminUsersTabComponent, AdminPlansTabComponent, InsuranceHomeTabComponent, MyProfessionalsTabComponent, MyServicesTabComponent, AdminStatsTabComponent, ToastComponent, PullToRefreshDirective],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })

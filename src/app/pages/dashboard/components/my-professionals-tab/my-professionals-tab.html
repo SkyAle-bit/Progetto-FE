@@ -1,0 +1,165 @@
+<div class="mp-page px-4 py-5 sm:max-w-[900px] sm:mx-auto sm:py-8 sm:px-8">
+
+    <!-- Header -->
+    <h3 class="mp-title">I Miei Professionisti</h3>
+    <p class="mp-subtitle">Prenota un appuntamento o lascia una recensione</p>
+
+    <!-- Cards professionisti -->
+    <div class="mp-grid" *ngIf="professionals.length > 0">
+        <div class="mp-card" *ngFor="let p of professionals">
+
+            <!-- Accent bar -->
+            <div class="mp-card-accent" [class.blue]="p.role === 'PERSONAL_TRAINER'"
+                [class.gold]="p.role !== 'PERSONAL_TRAINER'"></div>
+
+            <div class="mp-card-body">
+
+                <!-- Avatar + Info -->
+                <div class="mp-prof-header">
+                    <div class="mp-avatar" [class.blue-border]="p.role === 'PERSONAL_TRAINER'"
+                        [class.gold-border]="p.role !== 'PERSONAL_TRAINER'">
+                        <img *ngIf="p.profilePicture" [src]="p.profilePicture" [alt]="p.fullName">
+                        <span *ngIf="!p.profilePicture" class="mp-avatar-icon">{{ p.role === 'PERSONAL_TRAINER' ? '💪' :
+                            '🥗' }}</span>
+                    </div>
+                    <div class="mp-prof-info">
+                        <span class="mp-role-badge" [class.blue]="p.role === 'PERSONAL_TRAINER'"
+                            [class.gold]="p.role !== 'PERSONAL_TRAINER'">
+                            {{ p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}
+                        </span>
+                        <div class="mp-prof-name">{{ p.fullName }}</div>
+                        <div class="mp-prof-bio" *ngIf="p.professionalBio">{{ p.professionalBio }}</div>
+                    </div>
+                </div>
+
+                <!-- Rating aggregato -->
+                <div class="mp-rating-row" *ngIf="reviewsMap[p.id]?.length">
+                    <span class="mp-star">⭐</span>
+                    <span class="mp-avg-rating">{{ getAvgRating(reviewsMap[p.id]) | number:'1.1-1' }}</span>
+                    <span class="mp-review-count">({{ reviewsMap[p.id].length }} recensioni)</span>
+                </div>
+                <div class="mp-no-reviews" *ngIf="!reviewsMap[p.id]?.length">
+                    Nessuna recensione ancora
+                </div>
+
+                <!-- Divider -->
+                <div class="mp-divider"></div>
+
+                <!-- Bottone prenota -->
+                <button class="mp-btn-book" [class.blue]="p.role === 'PERSONAL_TRAINER'"
+                    [class.gold]="p.role !== 'PERSONAL_TRAINER'" (click)="bookProfessional.emit(p)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                    </svg>
+                    Prenota Appuntamento
+                </button>
+
+                <!-- Area recensione -->
+                <div class="mp-review-section">
+
+                    <!-- HA GIÀ RECENSITO (fonte affidabile dal backend) -->
+                    <ng-container *ngIf="hasReviewedServerMap[p.id]">
+                        <!-- Contenuto trovato nella lista pubblica -->
+                        <div class="mp-my-review" *ngIf="hasReviewedMap[p.id]">
+                            <div class="mp-my-review-label">📝 La tua recensione</div>
+                            <div class="mp-stars-display">
+                                <span *ngFor="let s of getStars(hasReviewedMap[p.id]!.rating)"
+                                    class="mp-star-filled">★</span>
+                                <span *ngFor="let s of getStars(5 - hasReviewedMap[p.id]!.rating)"
+                                    class="mp-star-empty">★</span>
+                            </div>
+                            <p class="mp-review-text">"{{ hasReviewedMap[p.id]!.comment }}"</p>
+                        </div>
+                        <!-- Fallback se il contenuto non è ancora caricato -->
+                        <div class="mp-my-review" *ngIf="!hasReviewedMap[p.id]">
+                            <div class="mp-my-review-label">📝 La tua recensione</div>
+                            <p class="mp-review-text" style="color:#8fa3c8;font-style:italic;">Hai già recensito questo
+                                professionista ✓</p>
+                        </div>
+                    </ng-container>
+
+                    <!-- NON HA ANCORA RECENSITO -->
+                    <ng-container *ngIf="!hasReviewedServerMap[p.id]">
+                        <!-- Può recensire: mostra form -->
+                        <div *ngIf="canReviewMap[p.id]">
+                            <button class="mp-btn-review-toggle" (click)="toggleReviewForm(p.id)"
+                                [class.open]="reviewFormOpen[p.id]">
+                                {{ reviewFormOpen[p.id] ? '✕ Chiudi' : '✍️ Lascia la tua recensione' }}
+                            </button>
+
+                            <div class="mp-review-form" *ngIf="reviewFormOpen[p.id]">
+                                <div class="mp-star-picker">
+                                    <span *ngFor="let s of [1,2,3,4,5]" class="mp-star-pick"
+                                        [class.active]="reviewRating[p.id] >= s" (click)="setRating(p.id, s)">★</span>
+                                </div>
+                                <textarea class="mp-review-textarea" rows="3"
+                                    placeholder="Descrivi la tua esperienza..."
+                                    [(ngModel)]="reviewComment[p.id]"></textarea>
+                                <div class="mp-review-error" *ngIf="reviewError[p.id]">{{ reviewError[p.id] }}</div>
+                                <button class="mp-btn-submit-review" [disabled]="reviewSubmitting[p.id]"
+                                    (click)="submitReview(p)">
+                                    {{ reviewSubmitting[p.id] ? 'Invio in corso...' : 'Invia Recensione' }}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Non ancora abilitato (meno di 1 mese dalla registrazione) -->
+                        <div class="mp-review-locked"
+                            *ngIf="!canReviewMap[p.id] && hasReviewedServerMap[p.id] !== undefined">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+                            Potrai recensire tra <strong>{{ getDaysUntilReview() }}</strong> giorni
+                        </div>
+                    </ng-container>
+
+                    <!-- Successo invio (sessione corrente) -->
+                    <div class="mp-review-success" *ngIf="reviewSuccess[p.id]">
+                        ✅ Recensione inviata con successo!
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nessun professionista -->
+    <div class="mp-empty" *ngIf="professionals.length === 0">
+        <div class="mp-empty-icon">👤</div>
+        <h4 class="mp-empty-title">Nessun professionista assegnato</h4>
+        <p class="mp-empty-text">I tuoi professionisti appariranno qui quando ti saranno assegnati.</p>
+    </div>
+
+</div>
+
+<!-- ── MODAL RECENSIONI PUBBLICHE ── -->
+<div class="mp-modal-overlay" *ngIf="publicReviewsModal" (click)="closePublicReviews()">
+    <div class="mp-modal" (click)="$event.stopPropagation()">
+        <div class="mp-modal-header">
+            <h3 class="mp-modal-title">Recensioni — {{ publicReviewsModal.prof.fullName }}</h3>
+            <button class="mp-modal-close" (click)="closePublicReviews()">✕</button>
+        </div>
+        <div class="mp-modal-body">
+            <div class="mp-modal-review" *ngFor="let r of publicReviewsModal.reviews">
+                <div class="mp-modal-review-top">
+                    <span class="mp-modal-author">{{ r.authorName }}</span>
+                    <div class="mp-modal-stars">
+                        <span *ngFor="let s of getStars(r.rating)" class="mp-star-filled">★</span>
+                        <span *ngFor="let s of getStars(5 - r.rating)" class="mp-star-empty">★</span>
+                    </div>
+                </div>
+                <p class="mp-modal-comment">{{ r.comment }}</p>
+                <span class="mp-modal-date" *ngIf="r.date">{{ r.date | date:'d MMM yyyy' }}</span>
+            </div>
+            <div class="mp-modal-empty" *ngIf="!publicReviewsModal.reviews.length">
+                Nessuna recensione ancora per questo professionista.
+            </div>
+        </div>
+    </div>
+</div>

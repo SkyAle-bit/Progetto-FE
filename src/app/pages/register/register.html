@@ -238,6 +238,8 @@
               </div>
               <span *ngIf="pt.isSoldOut" class="prof-sold-out-badge">Completo</span>
               <span *ngIf="registerForm.value.selectedPtId === pt.id" class="prof-check">✓</span>
+              <button type="button" class="btn-view-reviews"
+                (click)="$event.stopPropagation(); openReviewsModal(pt)">Vedi recensioni</button>
             </div>
             <div *ngIf="filteredPts.length === 0" class="prof-empty">Nessun risultato</div>
           </div>
@@ -268,6 +270,8 @@
               </div>
               <span *ngIf="nut.isSoldOut" class="prof-sold-out-badge">Completo</span>
               <span *ngIf="registerForm.value.selectedNutritionistId === nut.id" class="prof-check">✓</span>
+              <button type="button" class="btn-view-reviews"
+                (click)="$event.stopPropagation(); openReviewsModal(nut)">Vedi recensioni</button>
             </div>
             <div *ngIf="filteredNuts.length === 0" class="prof-empty">Nessun risultato</div>
           </div>
@@ -309,4 +313,34 @@
   <div class="toast-icon-wrap">{{ toast.type === 'success' ? '✓' : '!' }}</div>
   <span class="toast-message">{{ toast.message }}</span>
   <button class="toast-close" (click)="dismissToast()">✕</button>
+</div>
+
+<!-- ── MODAL VEDI RECENSIONI ── -->
+<div class="reviews-modal-overlay" *ngIf="reviewsModal" (click)="closeReviewsModal()">
+  <div class="reviews-modal" (click)="$event.stopPropagation()">
+    <div class="reviews-modal-header">
+      <div class="reviews-modal-title-wrap">
+        <span class="reviews-modal-emoji">{{ reviewsModal.prof.role === 'PERSONAL_TRAINER' ? '💪' : '🥗' }}</span>
+        <h3 class="reviews-modal-title">{{ reviewsModal.prof.fullName }}</h3>
+      </div>
+      <button class="reviews-modal-close" (click)="closeReviewsModal()">✕</button>
+    </div>
+    <div class="reviews-modal-body">
+      <div class="reviews-loading" *ngIf="reviewsLoading">Caricamento recensioni...</div>
+      <ng-container *ngIf="!reviewsLoading">
+        <div class="review-item" *ngFor="let r of reviewsModal.reviews">
+          <div class="review-top">
+            <span class="review-author">{{ r.authorName }}</span>
+            <div class="review-stars">
+              <span *ngFor="let s of [1,2,3,4,5]" [class.active]="r.rating >= s">★</span>
+            </div>
+          </div>
+          <p class="review-comment">{{ r.comment }}</p>
+        </div>
+        <div class="reviews-empty" *ngIf="reviewsModal.reviews.length === 0">
+          Nessuna recensione ancora per questo professionista.
+        </div>
+      </ng-container>
+    </div>
+  </div>
 </div>

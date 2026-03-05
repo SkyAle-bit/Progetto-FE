@@ -17,107 +17,110 @@
 
     <!-- Desktop navigation tabs (centrato) -->
     <nav class="hidden sm:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
-        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap"
-          [class.active]="activeTab === 'home'"
-          (click)="setTab('home')">
-          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-          </svg>
-          Dashboard
-        </button>
-        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap"
-          *ngIf="!isInsuranceManager() && !isAdmin()"
-          [class.active]="activeTab === 'calendar'"
-          (click)="setTab('calendar')">
-          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-          </svg>
-          Calendario
-        </button>
-        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap relative"
-          [class.active]="activeTab === 'chat'"
-          (click)="setTab('chat')">
-          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-          </svg>
-          Chat
-          <span class="absolute -top-1 -right-1.5 min-w-[17px] h-[17px] px-[3px] rounded-full
+      <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap" [class.active]="activeTab === 'home'"
+        (click)="setTab('home')">
+        <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        Dashboard
+      </button>
+      <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap" *ngIf="!isInsuranceManager() && !isAdmin()"
+        [class.active]="activeTab === 'calendar'" (click)="setTab('calendar')">
+        <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        Calendario
+      </button>
+      <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap relative" [class.active]="activeTab === 'chat'"
+        (click)="setTab('chat')">
+        <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+        </svg>
+        Chat
+        <span class="absolute -top-1 -right-1.5 min-w-[17px] h-[17px] px-[3px] rounded-full
                        bg-[#c9a96e] text-[#1a2744] text-[0.55rem] font-black
-                       flex items-center justify-center shadow-sm"
-            *ngIf="getTotalUnread() > 0">{{ getTotalUnread() > 9 ? '9+' : getTotalUnread() }}</span>
-        </button>
-        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap"
-          *ngIf="isProfessional()"
-          [class.active]="activeTab === 'clients'"
-          (click)="setTab('clients')">
-          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
-          I Miei Clienti
-        </button>
-        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap"
-          *ngIf="isClient()"
-          [class.active]="activeTab === 'book-call'"
-          (click)="setTab('book-call')">
-          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-          </svg>
-          Prenota Call
-        </button>
-        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap"
-          *ngIf="isClient()"
-          [class.active]="activeTab === 'my-services'"
-          (click)="setTab('my-services')">
-          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
-          </svg>
-          I Miei Servizi
-        </button>
-        <!-- ADMIN tabs -->
-        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap"
-          *ngIf="isAdmin()"
-          [class.active]="activeTab === 'admin-users'"
-          (click)="setTab('admin-users')">
-          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
-          </svg>
-          Utenti
-        </button>
-        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap"
-          *ngIf="isAdmin()"
-          [class.active]="activeTab === 'admin-plans'"
-          (click)="setTab('admin-plans')">
-          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-          </svg>
-          Piani
-        </button>
-        <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap"
-          *ngIf="isAdmin()"
-          [class.active]="activeTab === 'admin-stats'"
-          (click)="setTab('admin-stats')">
-          <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-          </svg>
-          Statistiche
-        </button>
-        <!-- INSURANCE: nessun tab separato Polizze, tutto in Home -->
-      </nav>
+                       flex items-center justify-center shadow-sm" *ngIf="getTotalUnread() > 0">{{ getTotalUnread() > 9
+          ? '9+' : getTotalUnread() }}</span>
+      </button>
+      <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap" *ngIf="isProfessional()"
+        [class.active]="activeTab === 'clients'" (click)="setTab('clients')">
+        <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        I Miei Clienti
+      </button>
+      <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap" *ngIf="isClient()" [class.active]="activeTab === 'book-call'"
+        (click)="setTab('book-call')">
+        <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        I Miei Professionisti
+      </button>
+      <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap" *ngIf="isClient()"
+        [class.active]="activeTab === 'my-services'" (click)="setTab('my-services')">
+        <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+        </svg>
+        I Miei Servizi
+      </button>
+      <!-- ADMIN tabs -->
+      <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap" *ngIf="isAdmin()" [class.active]="activeTab === 'admin-users'"
+        (click)="setTab('admin-users')">
+        <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        Utenti
+      </button>
+      <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap" *ngIf="isAdmin()" [class.active]="activeTab === 'admin-plans'"
+        (click)="setTab('admin-plans')">
+        <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        Piani
+      </button>
+      <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
+                       transition-all whitespace-nowrap" *ngIf="isAdmin()" [class.active]="activeTab === 'admin-stats'"
+        (click)="setTab('admin-stats')">
+        <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor"
+          viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        Statistiche
+      </button>
+      <!-- INSURANCE: nessun tab separato Polizze, tutto in Home -->
+    </nav>
 
     <!-- Destra -->
     <div class="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-shrink-0">
 
       <!-- Week stat (professionals only) — desktop only, visible on calendar tab -->
-      <div class="hidden md:flex flex-col items-end gap-[1px]" *ngIf="!isLoading && isProfessional() && activeTab === 'calendar'">
+      <div class="hidden md:flex flex-col items-end gap-[1px]"
+        *ngIf="!isLoading && isProfessional() && activeTab === 'calendar'">
         <span class="text-[1.1rem] font-bold text-[#e8c97a] leading-none tabular-nums">{{ countWeekBookings() }}</span>
         <span class="text-[0.6rem] text-white/40 uppercase tracking-[0.10em]">questa settimana</span>
       </div>
@@ -142,31 +145,30 @@
       </div>
 
       <!-- Availability button (professionals — desktop only, calendar tab) -->
-      <button *ngIf="isProfessional() && activeTab === 'calendar'" class="hidden sm:flex btn-avail-topbar" (click)="openAvailability()"
-        title="Gestisci disponibilità settimana prossima">
+      <button *ngIf="isProfessional() && activeTab === 'calendar'" class="hidden sm:flex btn-avail-topbar"
+        (click)="openAvailability()" title="Gestisci disponibilità settimana prossima">
         <span>📅</span>
         <span class="hidden sm:inline">Disponibilità</span>
       </button>
 
       <!-- Profile button (clienti e professionisti) -->
-      <button *ngIf="!isAdmin() && !isInsuranceManager()"
-        class="profile-btn w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full border-2 border-[#c9a96e]/50
+      <button *ngIf="!isAdmin() && !isInsuranceManager()" class="profile-btn w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full border-2 border-[#c9a96e]/50
                      bg-[#c9a96e]/12 cursor-pointer flex items-center justify-center
                      transition-all overflow-hidden p-0 flex-shrink-0" (click)="toggleProfile()"
         [class.active]="isProfileOpen">
         <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar"
           class="w-full h-full object-cover">
-        <span *ngIf="!currentUser?.profilePicture" class="text-[0.78rem] font-bold text-[#c9a96e]">{{ getInitials() }}</span>
+        <span *ngIf="!currentUser?.profilePicture" class="text-[0.78rem] font-bold text-[#c9a96e]">{{ getInitials()
+          }}</span>
       </button>
 
       <!-- Logout button (Admin e Insurance Manager) -->
-      <button *ngIf="isAdmin() || isInsuranceManager()"
-        class="flex items-center gap-1.5 px-3 py-[0.35rem] rounded-lg border border-[#c9a96e]/40
+      <button *ngIf="isAdmin() || isInsuranceManager()" class="flex items-center gap-1.5 px-3 py-[0.35rem] rounded-lg border border-[#c9a96e]/40
                bg-[#c9a96e]/10 text-[#c9a96e] text-[0.78rem] font-semibold
-               hover:bg-[#c9a96e]/20 transition-all flex-shrink-0"
-        (click)="logout()">
+               hover:bg-[#c9a96e]/20 transition-all flex-shrink-0" (click)="logout()">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
         </svg>
         <span class="hidden sm:inline">Esci</span>
       </button>
@@ -196,19 +198,10 @@
          └──────────────────────────────────────────────────────┘ -->
     <div class="tab-home flex-1 overflow-y-auto" *ngIf="activeTab === 'home' && !isAdmin() && !isInsuranceManager()"
       appPullToRefresh (refresh)="onPullRefresh()">
-      <app-home-tab *ngIf="!isLoading && dashboardData"
-        [currentUser]="currentUser"
-        [profile]="profile"
-        [subscription]="subscription"
-        [bookings]="bookings"
-        [myClients]="myClients"
-        [professionals]="professionals"
-        [isProfessional]="isProfessional()"
-        [isClient]="isClient()"
-        [weekBookingsCount]="countWeekBookings()"
-        [proStats]="proStats"
-        [activityFeed]="activityFeed"
-        (openAvailabilityEvent)="openAvailability()"
+      <app-home-tab *ngIf="!isLoading && dashboardData" [currentUser]="currentUser" [profile]="profile"
+        [subscription]="subscription" [bookings]="bookings" [myClients]="myClients" [professionals]="professionals"
+        [isProfessional]="isProfessional()" [isClient]="isClient()" [weekBookingsCount]="countWeekBookings()"
+        [proStats]="proStats" [activityFeed]="activityFeed" (openAvailabilityEvent)="openAvailability()"
         (setTabEvent)="setTab($event)">
       </app-home-tab>
     </div>
@@ -216,99 +209,68 @@
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: CALENDARIO                                     │
          └──────────────────────────────────────────────────────┘ -->
-    <app-calendar-tab class="flex-1 flex flex-col overflow-hidden"
-      *ngIf="activeTab === 'calendar'"
-      [bookings]="bookings"
-      [isProfessional]="isProfessional()"
-      [isClient]="isClient()"
-      [isLoading]="isLoading"
-      (openCallModalEvent)="openCallModal($event)"
-      (openAvailabilityEvent)="openAvailability()">
+    <app-calendar-tab class="flex-1 flex flex-col overflow-hidden" *ngIf="activeTab === 'calendar'"
+      [bookings]="bookings" [isProfessional]="isProfessional()" [isClient]="isClient()" [isLoading]="isLoading"
+      (openCallModalEvent)="openCallModal($event)" (openAvailabilityEvent)="openAvailability()">
     </app-calendar-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: CHAT                                            │
          └──────────────────────────────────────────────────────┘ -->
-    <app-chat-tab class="flex-1 flex overflow-hidden"
-      *ngIf="activeTab === 'chat'"
-      [currentUser]="currentUser"
-      [isProfessional]="isProfessional()"
-      [isClient]="isClient()"
-      [isInsurance]="isInsuranceManager()"
-      [isAdmin]="isAdmin()"
-      [professionals]="professionals"
-      [myClients]="myClients"
-      [allUsers]="allUsers">
+    <app-chat-tab class="flex-1 flex overflow-hidden" *ngIf="activeTab === 'chat'" [currentUser]="currentUser"
+      [isProfessional]="isProfessional()" [isClient]="isClient()" [isInsurance]="isInsuranceManager()"
+      [isAdmin]="isAdmin()" [professionals]="professionals" [myClients]="myClients" [allUsers]="allUsers">
     </app-chat-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: I MIEI CLIENTI (solo professionisti)           │
          └──────────────────────────────────────────────────────┘ -->
-    <app-clients-tab class="flex-1 overflow-y-auto"
-      *ngIf="activeTab === 'clients' && isProfessional()"
-      appPullToRefresh (refresh)="onPullRefresh()"
-      [myClients]="myClients"
-      [currentUser]="currentUser"
+    <app-clients-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'clients' && isProfessional()" appPullToRefresh
+      (refresh)="onPullRefresh()" [myClients]="myClients" [currentUser]="currentUser"
       (showPopup)="showPopupMessage($event.title, $event.message)">
     </app-clients-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: PRENOTA CALL (solo clienti)                    │
          └──────────────────────────────────────────────────────┘ -->
-    <app-book-call-tab class="flex-1 overflow-y-auto"
-      *ngIf="activeTab === 'book-call' && isClient()"
-      appPullToRefresh (refresh)="onPullRefresh()"
-      [professionals]="professionals"
+    <app-my-professionals-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'book-call' && isClient()"
+      appPullToRefresh (refresh)="onPullRefresh()" [professionals]="professionals" [currentUser]="currentUser"
       (bookProfessional)="openBooking($event)">
-    </app-book-call-tab>
+    </app-my-professionals-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: I MIEI SERVIZI (solo clienti)                  │
          └──────────────────────────────────────────────────────┘ -->
-    <app-my-services-tab class="flex-1 overflow-y-auto"
-      *ngIf="activeTab === 'my-services' && isClient()"
-      appPullToRefresh (refresh)="onPullRefresh()"
-      [currentUser]="currentUser">
+    <app-my-services-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'my-services' && isClient()"
+      appPullToRefresh (refresh)="onPullRefresh()" [currentUser]="currentUser">
     </app-my-services-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: ADMIN HOME (solo admin)                        │
          └──────────────────────────────────────────────────────┘ -->
-    <app-admin-home-tab class="flex-1 overflow-y-auto"
-      *ngIf="activeTab === 'home' && isAdmin()"
-      appPullToRefresh (refresh)="onPullRefresh()"
-      [currentUser]="currentUser"
-      [allUsers]="allUsers"
-      [allPlans]="allPlans"
-      [allSubscriptions]="allSubscriptions"
-      (setTabEvent)="setTab($event)">
+    <app-admin-home-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'home' && isAdmin()" appPullToRefresh
+      (refresh)="onPullRefresh()" [currentUser]="currentUser" [allUsers]="allUsers" [allPlans]="allPlans"
+      [allSubscriptions]="allSubscriptions" (setTabEvent)="setTab($event)">
     </app-admin-home-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: ADMIN UTENTI (solo admin)                      │
          └──────────────────────────────────────────────────────┘ -->
-    <app-admin-users-tab class="flex-1 overflow-y-auto"
-      *ngIf="activeTab === 'admin-users' && isAdmin()"
-      [allUsers]="allUsers"
-      [allPlans]="allPlans"
-      (usersChanged)="reloadAdminData()">
+    <app-admin-users-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'admin-users' && isAdmin()"
+      [allUsers]="allUsers" [allPlans]="allPlans" (usersChanged)="reloadAdminData()">
     </app-admin-users-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: ADMIN PIANI (solo admin)                       │
          └──────────────────────────────────────────────────────┘ -->
-    <app-admin-plans-tab class="flex-1 overflow-y-auto"
-      *ngIf="activeTab === 'admin-plans' && isAdmin()"
-      [allPlans]="allPlans"
-      [allSubscriptions]="allSubscriptions"
-      (plansChanged)="reloadAdminData()">
+    <app-admin-plans-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'admin-plans' && isAdmin()"
+      [allPlans]="allPlans" [allSubscriptions]="allSubscriptions" (plansChanged)="reloadAdminData()">
     </app-admin-plans-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: ADMIN STATISTICHE (solo admin)                 │
          └──────────────────────────────────────────────────────┘ -->
-    <app-admin-stats-tab class="flex-1 overflow-y-auto"
-      *ngIf="activeTab === 'admin-stats' && isAdmin()"
+    <app-admin-stats-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'admin-stats' && isAdmin()"
       appPullToRefresh (refresh)="onPullRefresh()">
     </app-admin-stats-tab>
 
@@ -316,10 +278,8 @@
          │  TAB: INSURANCE HOME (solo insurance manager)        │
          └──────────────────────────────────────────────────────┘ -->
     <app-insurance-home-tab class="flex-1 overflow-y-auto"
-      *ngIf="(activeTab === 'home' || activeTab === 'insurance') && isInsuranceManager()"
-      appPullToRefresh (refresh)="onPullRefresh()"
-      [currentUser]="currentUser"
-      [allSubscriptions]="allSubscriptions"
+      *ngIf="(activeTab === 'home' || activeTab === 'insurance') && isInsuranceManager()" appPullToRefresh
+      (refresh)="onPullRefresh()" [currentUser]="currentUser" [allSubscriptions]="allSubscriptions"
       [allUsers]="allUsers">
     </app-insurance-home-tab>
   </div>
@@ -336,92 +296,103 @@
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
       [class.active]="activeTab === 'home'" (click)="setTab('home')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
       </svg>
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Home</span>
     </button>
 
     <!-- Tab: Calendario (non per insurance e admin) -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
-      *ngIf="!isInsuranceManager() && !isAdmin()"
-      [class.active]="activeTab === 'calendar'" (click)="setTab('calendar')">
+      *ngIf="!isInsuranceManager() && !isAdmin()" [class.active]="activeTab === 'calendar'"
+      (click)="setTab('calendar')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
       </svg>
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Calendario</span>
     </button>
 
     <!-- Tab: Chat -->
-    <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all relative"
+    <button
+      class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all relative"
       [class.active]="activeTab === 'chat'" (click)="setTab('chat')">
       <div class="relative">
         <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+          </path>
         </svg>
         <span class="absolute -top-1 -right-2 min-w-[17px] h-[17px] px-[3px] rounded-full
                      bg-[#c9a96e] text-[#1a2744] text-[0.55rem] font-black
-                     flex items-center justify-center shadow-sm"
-          *ngIf="getTotalUnread() > 0">{{ getTotalUnread() > 9 ? '9+' : getTotalUnread() }}</span>
+                     flex items-center justify-center shadow-sm" *ngIf="getTotalUnread() > 0">{{ getTotalUnread() > 9 ?
+          '9+' : getTotalUnread() }}</span>
       </div>
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Chat</span>
     </button>
 
     <!-- Tab: Clienti (professionisti) -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
-      *ngIf="isProfessional()"
-      [class.active]="activeTab === 'clients'" (click)="setTab('clients')">
+      *ngIf="isProfessional()" [class.active]="activeTab === 'clients'" (click)="setTab('clients')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+        </path>
       </svg>
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Clienti</span>
     </button>
 
-    <!-- Tab: Prenota Call (clienti) -->
+    <!-- Tab: I Miei Professionisti (clienti) -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
-      *ngIf="isClient()"
-      [class.active]="activeTab === 'book-call'" (click)="setTab('book-call')">
+      *ngIf="isClient()" [class.active]="activeTab === 'book-call'" (click)="setTab('book-call')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+        </path>
       </svg>
-      <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Prenota</span>
+      <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Profess.</span>
     </button>
 
     <!-- Tab: I Miei Servizi (clienti) -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
-      *ngIf="isClient()"
-      [class.active]="activeTab === 'my-services'" (click)="setTab('my-services')">
+      *ngIf="isClient()" [class.active]="activeTab === 'my-services'" (click)="setTab('my-services')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
       </svg>
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Servizi</span>
     </button>
 
     <!-- Tab: Utenti (admin) -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
-      *ngIf="isAdmin()"
-      [class.active]="activeTab === 'admin-users'" (click)="setTab('admin-users')">
+      *ngIf="isAdmin()" [class.active]="activeTab === 'admin-users'" (click)="setTab('admin-users')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">
+        </path>
       </svg>
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Utenti</span>
     </button>
 
     <!-- Tab: Piani (admin) -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
-      *ngIf="isAdmin()"
-      [class.active]="activeTab === 'admin-plans'" (click)="setTab('admin-plans')">
+      *ngIf="isAdmin()" [class.active]="activeTab === 'admin-plans'" (click)="setTab('admin-plans')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+        </path>
       </svg>
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Piani</span>
     </button>
 
     <!-- Tab: Statistiche (admin) -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
-      *ngIf="isAdmin()"
-      [class.active]="activeTab === 'admin-stats'" (click)="setTab('admin-stats')">
+      *ngIf="isAdmin()" [class.active]="activeTab === 'admin-stats'" (click)="setTab('admin-stats')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+        </path>
       </svg>
       <span class="text-[0.62rem] font-semibold tracking-[0.02em]">Stats</span>
     </button>
@@ -447,8 +418,10 @@
       </div>
       <div class="p-6 flex flex-col gap-4" *ngIf="selectedCallBooking">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-[#f2f6fc] flex items-center justify-center text-[#1a2744] font-bold text-lg">
-            {{ selectedCallBooking.professionalName ? selectedCallBooking.professionalName.charAt(0) : selectedCallBooking.clientName?.charAt(0) }}
+          <div
+            class="w-10 h-10 rounded-full bg-[#f2f6fc] flex items-center justify-center text-[#1a2744] font-bold text-lg">
+            {{ selectedCallBooking.professionalName ? selectedCallBooking.professionalName.charAt(0) :
+            selectedCallBooking.clientName?.charAt(0) }}
           </div>
           <div>
             <div class="text-[0.7rem] uppercase tracking-wider text-[#8fa3c8] font-bold mb-[2px]">Con chi</div>
@@ -463,39 +436,58 @@
           </div>
           <div>
             <div class="text-[0.7rem] uppercase tracking-wider text-[#8fa3c8] font-bold mb-[2px]">Orario</div>
-            <div class="text-[0.95rem] font-semibold text-[#1a2744]">{{ selectedCallBooking.startTime }} - {{ selectedCallBooking.endTime }}</div>
+            <div class="text-[0.95rem] font-semibold text-[#1a2744]">{{ selectedCallBooking.startTime }} - {{
+              selectedCallBooking.endTime }}</div>
           </div>
         </div>
         <div class="h-px bg-[#ccd8ed]/50 my-1"></div>
         <div>
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[0.75rem] font-bold uppercase tracking-wider"
-            [class.bg-emerald-50]="selectedCallBooking.status === 'CONFIRMED'" [class.text-emerald-600]="selectedCallBooking.status === 'CONFIRMED'"
-            [class.bg-amber-50]="selectedCallBooking.status === 'PENDING'" [class.text-amber-600]="selectedCallBooking.status === 'PENDING'"
-            [class.bg-slate-100]="selectedCallBooking.status === 'CANCELLED'" [class.text-slate-500]="selectedCallBooking.status === 'CANCELLED'">
+          <span
+            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[0.75rem] font-bold uppercase tracking-wider"
+            [class.bg-emerald-50]="selectedCallBooking.status === 'CONFIRMED'"
+            [class.text-emerald-600]="selectedCallBooking.status === 'CONFIRMED'"
+            [class.bg-amber-50]="selectedCallBooking.status === 'PENDING'"
+            [class.text-amber-600]="selectedCallBooking.status === 'PENDING'"
+            [class.bg-slate-100]="selectedCallBooking.status === 'CANCELLED'"
+            [class.text-slate-500]="selectedCallBooking.status === 'CANCELLED'">
             <span class="w-1.5 h-1.5 rounded-full" [class.bg-emerald-500]="selectedCallBooking.status === 'CONFIRMED'"
-              [class.bg-amber-500]="selectedCallBooking.status === 'PENDING'" [class.bg-slate-400]="selectedCallBooking.status === 'CANCELLED'"></span>
-            {{ selectedCallBooking.status === 'CONFIRMED' ? 'Confermata' : selectedCallBooking.status === 'PENDING' ? 'In attesa' : 'Annullata' }}
+              [class.bg-amber-500]="selectedCallBooking.status === 'PENDING'"
+              [class.bg-slate-400]="selectedCallBooking.status === 'CANCELLED'"></span>
+            {{ selectedCallBooking.status === 'CONFIRMED' ? 'Confermata' : selectedCallBooking.status === 'PENDING' ?
+            'In attesa' : 'Annullata' }}
           </span>
         </div>
-        <p class="text-[0.8rem] text-[#8fa3c8] leading-relaxed mt-2" *ngIf="selectedCallBooking.status === 'CONFIRMED' && !canJoinCallNow">
-          Il link per accedere alla videochiamata sarà disponibile <strong class="text-[#1a2744]">30 minuti prima</strong> dell'inizio.
+        <p class="text-[0.8rem] text-[#8fa3c8] leading-relaxed mt-2"
+          *ngIf="selectedCallBooking.status === 'CONFIRMED' && !canJoinCallNow">
+          Il link per accedere alla videochiamata sarà disponibile <strong class="text-[#1a2744]">30 minuti
+            prima</strong> dell'inizio.
         </p>
-        <p class="text-[0.8rem] text-emerald-600 font-medium leading-relaxed mt-2" *ngIf="selectedCallBooking.status === 'CONFIRMED' && canJoinCallNow">
+        <p class="text-[0.8rem] text-emerald-600 font-medium leading-relaxed mt-2"
+          *ngIf="selectedCallBooking.status === 'CONFIRMED' && canJoinCallNow">
           La chiamata è aperta! Puoi accedere premendo il bottone qui sotto.
         </p>
-        <p class="text-[0.8rem] text-amber-600 font-medium leading-relaxed mt-2" *ngIf="selectedCallBooking.status === 'PENDING'">
+        <p class="text-[0.8rem] text-amber-600 font-medium leading-relaxed mt-2"
+          *ngIf="selectedCallBooking.status === 'PENDING'">
           La chiamata deve ancora essere confermata dal professionista.
         </p>
-        <button class="mt-4 w-full py-3.5 rounded-xl text-[0.95rem] font-bold uppercase tracking-wide transition-all flex items-center justify-center gap-2"
+        <button
+          class="mt-4 w-full py-3.5 rounded-xl text-[0.95rem] font-bold uppercase tracking-wide transition-all flex items-center justify-center gap-2"
           [ngClass]="canJoinCallNow && selectedCallBooking.status === 'CONFIRMED' ? 'bg-[#1a3462] hover:bg-[#112344] text-white shadow-lg shadow-[#1a3462]/20' : 'bg-[#e0e8f5] text-[#8fa3c8] cursor-not-allowed'"
           [disabled]="!canJoinCallNow || selectedCallBooking.status !== 'CONFIRMED'" (click)="joinCall()">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" *ngIf="canJoinCallNow && selectedCallBooking.status === 'CONFIRMED'">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            *ngIf="canJoinCallNow && selectedCallBooking.status === 'CONFIRMED'">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+            </path>
           </svg>
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" *ngIf="!canJoinCallNow || selectedCallBooking.status !== 'CONFIRMED'">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            *ngIf="!canJoinCallNow || selectedCallBooking.status !== 'CONFIRMED'">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+            </path>
           </svg>
-          {{ canJoinCallNow && selectedCallBooking.status === 'CONFIRMED' ? 'Accedi alla Call' : 'Link non ancora attivo' }}
+          {{ canJoinCallNow && selectedCallBooking.status === 'CONFIRMED' ? 'Accedi alla Call' : 'Link non ancora
+          attivo' }}
         </button>
       </div>
     </div>
@@ -509,9 +501,12 @@
   <aside class="profile-panel fixed top-0 right-0 h-screen w-full sm:w-80
                 bg-white border-l border-[#ccd8ed] z-[101]
                 flex flex-col shadow-[-12px_0_48px_rgba(26,52,98,0.14)]" [class.open]="isProfileOpen">
-    <div class="panel-header flex items-center justify-between px-6 py-5 border-b border-[#ccd8ed] flex-shrink-0 bg-[#1a3462]">
-      <span class="panel-title font-['Darker_Grotesque'] text-[1.15rem] font-extrabold tracking-[0.03em]">Il tuo Profilo</span>
-      <button class="w-7 h-7 bg-white/12 border border-white/20 rounded-[6px] text-white/60 text-[0.75rem] cursor-pointer flex items-center justify-center transition-all"
+    <div
+      class="panel-header flex items-center justify-between px-6 py-5 border-b border-[#ccd8ed] flex-shrink-0 bg-[#1a3462]">
+      <span class="panel-title font-['Darker_Grotesque'] text-[1.15rem] font-extrabold tracking-[0.03em]">Il tuo
+        Profilo</span>
+      <button
+        class="w-7 h-7 bg-white/12 border border-white/20 rounded-[6px] text-white/60 text-[0.75rem] cursor-pointer flex items-center justify-center transition-all"
         (click)="closeProfile()">✕</button>
     </div>
     <div class="panel-body flex-1 overflow-y-auto px-5 py-7 flex flex-col items-center gap-[0.9rem] bg-[#f2f6fc]">
@@ -524,60 +519,87 @@
         <div class="panel-avatar-wrap relative mb-1">
           <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar"
             class="w-[82px] h-[82px] rounded-full object-cover border-2 border-[#c9a96e] relative z-[1]">
-          <div *ngIf="!currentUser?.profilePicture" class="panel-avatar-fallback w-[82px] h-[82px] rounded-full
+          <div *ngIf="!currentUser?.profilePicture"
+            class="panel-avatar-fallback w-[82px] h-[82px] rounded-full
                       bg-gradient-to-br from-[#1a3462] to-[#2d5fa8] border-2 border-[#c9a96e] text-[#e8c97a]
                       flex items-center justify-center text-[1.8rem] font-black relative z-[1] font-['Darker_Grotesque']">{{ getInitials() }}</div>
           <div class="panel-avatar-ring absolute rounded-full border border-[#c9a96e]/28" style="inset: -6px"></div>
         </div>
-        <div class="font-['Darker_Grotesque'] text-[1.35rem] font-black text-[#1a2744] text-center tracking-[0.02em]">{{ profile?.firstName }} {{ profile?.lastName }}</div>
-        <div class="bg-[#1a3462]/8 border border-[#1a3462]/20 text-[#1a3462] px-4 py-[0.22rem] rounded-full text-[0.68rem] font-semibold tracking-[0.12em] uppercase">{{ profile?.role }}</div>
+        <div class="font-['Darker_Grotesque'] text-[1.35rem] font-black text-[#1a2744] text-center tracking-[0.02em]">{{
+          profile?.firstName }} {{ profile?.lastName }}</div>
+        <div
+          class="bg-[#1a3462]/8 border border-[#1a3462]/20 text-[#1a3462] px-4 py-[0.22rem] rounded-full text-[0.68rem] font-semibold tracking-[0.12em] uppercase">
+          {{ profile?.role }}</div>
 
         <button *ngIf="isProfessional()" class="btn-availability" (click)="openAvailability()">
-          <span class="btn-availability-icon">📅</span> Gestisci Disponibilità <span class="btn-availability-arrow">→</span>
+          <span class="btn-availability-icon">📅</span> Gestisci Disponibilità <span
+            class="btn-availability-arrow">→</span>
         </button>
 
-        <div class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-2">Dati Personali</div>
+        <div
+          class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-2">
+          Dati Personali</div>
         <div class="w-full flex flex-col gap-2">
-          <div class="detail-row flex items-center gap-3 px-4 py-[0.65rem] bg-white border border-[#ccd8ed] rounded-[10px] transition-all">
+          <div
+            class="detail-row flex items-center gap-3 px-4 py-[0.65rem] bg-white border border-[#ccd8ed] rounded-[10px] transition-all">
             <span class="text-[0.88rem] text-[#c9a96e] w-[18px] text-center flex-shrink-0">✉</span>
             <div class="flex flex-col gap-[0.08rem] min-w-0">
               <span class="text-[0.60rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Email</span>
-              <span class="text-[0.84rem] text-[#1a2744] overflow-hidden text-ellipsis whitespace-nowrap">{{ profile?.email }}</span>
+              <span class="text-[0.84rem] text-[#1a2744] overflow-hidden text-ellipsis whitespace-nowrap">{{
+                profile?.email }}</span>
             </div>
           </div>
         </div>
 
         <ng-container *ngIf="isClient() && subscription">
-          <div class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-1">Abbonamento</div>
-          <div class="subscription-card w-full rounded-xl p-4 flex flex-col gap-2" [class.inactive]="!subscription.isActive">
+          <div
+            class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-1">
+            Abbonamento</div>
+          <div class="subscription-card w-full rounded-xl p-4 flex flex-col gap-2"
+            [class.inactive]="!subscription.isActive">
             <div class="text-[0.95rem] font-semibold text-[#1a2744]">{{ subscription.planName }}</div>
             <div class="sub-status flex items-center gap-2 text-[0.78rem] text-[#8fa3c8]">
-              <span class="sub-dot w-[7px] h-[7px] rounded-full bg-[#ccd8ed] flex-shrink-0" [class.active]="subscription.isActive"></span>
+              <span class="sub-dot w-[7px] h-[7px] rounded-full bg-[#ccd8ed] flex-shrink-0"
+                [class.active]="subscription.isActive"></span>
               {{ subscription.isActive ? 'Attivo' : 'Scaduto' }}
             </div>
-            <div class="text-[0.77rem] text-[#8fa3c8]">Scade il {{ subscription.endDate | date:'d MMMM yyyy':'':'it' }}</div>
-            <div class="text-[0.74rem] text-[#b8922a] font-medium" *ngIf="subscription.isActive">{{ getSubscriptionDaysLeft() }} giorni rimanenti</div>
+            <div class="text-[0.77rem] text-[#8fa3c8]">Scade il {{ subscription.endDate | date:'d MMMM yyyy':'':'it' }}
+            </div>
+            <div class="text-[0.74rem] text-[#b8922a] font-medium" *ngIf="subscription.isActive">{{
+              getSubscriptionDaysLeft() }} giorni rimanenti</div>
             <div class="sub-credits flex gap-2 mt-1">
-              <div class="credit-item flex-1 bg-white border border-[#ccd8ed] rounded-lg p-2 flex flex-col items-center gap-[0.2rem]">
-                <span class="text-base">💪</span><span class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.08em]">PT</span>
+              <div
+                class="credit-item flex-1 bg-white border border-[#ccd8ed] rounded-lg p-2 flex flex-col items-center gap-[0.2rem]">
+                <span class="text-base">💪</span><span
+                  class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.08em]">PT</span>
                 <span class="text-[1.1rem] font-bold text-[#b8922a]">{{ subscription.remainingPtCredits }}</span>
               </div>
-              <div class="credit-item flex-1 bg-white border border-[#ccd8ed] rounded-lg p-2 flex flex-col items-center gap-[0.2rem]">
-                <span class="text-base">🥗</span><span class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.08em]">Nutrizione</span>
-                <span class="text-[1.1rem] font-bold text-[#b8922a]">{{ subscription.remainingNutritionistCredits }}</span>
+              <div
+                class="credit-item flex-1 bg-white border border-[#ccd8ed] rounded-lg p-2 flex flex-col items-center gap-[0.2rem]">
+                <span class="text-base">🥗</span><span
+                  class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.08em]">Nutrizione</span>
+                <span class="text-[1.1rem] font-bold text-[#b8922a]">{{ subscription.remainingNutritionistCredits
+                  }}</span>
               </div>
             </div>
           </div>
         </ng-container>
 
         <ng-container *ngIf="isClient() && professionals.length > 0">
-          <div class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-1">I tuoi Professionisti</div>
+          <div
+            class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-1">
+            I tuoi Professionisti</div>
           <div class="w-full flex flex-col gap-2">
-            <div class="detail-row flex items-center gap-3 px-4 py-[0.65rem] bg-white border border-[#ccd8ed] rounded-[10px] transition-all" *ngFor="let p of professionals">
-              <span class="text-[0.88rem] text-[#c9a96e] w-[18px] text-center flex-shrink-0">{{ p.role === 'PERSONAL_TRAINER' ? '💪' : '🥗' }}</span>
+            <div
+              class="detail-row flex items-center gap-3 px-4 py-[0.65rem] bg-white border border-[#ccd8ed] rounded-[10px] transition-all"
+              *ngFor="let p of professionals">
+              <span class="text-[0.88rem] text-[#c9a96e] w-[18px] text-center flex-shrink-0">{{ p.role ===
+                'PERSONAL_TRAINER' ? '💪' : '🥗' }}</span>
               <div class="flex flex-col gap-[0.08rem] min-w-0 flex-1">
-                <span class="text-[0.60rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">{{ p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</span>
-                <span class="text-[0.84rem] text-[#1a2744] overflow-hidden text-ellipsis whitespace-nowrap">{{ p.fullName }}</span>
+                <span class="text-[0.60rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">{{ p.role ===
+                  'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</span>
+                <span class="text-[0.84rem] text-[#1a2744] overflow-hidden text-ellipsis whitespace-nowrap">{{
+                  p.fullName }}</span>
               </div>
               <button class="btn-book-sm" (click)="openBooking(p)">Prenota</button>
             </div>
@@ -589,64 +611,87 @@
   </aside>
 
   <!-- ── MODALE DISPONIBILITÀ ── -->
-  <div class="fixed inset-0 bg-[#1a3462]/38 z-[200] backdrop-blur-[5px]" style="animation: fadeIn 0.2s ease" *ngIf="isAvailabilityOpen" (click)="closeAvailability()"></div>
+  <div class="fixed inset-0 bg-[#1a3462]/38 z-[200] backdrop-blur-[5px]" style="animation: fadeIn 0.2s ease"
+    *ngIf="isAvailabilityOpen" (click)="closeAvailability()"></div>
   <div class="avail-modal fixed z-[201] bg-white overflow-hidden flex flex-col top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
               w-[min(96vw,920px)] h-[min(92vh,700px)] rounded-2xl max-sm:top-0 max-sm:left-0 max-sm:translate-x-0 max-sm:translate-y-0
               max-sm:w-screen max-sm:h-[100dvh] max-sm:rounded-none" *ngIf="isAvailabilityOpen">
     <div class="flex items-center justify-between px-6 py-[1.1rem] bg-[#1a3462] flex-shrink-0">
       <div class="flex flex-col gap-[0.15rem]">
-        <span class="avail-title font-['Darker_Grotesque'] text-[1.1rem] font-black tracking-[0.02em]">Disponibilità Settimana Prossima</span>
+        <span class="avail-title font-['Darker_Grotesque'] text-[1.1rem] font-black tracking-[0.02em]">Disponibilità
+          Settimana Prossima</span>
         <span class="text-[0.72rem] text-white/52 tracking-[0.04em]">{{ getNextWeekLabel() }}</span>
       </div>
-      <button class="w-[30px] h-[30px] bg-white/10 border border-white/18 rounded-[7px] text-white/65 text-[0.75rem] cursor-pointer flex items-center justify-center transition-all flex-shrink-0" (click)="closeAvailability()">✕</button>
+      <button
+        class="w-[30px] h-[30px] bg-white/10 border border-white/18 rounded-[7px] text-white/65 text-[0.75rem] cursor-pointer flex items-center justify-center transition-all flex-shrink-0"
+        (click)="closeAvailability()">✕</button>
     </div>
-    <div class="avail-days-header grid border-b border-[#ccd8ed] bg-[#f2f6fc] flex-shrink-0 grid-cols-[36px_repeat(7,1fr)] sm:grid-cols-[44px_repeat(7,1fr)]">
+    <div
+      class="avail-days-header grid border-b border-[#ccd8ed] bg-[#f2f6fc] flex-shrink-0 grid-cols-[36px_repeat(7,1fr)] sm:grid-cols-[44px_repeat(7,1fr)]">
       <div class="avail-time-gutter border-r border-[#ccd8ed] flex items-center justify-center">
         <button *ngIf="isCopyMode" class="btn-cancel-copy" (click)="clearCopy()" title="Annulla copia">✕</button>
       </div>
-      <div class="avail-day-header flex flex-col items-center py-[0.55rem] border-r border-[#ccd8ed]/60 gap-[0.2rem]" *ngFor="let day of nextWeekDays" [class.is-copy-source]="isCopiedDay(day)">
-        <span class="avail-day-name text-[0.60rem] max-sm:text-[0.52rem] font-bold text-[#8fa3c8] tracking-[0.12em]">{{ getDayName(day) }}</span>
-        <span class="avail-day-number text-[0.9rem] max-sm:text-[0.78rem] font-semibold text-[#1a2744]">{{ getDayNumber(day) }}</span>
+      <div class="avail-day-header flex flex-col items-center py-[0.55rem] border-r border-[#ccd8ed]/60 gap-[0.2rem]"
+        *ngFor="let day of nextWeekDays" [class.is-copy-source]="isCopiedDay(day)">
+        <span class="avail-day-name text-[0.60rem] max-sm:text-[0.52rem] font-bold text-[#8fa3c8] tracking-[0.12em]">{{
+          getDayName(day) }}</span>
+        <span class="avail-day-number text-[0.9rem] max-sm:text-[0.78rem] font-semibold text-[#1a2744]">{{
+          getDayNumber(day) }}</span>
         <span *ngIf="isCopiedDay(day)" class="badge-copied">✓ Copiato</span>
         <button *ngIf="isCopyMode && !isCopiedDay(day)" class="btn-paste-day" (click)="pasteDay(day)">⬇ Incolla</button>
-        <button *ngIf="!isCopyMode" class="btn-copy-day" (click)="copyDay(day)" [disabled]="!hasDaySlots(day)" title="Copia disponibilità">⧉ Copia</button>
+        <button *ngIf="!isCopyMode" class="btn-copy-day" (click)="copyDay(day)" [disabled]="!hasDaySlots(day)"
+          title="Copia disponibilità">⧉ Copia</button>
       </div>
     </div>
     <div class="avail-body flex-1 overflow-y-scroll overflow-x-hidden">
       <div class="avail-grid min-h-full grid grid-cols-[36px_repeat(7,1fr)] sm:grid-cols-[44px_repeat(7,1fr)]">
         <div class="avail-time-col border-r border-[#ccd8ed] bg-[#f2f6fc] sticky left-0 z-[2]">
-          <div class="avail-time-label" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)" [class.half-hour]="!isFullHour(slot)">{{ isFullHour(slot) ? slot : '' }}</div>
+          <div class="avail-time-label" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
+            [class.half-hour]="!isFullHour(slot)">{{ isFullHour(slot) ? slot : '' }}</div>
         </div>
-        <div class="avail-day-col border-r border-[#ccd8ed]/50" *ngFor="let day of nextWeekDays" [class.is-paste-target]="isCopyMode && !isCopiedDay(day)" [class.is-copy-source]="isCopiedDay(day)">
-          <div class="avail-slot" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)" [class.half-hour]="!isFullHour(slot)"
-            [class.selected]="isSlotSelected(day, slot)" [class.existing]="isSlotExisting(day, slot)" [class.locked]="isSlotLocked(day, slot)"
-            (click)="toggleSlot(day, slot)" [title]="getDayName(day) + ' ' + getDayNumber(day) + ' — ' + slot + (isSlotLocked(day, slot) ? ' (Prenotato)' : '')">
+        <div class="avail-day-col border-r border-[#ccd8ed]/50" *ngFor="let day of nextWeekDays"
+          [class.is-paste-target]="isCopyMode && !isCopiedDay(day)" [class.is-copy-source]="isCopiedDay(day)">
+          <div class="avail-slot" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
+            [class.half-hour]="!isFullHour(slot)" [class.selected]="isSlotSelected(day, slot)"
+            [class.existing]="isSlotExisting(day, slot)" [class.locked]="isSlotLocked(day, slot)"
+            (click)="toggleSlot(day, slot)"
+            [title]="getDayName(day) + ' ' + getDayNumber(day) + ' — ' + slot + (isSlotLocked(day, slot) ? ' (Prenotato)' : '')">
             <span *ngIf="isSlotLocked(day, slot)" class="slot-lock-icon">🔒</span>
           </div>
         </div>
       </div>
     </div>
-    <div class="avail-footer flex items-center justify-between flex-wrap gap-4 px-6 py-[0.9rem] border-t border-[#ccd8ed] bg-white flex-shrink-0 max-sm:flex-col max-sm:items-stretch">
+    <div
+      class="avail-footer flex items-center justify-between flex-wrap gap-4 px-6 py-[0.9rem] border-t border-[#ccd8ed] bg-white flex-shrink-0 max-sm:flex-col max-sm:items-stretch">
       <span class="flex items-center gap-2 text-[0.82rem] text-[#8fa3c8]">
         <span class="text-[1.1rem] font-bold text-[#1a3462]">{{ getSelectedCount() }}</span> slot selezionati
-        <span class="text-[0.75rem] text-[#c9a96e] font-medium">({{ (getSelectedCount() * 0.5).toFixed(1) }}h totali)</span>
+        <span class="text-[0.75rem] text-[#c9a96e] font-medium">({{ (getSelectedCount() * 0.5).toFixed(1) }}h
+          totali)</span>
       </span>
       <div class="flex gap-2 max-sm:justify-end">
         <button class="btn-avail-cancel" (click)="closeAvailability()">Annulla</button>
-        <button class="btn-avail-confirm" (click)="confirmAvailability()" [disabled]="getSelectedCount() === 0">Conferma Disponibilità</button>
+        <button class="btn-avail-confirm" (click)="confirmAvailability()" [disabled]="getSelectedCount() === 0">Conferma
+          Disponibilità</button>
       </div>
     </div>
   </div>
 
   <!-- ── MODALE PRENOTAZIONE CLIENTE ── -->
-  <div class="fixed inset-0 bg-[#1a2744]/40 backdrop-blur-[4px] z-[2000]" style="animation: fadeIn 0.3s ease" *ngIf="isBookingOpen" (click)="closeBooking()"></div>
-  <div class="booking-modal fixed z-[2001] bg-white rounded-xl overflow-hidden flex flex-col top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[540px] max-h-[90vh]" *ngIf="isBookingOpen">
+  <div class="fixed inset-0 bg-[#1a2744]/40 backdrop-blur-[4px] z-[2000]" style="animation: fadeIn 0.3s ease"
+    *ngIf="isBookingOpen" (click)="closeBooking()"></div>
+  <div
+    class="booking-modal fixed z-[2001] bg-white rounded-xl overflow-hidden flex flex-col top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[540px] max-h-[90vh]"
+    *ngIf="isBookingOpen">
     <div class="flex justify-between items-start px-6 py-5 bg-[#1a2744] border-b-2 border-[#c9a96e]">
       <div class="flex flex-col gap-[0.3rem]">
-        <span class="font-['Darker_Grotesque'] text-[1.6rem] font-extrabold leading-tight text-white">Prenota con {{ selectedProfessional?.fullName }}</span>
-        <span class="text-[0.85rem] text-[#c9a96e] font-medium tracking-[0.03em] uppercase">{{ selectedProfessional?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</span>
+        <span class="font-['Darker_Grotesque'] text-[1.6rem] font-extrabold leading-tight text-white">Prenota con {{
+          selectedProfessional?.fullName }}</span>
+        <span class="text-[0.85rem] text-[#c9a96e] font-medium tracking-[0.03em] uppercase">{{
+          selectedProfessional?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</span>
       </div>
-      <button class="booking-close w-7 h-7 bg-white/10 border-none rounded-full text-white text-[0.9rem] cursor-pointer flex items-center justify-center transition-all" (click)="closeBooking()">✕</button>
+      <button
+        class="booking-close w-7 h-7 bg-white/10 border-none rounded-full text-white text-[0.9rem] cursor-pointer flex items-center justify-center transition-all"
+        (click)="closeBooking()">✕</button>
     </div>
     <div class="flex flex-col items-center justify-center gap-4 p-12" *ngIf="isLoading">
       <div class="loading-spinner"></div>
@@ -656,37 +701,54 @@
       <div class="text-center py-8 px-4" *ngIf="bookingDays.length === 0">
         <div class="text-[2.5rem] mb-4 opacity-80">📅</div>
         <p class="text-[1.1rem] font-semibold text-[#1a2744] mb-2">Nessuna disponibilità</p>
-        <p class="text-[0.9rem] text-[#64748b] leading-[1.5]">Questo professionista non ha ancora inserito disponibilità.</p>
+        <p class="text-[0.9rem] text-[#64748b] leading-[1.5]">Questo professionista non ha ancora inserito
+          disponibilità.</p>
       </div>
       <ng-container *ngIf="bookingDays.length > 0">
         <div class="text-[0.9rem] font-bold text-[#1a2744] mb-3 uppercase tracking-[0.03em]">Seleziona una data</div>
         <div class="booking-day-selector flex gap-3 overflow-x-auto pb-2">
-          <button class="booking-day-card flex-[0_0_auto] w-[72px] py-3 flex flex-col items-center justify-center bg-white border border-[#e2e8f0] rounded-[10px] cursor-pointer transition-all"
-            *ngFor="let day of bookingDays" [class.selected]="selectedBookingDay && day.getTime() === selectedBookingDay.getTime()" (click)="selectBookingDay(day)">
-            <span class="bdc-name text-[0.75rem] text-[#64748b] uppercase font-semibold mb-[0.2rem]">{{ getDayName(day) }}</span>
-            <span class="bdc-num font-['Darker_Grotesque'] text-[1.8rem] font-extrabold leading-none text-[#1a2744] mb-[0.1rem]">{{ getDayNumber(day) }}</span>
-            <span class="bdc-month text-[0.75rem] text-[#8fa3c8] font-medium capitalize">{{ day.toLocaleDateString('it-IT', { month: 'short' }) }}</span>
+          <button
+            class="booking-day-card flex-[0_0_auto] w-[72px] py-3 flex flex-col items-center justify-center bg-white border border-[#e2e8f0] rounded-[10px] cursor-pointer transition-all"
+            *ngFor="let day of bookingDays"
+            [class.selected]="selectedBookingDay && day.getTime() === selectedBookingDay.getTime()"
+            (click)="selectBookingDay(day)">
+            <span class="bdc-name text-[0.75rem] text-[#64748b] uppercase font-semibold mb-[0.2rem]">{{ getDayName(day)
+              }}</span>
+            <span
+              class="bdc-num font-['Darker_Grotesque'] text-[1.8rem] font-extrabold leading-none text-[#1a2744] mb-[0.1rem]">{{
+              getDayNumber(day) }}</span>
+            <span class="bdc-month text-[0.75rem] text-[#8fa3c8] font-medium capitalize">{{
+              day.toLocaleDateString('it-IT', { month: 'short' }) }}</span>
           </button>
         </div>
-        <div class="text-[0.9rem] font-bold text-[#1a2744] uppercase tracking-[0.03em] mt-6 mb-3">Orari disponibili</div>
+        <div class="text-[0.9rem] font-bold text-[#1a2744] uppercase tracking-[0.03em] mt-6 mb-3">Orari disponibili
+        </div>
         <div class="flex flex-wrap gap-[0.6rem]" *ngIf="slotsForSelectedDay.length > 0">
-          <button class="booking-time-pill px-5 py-[0.6rem] bg-white border border-[#e2e8f0] rounded-full text-[#1a2744] font-semibold text-[0.9rem] cursor-pointer transition-all"
-            *ngFor="let slot of slotsForSelectedDay" [class.selected]="isBookingSlotSelected(slot)" (click)="toggleBookingSlot(slot)">
+          <button
+            class="booking-time-pill px-5 py-[0.6rem] bg-white border border-[#e2e8f0] rounded-full text-[#1a2744] font-semibold text-[0.9rem] cursor-pointer transition-all"
+            *ngFor="let slot of slotsForSelectedDay" [class.selected]="isBookingSlotSelected(slot)"
+            (click)="toggleBookingSlot(slot)">
             {{ getSlotTimeLabel(slot) }}
           </button>
         </div>
-        <div class="p-4 bg-[#1a2744]/3 rounded-lg text-[#64748b] text-[0.9rem] text-center italic" *ngIf="selectedBookingDay && slotsForSelectedDay.length === 0">Nessun orario disponibile in questa data.</div>
+        <div class="p-4 bg-[#1a2744]/3 rounded-lg text-[#64748b] text-[0.9rem] text-center italic"
+          *ngIf="selectedBookingDay && slotsForSelectedDay.length === 0">Nessun orario disponibile in questa data.</div>
       </ng-container>
     </div>
     <div class="flex flex-col gap-4 px-6 py-5 bg-white border-t border-[#e2e8f0]" *ngIf="!isLoading">
-      <div class="booking-selection-info flex items-center gap-2 text-[0.95rem] px-[0.6rem] py-[0.6rem] bg-[#c9a96e]/10 rounded-md text-[#1a2744]" style="animation: fadeIn 0.3s" *ngIf="selectedBookingSlot && selectedBookingDay">
+      <div
+        class="booking-selection-info flex items-center gap-2 text-[0.95rem] px-[0.6rem] py-[0.6rem] bg-[#c9a96e]/10 rounded-md text-[#1a2744]"
+        style="animation: fadeIn 0.3s" *ngIf="selectedBookingSlot && selectedBookingDay">
         <span class="font-medium text-[#64748b]">Data selezionata:</span>
-        <span class="font-bold text-[#1a2744]">{{ selectedBookingDay.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }) }} alle {{ getSlotTimeLabel(selectedBookingSlot) }}</span>
+        <span class="font-bold text-[#1a2744]">{{ selectedBookingDay.toLocaleDateString('it-IT', { weekday: 'long', day:
+          'numeric', month: 'long' }) }} alle {{ getSlotTimeLabel(selectedBookingSlot) }}</span>
       </div>
-      <div class="text-[#8fa3c8] italic text-[0.95rem]" *ngIf="!selectedBookingSlot">Seleziona un orario per continuare</div>
+      <div class="text-[#8fa3c8] italic text-[0.95rem]" *ngIf="!selectedBookingSlot">Seleziona un orario per continuare
+      </div>
       <div class="flex gap-2 justify-end">
         <button class="btn-avail-cancel" (click)="closeBooking()">Annulla</button>
-        <button class="btn-book-confirm" (click)="confirmBooking()" [disabled]="!selectedBookingSlot">Conferma Prenotazione</button>
+        <button class="btn-book-confirm" (click)="confirmBooking()" [disabled]="!selectedBookingSlot">Conferma
+          Prenotazione</button>
       </div>
     </div>
   </div>

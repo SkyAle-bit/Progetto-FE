@@ -3,6 +3,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ReviewService, ReviewResponse } from '../../services/review.service';
 
 // Validator custom: verifica che password e conferma combacino
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -53,6 +54,28 @@ export class RegisterComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private reviewService = inject(ReviewService);
+
+  // ── Modal Vedi Recensioni ────────────────
+  reviewsModal: { prof: any; reviews: ReviewResponse[] } | null = null;
+  reviewsLoading = false;
+
+  openReviewsModal(prof: any): void {
+    this.reviewsLoading = true;
+    this.reviewsModal = { prof, reviews: [] };
+    this.reviewService.getReviewsForProfessional(prof.id).subscribe({
+      next: (reviews) => {
+        if (this.reviewsModal) this.reviewsModal.reviews = reviews;
+        this.reviewsLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => { this.reviewsLoading = false; }
+    });
+  }
+
+  closeReviewsModal(): void {
+    this.reviewsModal = null;
+  }
 
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
