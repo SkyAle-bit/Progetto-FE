@@ -139,10 +139,9 @@
           <div *ngFor="let msg of chatMessages; let i = index; trackBy: trackMessage"
             class="flex flex-col sm:max-w-[700px] sm:mx-auto sm:w-full">
             <div class="flex justify-center my-3"
-              *ngIf="i === 0 || formatChatTime(msg.createdAt).split(' ')[0] !== formatChatTime(chatMessages[i-1].createdAt).split(' ')[0]">
+              *ngIf="i === 0 || getMessageDateHeader(msg.createdAt) !== getMessageDateHeader(chatMessages[i-1].createdAt)">
               <span class="px-3 py-1 rounded-full bg-[#1a3462]/8 text-[0.62rem] text-[#8fa3c8] font-semibold">{{
-                formatChatTime(msg.createdAt).includes(':') && !formatChatTime(msg.createdAt).includes(' ') ? 'Oggi' :
-                formatChatTime(msg.createdAt).split(' ')[0] }}</span>
+                getMessageDateHeader(msg.createdAt) }}</span>
             </div>
             <div class="flex mb-[2px]" [class.justify-end]="isMyMessage(msg)" [class.justify-start]="!isMyMessage(msg)">
               <div class="chat-bubble max-w-[80%] sm:max-w-[60%] px-3.5 py-2 rounded-2xl relative"

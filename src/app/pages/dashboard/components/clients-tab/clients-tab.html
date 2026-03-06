@@ -150,7 +150,7 @@
             <!-- Pulsante Appunti -->
             <button *ngIf="canEditNotes(doc)"
               class="w-8 h-8 rounded-lg border flex items-center justify-center transition-all"
-              [ngClass]="editingNotesDocId === doc.id ? 'bg-[#c9a96e] text-[#1a2744] border-[#c9a96e]' : doc.notes ? 'bg-amber-50 border-amber-300 text-amber-600' : 'bg-[#f2f6fc] border-[#ccd8ed] text-[#8fa3c8] hover:text-[#1a2744]'"
+              [ngClass]="editingNotesDocId === doc.id ? 'bg-[#c9a96e] text-[#1a2744] border-[#c9a96e]' : doc.notes ? 'bg-amber-50 border-amber-300 text-amber-600' : 'bg-[#f2f6fc] border-[#ccd8ed] text-[#1a2744] hover:bg-[#1a2744] hover:text-white'"
               title="Appunti" (click)="toggleNotesEdit(doc)">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"

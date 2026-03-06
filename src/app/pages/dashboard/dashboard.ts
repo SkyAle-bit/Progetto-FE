@@ -168,6 +168,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   contactAdmin(): void {
+    this.closeProfile();
     if (this.isAdmin()) {
       this.toast.warning('Attenzione', 'Sei già un Amministratore.');
       return;
@@ -475,7 +476,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.existingSlots.add(key);
           this.existingSlotIds.set(key, slot.id);
           // Se lo slot è prenotato (isAvailable == false o available == false), lo blocchiamo
-          if (!slot.isAvailable || slot.available === false) {
+          if (slot.isAvailable === false || slot.available === false) {
             this.lockedSlots.add(key);
           }
         });
@@ -752,6 +753,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  isMobileChatOpen(): boolean {
+    return this.activeTab === 'chat' && this.chatTabComponent?.chatView === 'conversation';
   }
 
   // ── Accesso alle Call ────────────────────────────────────

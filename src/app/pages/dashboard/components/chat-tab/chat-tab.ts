@@ -166,14 +166,14 @@ export class ChatTabComponent implements OnInit, OnDestroy {
       const pickerOnly = this.chatConversations.filter(c => !currentLocalIds.has(c.otherUserId));
 
       // To avoid losing the active conversation while typing, ensure it is always present
-      const mergedConversations = [...backendConvs, ...localOnly, ...pickerOnly];
+      let mergedConversations = [...backendConvs, ...localOnly, ...pickerOnly];
 
       // If there is an active conversation, make sure it's in the list
       if (this.activeConversation && !mergedConversations.some(c => c.otherUserId === this.activeConversation!.otherUserId)) {
         mergedConversations.unshift(this.activeConversation);
       }
 
-      this.chatConversations = mergedConversations;
+      this.chatConversations = this.sortConversations(mergedConversations);
       this.cdr.detectChanges();
     });
     this.subscriptions.push(convSub);
@@ -232,7 +232,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
           mergedObj.unshift(this.activeConversation);
         }
 
-        this.chatConversations = mergedObj;
+        this.chatConversations = this.sortConversations(mergedObj);
         this.chatLoading = false;
         this.conversationsLoaded = true;
         this.cdr.detectChanges();
@@ -243,10 +243,11 @@ export class ChatTabComponent implements OnInit, OnDestroy {
         const localMap = new Map<number, Conversation>();
         [...baseLocalContacts, ...storedEmpty].forEach(c => localMap.set(c.otherUserId, c));
 
-        this.chatConversations = Array.from(localMap.values());
-        if (this.activeConversation && !this.chatConversations.some(c => c.otherUserId === this.activeConversation!.otherUserId)) {
-          this.chatConversations.unshift(this.activeConversation);
+        let fallbackConvs = Array.from(localMap.values());
+        if (this.activeConversation && !fallbackConvs.some(c => c.otherUserId === this.activeConversation!.otherUserId)) {
+          fallbackConvs.unshift(this.activeConversation);
         }
+        this.chatConversations = this.sortConversations(fallbackConvs);
         this.chatLoading = false;
         this.conversationsLoaded = true;
         this.cdr.detectChanges();
@@ -393,6 +394,26 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     return [...msgs].sort((a, b) => this.parseMessageDate(a.createdAt).getTime() - this.parseMessageDate(b.createdAt).getTime());
   }
 
+  private sortConversations(convs: Conversation[]): Conversation[] {
+    return [...convs].sort((a, b) => {
+      // 1. Sort by unread messages first
+      if ((a.unreadCount > 0) !== (b.unreadCount > 0)) {
+        return a.unreadCount > 0 ? -1 : 1;
+      }
+
+      // 2. Sort by last message time descending
+      const timeA = a.lastMessageTime ? this.parseMessageDate(a.lastMessageTime).getTime() : 0;
+      const timeB = b.lastMessageTime ? this.parseMessageDate(b.lastMessageTime).getTime() : 0;
+
+      if (timeA !== timeB) {
+        return timeB - timeA;
+      }
+
+      // 3. Fallback to alphabetically
+      return a.otherUserName.localeCompare(b.otherUserName);
+    });
+  }
+
   formatChatTime(isoString: string): string {
     if (!isoString) return '';
     const d = this.parseMessageDate(isoString); const now = new Date();
@@ -403,6 +424,25 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     if (isToday) return time;
     if (isYesterday) return `Ieri ${time}`;
     return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }) + ` ${time}`;
+  }
+
+  getMessageDateHeader(isoString: string): string {
+    if (!isoString) return '';
+    const d = this.parseMessageDate(isoString);
+    const now = new Date();
+
+    if (d.toDateString() === now.toDateString()) {
+      return 'Oggi';
+    }
+
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (d.toDateString() === yesterday.toDateString()) {
+      return 'Ieri';
+    }
+
+    return d.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   formatConvTime(isoString?: string): string {

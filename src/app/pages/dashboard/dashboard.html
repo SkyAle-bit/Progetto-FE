@@ -290,7 +290,7 @@
   <nav class="bottom-nav sm:hidden flex-shrink-0 flex items-stretch
               bg-white border-t border-[#ccd8ed]
               pb-[env(safe-area-inset-bottom)] z-50
-              shadow-[0_-2px_16px_rgba(26,52,98,0.08)]">
+              shadow-[0_-2px_16px_rgba(26,52,98,0.08)]" *ngIf="!isMobileChatOpen()">
 
     <!-- Tab: Home -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
