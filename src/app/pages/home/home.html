@@ -156,6 +156,120 @@
         </div>
     </section>
 
+    <!-- Lavora con Noi Section -->
+    <section class="join-section" id="lavora-con-noi">
+        <div class="join-header">
+            <h2 class="section-title">Lavora con Noi</h2>
+            <p class="section-subtitle">Sei un Personal Trainer o un Nutrizionista? Unisciti al team Naval Gold e
+                porta la tua carriera al livello successivo.</p>
+        </div>
+
+        <div class="join-form-container glass-card">
+            <!-- Success message -->
+            <div class="form-success" *ngIf="submitSuccess">
+                <div class="success-icon">✅</div>
+                <h3>Candidatura Inviata!</h3>
+                <p>Grazie per il tuo interesse. Ti contatteremo a breve all'indirizzo email fornito.</p>
+            </div>
+
+            <!-- Form -->
+            <form *ngIf="!submitSuccess" [formGroup]="applicationForm" (ngSubmit)="submitApplication()"
+                class="join-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">Nome *</label>
+                        <input id="firstName" type="text" formControlName="firstName" placeholder="Il tuo nome"
+                            [class.invalid]="applicationForm.get('firstName')?.invalid && applicationForm.get('firstName')?.touched">
+                        <span class="field-error"
+                            *ngIf="applicationForm.get('firstName')?.invalid && applicationForm.get('firstName')?.touched">
+                            Il nome è obbligatorio
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Cognome *</label>
+                        <input id="lastName" type="text" formControlName="lastName" placeholder="Il tuo cognome"
+                            [class.invalid]="applicationForm.get('lastName')?.invalid && applicationForm.get('lastName')?.touched">
+                        <span class="field-error"
+                            *ngIf="applicationForm.get('lastName')?.invalid && applicationForm.get('lastName')?.touched">
+                            Il cognome è obbligatorio
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input id="email" type="email" formControlName="email" placeholder="email@esempio.com"
+                            [class.invalid]="applicationForm.get('email')?.invalid && applicationForm.get('email')?.touched">
+                        <span class="field-error"
+                            *ngIf="applicationForm.get('email')?.hasError('required') && applicationForm.get('email')?.touched">
+                            L'email è obbligatoria
+                        </span>
+                        <span class="field-error"
+                            *ngIf="applicationForm.get('email')?.hasError('email') && applicationForm.get('email')?.touched">
+                            Inserisci un'email valida
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Ruolo desiderato *</label>
+                        <select id="role" formControlName="role"
+                            [class.invalid]="applicationForm.get('role')?.invalid && applicationForm.get('role')?.touched">
+                            <option value="" disabled>Seleziona un ruolo</option>
+                            <option value="PERSONAL_TRAINER">Personal Trainer</option>
+                            <option value="NUTRITIONIST">Nutrizionista</option>
+                        </select>
+                        <span class="field-error"
+                            *ngIf="applicationForm.get('role')?.invalid && applicationForm.get('role')?.touched">
+                            Seleziona un ruolo
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Messaggio Motivazionale *</label>
+                    <textarea id="message" formControlName="message" rows="5"
+                        placeholder="Raccontaci di te, le tue esperienze e perché vorresti far parte del nostro team..."
+                        [class.invalid]="applicationForm.get('message')?.invalid && applicationForm.get('message')?.touched"></textarea>
+                    <span class="field-error"
+                        *ngIf="applicationForm.get('message')?.invalid && applicationForm.get('message')?.touched">
+                        Il messaggio è obbligatorio
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label>Curriculum Vitae (PDF)</label>
+                    <div class="file-upload-area" (click)="fileInput.click()" (dragover)="onDragOver($event)"
+                        (drop)="onDrop($event)">
+                        <input #fileInput type="file" accept=".pdf" (change)="onFileSelected($event)"
+                            style="display:none">
+                        <div class="file-upload-content" *ngIf="!selectedFile">
+                            <span class="upload-icon">📄</span>
+                            <p>Clicca o trascina il tuo CV qui</p>
+                            <span class="upload-hint">Solo file PDF, max 10MB</span>
+                        </div>
+                        <div class="file-upload-content file-selected" *ngIf="selectedFile">
+                            <span class="upload-icon">✅</span>
+                            <p>{{ selectedFile.name }}</p>
+                            <span class="upload-hint">{{ (selectedFile.size / 1024 / 1024).toFixed(2) }} MB</span>
+                        </div>
+                    </div>
+                    <span class="field-error" *ngIf="fileError">{{ fileError }}</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary btn-large" [disabled]="isSubmitting">
+                        <span *ngIf="!isSubmitting">Invia Candidatura <span class="btn-arrow">→</span></span>
+                        <span *ngIf="isSubmitting">Invio in corso...</span>
+                    </button>
+                </div>
+
+                <div class="form-error-message" *ngIf="submitError">
+                    ⚠️ {{ submitError }}
+                </div>
+            </form>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer class="home-footer">
         <div class="footer-brand">

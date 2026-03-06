@@ -1064,7 +1064,257 @@
     }
 }
 
-/* Footer */
+/* ==============================================================
+ * LAVORA CON NOI SECTION
+ * ============================================================== */
+.join-section {
+    position: relative;
+    z-index: 10;
+    padding: 6rem 2rem 8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.join-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    max-width: 650px;
+}
+
+.join-form-container {
+    width: 100%;
+    max-width: 750px;
+    padding: 3rem;
+}
+
+.join-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #b1c0d4;
+    letter-spacing: 0.02em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.9rem 1.1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    color: #fdfaf4;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+    outline: none;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #6a7c9b;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #c9a96e;
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.15);
+}
+
+.form-group input.invalid,
+.form-group select.invalid,
+.form-group textarea.invalid {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15);
+}
+
+.form-group select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23b1c0d4' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+    cursor: pointer;
+}
+
+.form-group select option {
+    background: #1a3462;
+    color: #fdfaf4;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.field-error {
+    font-size: 0.78rem;
+    color: #e74c3c;
+    font-weight: 600;
+    padding-left: 0.2rem;
+}
+
+/* File upload area */
+.file-upload-area {
+    border: 2px dashed rgba(201, 169, 110, 0.3);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s, background 0.3s;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.file-upload-area:hover {
+    border-color: #c9a96e;
+    background: rgba(201, 169, 110, 0.05);
+}
+
+.file-upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.upload-icon {
+    font-size: 2.5rem;
+}
+
+.file-upload-content p {
+    font-size: 0.95rem;
+    color: #b1c0d4;
+    font-weight: 600;
+}
+
+.upload-hint {
+    font-size: 0.78rem;
+    color: #6a7c9b;
+}
+
+.file-upload-content.file-selected p {
+    color: #c9a96e;
+}
+
+/* Form actions */
+.form-actions {
+    display: flex;
+    justify-content: center;
+    padding-top: 0.5rem;
+}
+
+.form-actions .btn-primary {
+    min-width: 250px;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.form-actions .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Success state */
+.form-success {
+    text-align: center;
+    padding: 3rem 1rem;
+    animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.form-success .success-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-success h3 {
+    font-family: 'Darker Grotesque', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #c9a96e;
+    margin-bottom: 0.75rem;
+}
+
+.form-success p {
+    font-size: 1rem;
+    color: #b1c0d4;
+    line-height: 1.6;
+}
+
+/* Error message */
+.form-error-message {
+    text-align: center;
+    padding: 1rem;
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    border-radius: 10px;
+    color: #e74c3c;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* ── Join section responsive ── */
+@media (max-width: 768px) {
+    .join-section {
+        padding: 3rem 1rem 4rem;
+    }
+
+    .join-form-container {
+        padding: 2rem 1.5rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .join-section {
+        padding: 2rem 0.8rem 3rem;
+    }
+
+    .join-form-container {
+        padding: 1.5rem 1rem;
+    }
+
+    .join-header .section-title {
+        font-size: 1.8rem;
+    }
+
+    .file-upload-area {
+        padding: 1.5rem 1rem;
+    }
+
+    .form-actions .btn-primary {
+        width: 100%;
+        min-width: unset;
+    }
+}
+
 .home-footer {
     padding: 3rem 4rem;
     background: #0f1e38;
@@ -1150,4 +1400,3 @@
         font-size: 0.7rem;
     }
 }
-
