@@ -181,10 +181,15 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     // Subscribe a messaggi real-time dal WebSocket (per la conversazione attiva)
     const msgSub = this.chatService.messages$.subscribe(msgs => {
       if (this.activeConversation && msgs.length > 0) {
+        // Mantieni i messaggi locali ottimistici (id < 0) non ancora confermati dal server
+        const localOptimistic = this.chatMessages.filter(m => m.id < 0 &&
+          !msgs.some(sm => sm.senderId === m.senderId && sm.content === m.content));
+
         // Ordina i messaggi e aggiorna solo se c'è una variazione
-        const sorted = this.sortMessages(msgs);
+        const sorted = this.sortMessages([...msgs, ...localOptimistic]);
         if (sorted.length !== this.chatMessages.length ||
-          (sorted.length > 0 && sorted[sorted.length - 1].id !== this.chatMessages[this.chatMessages.length - 1]?.id)) {
+          (sorted.length > 0 && sorted[sorted.length - 1].id !== this.chatMessages[this.chatMessages.length - 1]?.id) ||
+          localOptimistic.length > 0) {
           this.chatMessages = sorted;
           this.cdr.detectChanges();
           setTimeout(() => this.scrollToBottom(), 50);
@@ -364,7 +369,13 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
       this.chatService.sendMessage({ senderId: this.currentUser.id, receiverId, content: text }).subscribe({
         next: (savedMsg) => {
-          this.chatMessages = this.chatMessages.map(m => m.id === localMsg.id ? savedMsg : m);
+          const exists = this.chatMessages.some(m => m.id === localMsg.id);
+          if (exists) {
+            this.chatMessages = this.chatMessages.map(m => m.id === localMsg.id ? savedMsg : m);
+          } else if (!this.chatMessages.some(m => m.id === savedMsg.id)) {
+            this.chatMessages = [...this.chatMessages, savedMsg];
+            this.chatMessages = this.sortMessages(this.chatMessages);
+          }
           this.cdr.detectChanges();
         },
         error: (err) => { console.warn('Errore invio messaggio', err); }
@@ -373,10 +384,18 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   }
 
   backToConversations(): void {
+    if (this.activeConversation) {
+      if (this.socketService.isConnected) {
+        this.chatService.markAsReadRealTime(this.activeConversation.otherUserId);
+      } else {
+        this.chatService.markAsRead(this.currentUser.id, this.activeConversation.otherUserId).subscribe();
+      }
+      this.activeConversation.unreadCount = 0;
+      this.activeConversation = null;
+    }
     this.chatView = 'list';
     // NON azzeriamo activeConversation nel service né i messaggi:
     // così se l'utente torna sulla stessa chat ritrova tutto intatto.
-    this.activeConversation = null;
     this.chatMessages = [];
     this.chatService.stopMessagePolling();
     this.loadConversations();

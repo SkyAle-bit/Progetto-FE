@@ -172,7 +172,7 @@
               (keydown)="onChatKeydown($event)" (input)="autoGrow($event)"></textarea>
           </div>
           <button
-            class="chat-send-btn w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all"
+            class="chat-send-btn w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-all mb-[1px] sm:mb-0"
             [class.active]="chatInput.trim().length > 0" [disabled]="chatInput.trim().length === 0"
             (click)="sendChatMessage()">
             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
