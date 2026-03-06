@@ -9,13 +9,42 @@
     <!-- Navbar -->
     <header class="home-header">
         <div class="brand">
-            <h1 class="brand-text">Kore.</h1>
+            <h1 class="brand-text">Kore<span class="brand-dot">.</span></h1>
         </div>
+        <nav class="nav-links">
+            <a href="#features" class="nav-link">Servizi</a>
+            <a href="#how-it-works" class="nav-link">Il Metodo</a>
+            <a href="#testimonials" class="nav-link">Dicono di noi</a>
+            <a href="#pricing" class="nav-link">Piani</a>
+            <a href="#lavora-con-noi" class="nav-link">Team</a>
+        </nav>
         <div class="auth-buttons">
             <a routerLink="/login" class="btn-outline">Accedi</a>
             <a routerLink="/register" class="btn-primary">Registrati</a>
         </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" [class.open]="isMobileMenuOpen" aria-label="Menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+        </button>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" [class.active]="isMobileMenuOpen">
+        <nav class="mobile-nav-links">
+            <a href="#features" class="mobile-nav-link" (click)="closeMobileMenu()">Servizi</a>
+            <a href="#how-it-works" class="mobile-nav-link" (click)="closeMobileMenu()">Il Metodo</a>
+            <a href="#testimonials" class="mobile-nav-link" (click)="closeMobileMenu()">Dicono di noi</a>
+            <a href="#pricing" class="mobile-nav-link" (click)="closeMobileMenu()">Piani</a>
+            <a href="#lavora-con-noi" class="mobile-nav-link" (click)="closeMobileMenu()">Team</a>
+        </nav>
+        <div class="mobile-auth-buttons">
+            <a routerLink="/login" class="btn-outline" (click)="closeMobileMenu()">Accedi</a>
+            <a routerLink="/register" class="btn-primary" (click)="closeMobileMenu()">Registrati</a>
+        </div>
+    </div>
 
     <!-- Hero Section -->
     <main class="hero-section">
@@ -25,10 +54,11 @@
         <div class="hero-overlay"></div>
 
         <div class="hero-content">
-            <h2 class="hero-title">Eccellenza fisica e mentale</h2>
+            <h2 class="hero-title">Forgia la tua migliore versione</h2>
             <p class="hero-subtitle">
-                Inizia il tuo percorso con Kore: un ecosistema esclusivo dove allenamento premium e nutrizione
-                avanzata si uniscono per scolpire il tuo successo.
+                Benvenuto in Kore, l'ecosistema esclusivo progettato per trasformare il tuo corpo e la tua mente. 
+                Allenamento d'élite, nutrizione avanzata e supporto costante si fondono in un'unica piattaforma per 
+                scolpire il tuo successo senza compromessi.
             </p>
 
             <div class="hero-cta">
@@ -39,45 +69,97 @@
         </div>
     </main>
 
-    <!-- Intro Section (Stats & Features) -->
-    <section class="intro-section">
-        <div class="intro-stats">
-            <div class="stat-item">
-                <span class="stat-number">50+</span>
-                <span class="stat-label">Professionisti Qualificati</span>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-number">10k+</span>
-                <span class="stat-label">Risultati Raggiunti</span>
-            </div>
-            <div class="stat-divider"></div>
-            <div class="stat-item">
-                <span class="stat-number">4.9/5</span>
-                <span class="stat-label">Recensioni degli Utenti</span>
-            </div>
-        </div>
+    <!-- Intro Section (Features) -->
+    <section class="intro-section" id="features">
 
         <div class="features-grid">
             <div class="feature-card minimal-card">
                 <div class="feature-icon">💪</div>
-                <h3 class="feature-title">Personal Trainer Dedicati</h3>
-                <p class="feature-desc">Protocolli di allenamento d'élite, progettati su di te per massimizzare forza,
-                    ipertrofia e prestazioni.</p>
+                <h3 class="feature-title">Allenamento Su Misura</h3>
+                <p class="feature-desc">Abbandona le schede preimpostate. Ricevi protocolli di allenamento d'élite dai nostri Personal Trainer, costantemente aggiornati sui tuoi progressi per massimizzare forza e ipertrofia.</p>
             </div>
 
             <div class="feature-card minimal-card">
                 <div class="feature-icon">🥗</div>
-                <h3 class="feature-title">Piani Nutrizionali</h3>
-                <p class="feature-desc">Nutrizione strategica e mirata, il carburante essenziale per sostenere i tuoi
-                    risultati e rigenerare corpo e mente.</p>
+                <h3 class="feature-title">Nutrizione Strategica</h3>
+                <p class="feature-desc">Nutrizione non significa rinuncia, ma carburante. I nostri specialisti creeranno un piano alimentare bilanciato sul tuo metabolismo e stile di vita per sostenere le tue performance.</p>
             </div>
 
             <div class="feature-card minimal-card">
                 <div class="feature-icon">✨</div>
-                <h3 class="feature-title">Esperienza Premium</h3>
-                <p class="feature-desc">Un ambiente digitale senza compromessi. Traccia i progressi, gestisci il tuo
-                    abbonamento e chatta con i tuoi coach in un'unica piattaforma essenziale e potente.</p>
+                <h3 class="feature-title">Un Ecosistema Premium</h3>
+                <p class="feature-desc">Gestisci tutto in un unico ambiente digitale fluido e potente. Traccia i tuoi record, sblocca crediti per sessioni private e comunica direttamente con i tuoi coach in qualsiasi momento.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Come Funziona Section -->
+    <section class="how-it-works-section" id="how-it-works">
+        <div class="section-header text-center">
+            <h2 class="section-title">Il tuo percorso verso il successo</h2>
+            <p class="section-subtitle">Un metodo diviso in tre fasi semplici, chiare e misurabili.</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card minimal-card">
+                <div class="step-number">01</div>
+                <h3 class="step-title">Analisi e Pianificazione</h3>
+                <p class="step-desc">Il tuo coach analizza il tuo punto di partenza e definisce gli obiettivi a breve e lungo termine.</p>
+            </div>
+            <div class="step-card minimal-card">
+                <div class="step-number">02</div>
+                <h3 class="step-title">Azione e Costanza</h3>
+                <p class="step-desc">Ricevi il tuo piano su misura e inizia ad allenarti. I nostri professionisti ti guidano passo dopo passo.</p>
+            </div>
+            <div class="step-card minimal-card">
+                <div class="step-number">03</div>
+                <h3 class="step-title">Feedback e Risultati</h3>
+                <p class="step-desc">Monitoriamo i tuoi progressi ogni settimana, regolando i carichi e l'alimentazione per ottimizzare i risultati.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section" id="testimonials">
+        <div class="section-header text-center">
+            <h2 class="section-title">Storie di successo</h2>
+            <p class="section-subtitle">Scopri chi ha già trasformato la propria vita con Kore.</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card minimal-card">
+                <div class="testimonial-content">
+                    <p>"Avere personal trainer e nutrizionista nello stesso ecosistema fa davvero la differenza. Mai più senza."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">M</div>
+                    <div class="author-info">
+                        <h4>Marco R.</h4>
+                        <span>Piano Premium</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card minimal-card">
+                <div class="testimonial-content">
+                    <p>"L'attenzione ai dettagli è maniacale. I miei risultati in questi primi 3 mesi hanno superato le mie aspettative."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">E</div>
+                    <div class="author-info">
+                        <h4>Elena F.</h4>
+                        <span>Piano Basic</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card minimal-card">
+                <div class="testimonial-content">
+                    <p>"L'app è intuitiva e bellissima. Finalmente un approccio serio al fitness, senza le solite schede copia-incolla."</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">A</div>
+                    <div class="author-info">
+                        <h4>Andrea V.</h4>
+                        <span>Piano Premium</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -246,7 +328,7 @@
                 <div class="form-group">
                     <label>Curriculum Vitae (PDF)</label>
                     <div class="file-upload-area" (click)="fileInput.click()" (dragover)="onDragOver($event)"
-                        (drop)="onDrop($event)">
+                        (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" [class.drag-over]="isDragging">
                         <input #fileInput type="file" accept=".pdf" (change)="onFileSelected($event)"
                             style="display:none">
                         <div class="file-upload-content" *ngIf="!selectedFile">
@@ -280,7 +362,7 @@
     <!-- Footer -->
     <footer class="home-footer">
         <div class="footer-brand">
-            <h2 class="brand-text footer-logo-text">Kore.</h2>
+            <h2 class="brand-text footer-logo-text">Kore<span class="brand-dot">.</span></h2>
         </div>
         <p class="footer-copy">
             Kore rappresenta l'eccellenza nel fitness e nella nutrizione.

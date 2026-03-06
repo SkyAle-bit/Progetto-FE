@@ -11,18 +11,34 @@
 
 .home-page {
     height: 100vh;
-    background: #ffffff;
+    background: #112240; /* Match navbar color so the padding-top gap is invisible */
     display: flex;
     flex-direction: column;
     font-family: 'Outfit', 'DM Sans', sans-serif;
     position: relative;
     overflow-y: auto;
     overflow-x: hidden;
+    scroll-behavior: smooth;
     color: #112240;
+    padding-top: 80px;
+    box-sizing: border-box;
+}
+
+/* Offset for fixed header when scrolling to anchors */
+section[id] {
+    scroll-margin-top: 100px; 
 }
 
 .bg-shapes {
-    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+    /* Removed display: none to allow the animated shapes to be visible */
 }
 
 .shape {
@@ -36,7 +52,7 @@
 .shape-1 {
     width: 600px;
     height: 600px;
-    background: #c9a96e;
+    background: #d4af5b;
     top: -150px;
     left: -150px;
     animation-delay: 0s;
@@ -54,10 +70,11 @@
 .shape-3 {
     width: 400px;
     height: 400px;
-    background: #a88a53;
+    background: #b89542;
     top: 40%;
     left: 50%;
     animation-delay: -12s;
+    z-index: -1;
 }
 
 @keyframes drift {
@@ -86,9 +103,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 4rem;
-    background: rgba(14, 28, 53, 0.35);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: #112240; /* Solid brand dark blue without blur */
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -118,8 +133,12 @@
     margin: 0;
 }
 
+.brand-dot {
+    color: #d4af5b; /* Brand gold/yellow */
+}
+
 .footer-logo-text {
-    color: #112240;
+    color: #ffffff;
     font-size: 3rem;
 }
 
@@ -129,6 +148,52 @@
 
 .brand:hover .brand-text {
     opacity: 0.9;
+}
+.mobile-menu-toggle,
+.mobile-menu-overlay {
+    display: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-link {
+    position: relative;
+    color: #b1c0d4;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.02em;
+    padding-bottom: 0.3rem; /* Provide space for underline */
+}
+
+/* Professional underline hover animation */
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: #d4af5b; /* Brand gold */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.nav-link:hover {
+    color: #ffffff;
+}
+
+.nav-link:hover::after {
+    width: 100%;
 }
 
 .auth-buttons {
@@ -152,13 +217,13 @@
 
 .btn-outline:hover {
     background: rgba(201, 169, 110, 0.1);
-    border-color: #c9a96e;
-    color: #c9a96e;
+    border-color: #d4af5b;
+    color: #d4af5b;
 }
 
 .btn-primary {
     padding: 0.75rem 1.5rem;
-    background: linear-gradient(135deg, #c9a96e 0%, #a88a53 100%);
+    background: linear-gradient(135deg, #d4af5b 0%, #b89542 100%);
     color: #1a3462;
     border: none;
     border-radius: 8px;
@@ -175,7 +240,7 @@
 .btn-primary:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(201, 169, 110, 0.35);
-    background: linear-gradient(135deg, #d4b57a 0%, #b3955d 100%);
+    background: linear-gradient(135deg, #e6c16c 0%, #c9a04a 100%);
 }
 
 .btn-large {
@@ -203,9 +268,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 9rem 2rem 4rem;
+    padding: 4rem 2rem 4rem;
     text-align: center;
-    min-height: 100vh;
+    min-height: calc(100vh - 80px); /* compensate for padding-top on .home-page */
     animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: 0.2s;
     overflow: hidden;
@@ -287,15 +352,15 @@
 .intro-stats {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 4rem;
-    padding: 3rem 5rem;
-    background: #fafafa;
+    justify-content: space-evenly; /* Better spacing than gap */
+    padding: 3rem 2rem; /* Adjusted padding */
+    background: #ffffff; /* White background */
     border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 10px 40px rgba(17, 34, 64, 0.08); /* Stronger shadow for separation from white bg */
+    border: 1px solid rgba(17, 34, 64, 0.05); /* Subtle border */
     margin-bottom: 6rem;
     width: 100%;
-    max-width: 1000px;
+    max-width: 1100px;
 }
 
 .stat-item {
@@ -339,9 +404,9 @@
 
 .minimal-card {
     background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(17, 34, 64, 0.08); /* Stronger border */
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 10px 30px rgba(17, 34, 64, 0.04); /* Stronger shadow */
     padding: 3rem 2.5rem;
     text-align: left;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s;
@@ -377,6 +442,135 @@
     font-size: 1.05rem;
     color: #6a7c9b;
     line-height: 1.6;
+}
+
+/* ==============================================================
+ * HOW IT WORKS SECTION
+ * ============================================================== */
+.how-it-works-section, .testimonials-section {
+    position: relative;
+    z-index: 10;
+    padding: 6rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+}
+
+.how-it-works-section {
+    background: #fafafa;
+}
+
+.testimonials-section {
+    background: #ffffff;
+    padding-bottom: 8rem;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+    max-width: 600px;
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.step-card {
+    text-align: left;
+    padding: 3rem 2.5rem;
+}
+
+.step-number {
+    font-size: 4rem;
+    font-family: 'Darker Grotesque', sans-serif;
+    font-weight: 900;
+    color: #f2f6fc; /* light blue grey */
+    line-height: 1;
+    margin-bottom: 1rem;
+    transition: color 0.3s ease;
+}
+
+.step-card:hover .step-number {
+    color: #e5edf7;
+}
+
+.step-title {
+    font-family: 'Darker Grotesque', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #112240;
+    margin-bottom: 1rem;
+}
+
+.step-desc {
+    font-size: 1.05rem;
+    color: #6a7c9b;
+    line-height: 1.6;
+}
+
+/* ==============================================================
+ * TESTIMONIALS SECTION
+ * ============================================================== */
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.testimonial-card {
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.testimonial-content p {
+    font-size: 1.05rem;
+    font-style: italic;
+    color: #112240;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.author-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #112240;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.author-info h4 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #112240;
+    margin: 0 0 0.2rem 0;
+}
+
+.author-info span {
+    font-size: 0.85rem;
+    color: #6a7c9b;
 }
 
 /* ==============================================================
@@ -442,7 +636,7 @@
 
 .discount-badge {
     background: rgba(201, 169, 110, 0.15);
-    color: #c9a96e;
+    color: #d4af5b;
     font-size: 0.7rem;
     padding: 0.2rem 0.6rem;
     border-radius: 20px;
@@ -487,21 +681,14 @@
 /* Pricing Grid */
 .pricing-grid {
     display: flex;
-    gap: 1.2rem;
+    gap: 1.5rem;
     width: 100%;
     max-width: 1300px;
-    /* Aumentato il container per farci stare 4 card */
     margin: 0 auto;
     align-items: stretch;
     justify-content: center;
-    flex-wrap: nowrap;
-    /* Forza la riga singola su desktop */
+    flex-wrap: wrap; /* Changed to wrap so it doesn't squish horizontally on smaller desktops */
     padding: 3rem 1rem 4rem 1rem;
-    /* Aumentato molto il padding top/bottom per scale e ombre su hover */
-    overflow-x: auto;
-    /* Permette scroll se scende sotto min-width */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
 }
 
 .pricing-grid::-webkit-scrollbar {
@@ -513,20 +700,15 @@
     display: flex;
     flex-direction: column;
     height: auto;
-    width: calc(50% - 1.2rem);
-    /* Esattamente 1/2 dello spazio su desktop */
-    min-width: 320px;
-    /* Card minima più larga per 2 card */
-    max-width: 450px;
-    /* Limita la larghezza massima a 450px */
-    padding: 2rem 1.5rem;
-    /* Ridotto leggermente il padding interno */
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    flex: 1 1 350px; /* Increased from 320px to prevent text squishing */
+    min-width: 350px; /* Increased from 300px */
+    max-width: 450px; /* Increased max width */
+    padding: 2.5rem 2rem; /* Restored padding for breathing room */
+    background: #ffffff;
+    border: 1px solid rgba(17, 34, 64, 0.08); /* Darker border instead of white */
     border-radius: 20px;
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s, box-shadow 0.4s;
+    box-shadow: 0 10px 40px rgba(17, 34, 64, 0.04); /* Real shadow for white card */
 }
 
 .pricing-card.popular {
@@ -535,7 +717,23 @@
     transform: scale(1.05);
     background: #112240;
     color: #ffffff;
-    z-index: 1;
+    z-index: 10;
+}
+
+/* Fix colors inside the popular card since we flipped the base colors to dark-on-light */
+.pricing-card.popular .pc-name,
+.pricing-card.popular .pc-price {
+    color: #ffffff;
+}
+
+.pricing-card.popular .pc-desc,
+.pricing-card.popular .pc-price .currency,
+.pricing-card.popular .pc-price .period {
+    color: #8fa3c8;
+}
+
+.pricing-card.popular .feature-item {
+    color: #e2ddd5;
 }
 
 .pricing-card.popular:hover {
@@ -547,7 +745,7 @@
     top: -14px;
     left: 50%;
     transform: translateX(-50%);
-    background: #c9a96e;
+    background: #d4af5b;
     color: #1a3462;
     font-size: 0.8rem;
     font-weight: 900;
@@ -565,17 +763,18 @@
 .pc-name {
     font-family: 'DM Sans', sans-serif;
     font-size: 1.5rem;
-    color: #fdfaf4;
+    color: #112240; /* Dark text for white card */
+    font-weight: 800;
     margin-bottom: 0.5rem;
 }
 
 .pricing-card.popular .pc-name {
-    color: #c9a96e;
+    color: #d4af5b;
 }
 
 .pc-desc {
     font-size: 0.9rem;
-    color: #8fa3c8;
+    color: #6a7c9b; /* Darker color for white card */
 }
 
 .pc-price-block {
@@ -585,7 +784,7 @@
 .pc-price {
     display: flex;
     align-items: flex-start;
-    color: #fdfaf4;
+    color: #112240; /* Dark text for white card */
     margin-bottom: 0.5rem;
 }
 
@@ -625,14 +824,15 @@
 
 /* La card NOT-popular ha il bottone outline */
 .pricing-card:not(.popular) .pc-cta.btn-outline {
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(17, 34, 64, 0.2); /* Make it visible on white background */
     background: transparent;
-    color: #fdfaf4;
+    color: #112240; /* Make text visible */
 }
 
 .pricing-card:not(.popular) .pc-cta.btn-outline:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: #fdfaf4;
+    background: rgba(14, 28, 53, 0.05); /* Adjusted to look good on white bg instead of transparent white */
+    border-color: #112240;
+    color: #112240;
 }
 
 .pc-features {
@@ -646,8 +846,9 @@
     align-items: flex-start;
     gap: 0.8rem;
     font-size: 0.95rem;
-    color: #e2ddd5;
+    color: #112240; /* Dark text for white card */
     line-height: 1.4;
+    font-weight: 500;
 }
 
 .feature-check {
@@ -655,7 +856,7 @@
     height: 20px;
     border-radius: 50%;
     background: rgba(201, 169, 110, 0.15);
-    color: #c9a96e;
+    color: #d4af5b;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -665,7 +866,7 @@
 }
 
 .pricing-card.popular .feature-check {
-    background: #c9a96e;
+    background: #d4af5b;
     color: #1a3462;
 }
 
@@ -712,6 +913,101 @@
     .pricing-card {
         min-width: 280px;
     }
+
+    .steps-grid,
+    .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        padding: 0 1.5rem;
+    }
+
+    .nav-links,
+    .home-header .auth-buttons {
+        display: none; /* Hide desktop nav and buttons on iPads */
+    }
+
+    .mobile-menu-toggle {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 28px;
+        height: 20px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .hamburger-line {
+        width: 100%;
+        height: 2px;
+        background: #ffffff;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+        transform-origin: center;
+    }
+
+    .mobile-menu-toggle.open .hamburger-line:nth-child(1) {
+        transform: translateY(9px) rotate(45deg);
+    }
+    .mobile-menu-toggle.open .hamburger-line:nth-child(2) {
+        opacity: 0;
+    }
+    .mobile-menu-toggle.open .hamburger-line:nth-child(3) {
+        transform: translateY(-9px) rotate(-45deg);
+    }
+
+    .mobile-menu-overlay {
+        display: flex;
+        position: fixed;
+        inset: 0;
+        background: #112240;
+        z-index: 999;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-top: 80px;
+        gap: 3rem;
+        transform: translateY(-100%);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mobile-menu-overlay.active {
+        transform: translateY(0);
+    }
+
+    .mobile-nav-links {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .mobile-nav-link {
+        color: #b1c0d4;
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+
+    .mobile-nav-link:active {
+        color: #ffffff;
+    }
+
+    .mobile-auth-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        width: 80%;
+        max-width: 300px;
+    }
+
+    .mobile-auth-buttons a {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
 }
 
 /* --- Tablet Portrait (max 768px) --- */
@@ -752,10 +1048,11 @@
         font-size: 1rem;
     }
 
-    .hero-stats {
-        flex-wrap: wrap;
-        gap: 1.5rem;
-        justify-content: center;
+    .intro-stats {
+        flex-direction: column; /* Stack stats vertically on mobile for better breathing room */
+        align-items: center;
+        gap: 2rem;
+        padding: 2.5rem 1.5rem;
     }
 
     .stat-divider {
@@ -777,9 +1074,10 @@
 
     .features-grid {
         grid-template-columns: 1fr;
-        max-width: 500px;
+        max-width: 100%; /* Allows full width usage on mobile */
         margin: 0 auto;
-        gap: 1.2rem;
+        gap: 1.5rem; /* Slightly larger gap between stacked cards */
+        padding: 0 1rem;
     }
 
     .glass-card {
@@ -788,6 +1086,17 @@
 
     .feature-title {
         font-size: 1.4rem;
+    }
+
+    .steps-grid,
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+    }
+
+    .how-it-works-section,
+    .testimonials-section {
+        padding: 4rem 1rem;
     }
 
     .pricing-section {
@@ -833,22 +1142,22 @@
     .pricing-grid {
         flex-direction: column;
         align-items: center;
-        padding: 1.5rem 0.5rem;
-        gap: 2rem;
+        padding: 1.5rem 1rem; /* More padding on sides */
+        gap: 2.5rem;
     }
 
     .pricing-card {
         width: 100%;
         max-width: 420px;
-        min-width: unset;
+        flex: unset;
     }
 
     .pricing-card.popular {
-        transform: scale(1);
+        transform: scale(1.02);
     }
 
     .pricing-card.popular:hover {
-        transform: translateY(-5px);
+        transform: scale(1.02) translateY(-5px);
     }
 
     .pc-price .amount {
@@ -895,9 +1204,10 @@
     }
 
     .hero-subtitle {
-        font-size: 0.9rem;
-        line-height: 1.5;
-        margin-bottom: 1.5rem;
+        font-size: 1rem; /* Slightly larger for readability */
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        padding: 0 1rem;
     }
 
     .hero-cta {
@@ -951,6 +1261,16 @@
 
     .feature-desc {
         font-size: 0.85rem;
+    }
+
+    .how-it-works-section,
+    .testimonials-section {
+        padding: 3rem 0.5rem;
+    }
+    
+    .step-card,
+    .testimonial-card {
+        padding: 2rem 1.5rem;
     }
 
     .pricing-section {
@@ -1116,8 +1436,11 @@
 
 .join-form-container {
     width: 100%;
-    max-width: 750px;
-    padding: 3rem;
+    max-width: 800px; /* Slightly wider */
+    padding: 4rem; /* More breathing room */
+    background: #ffffff;
+    border: 1px solid rgba(17, 34, 64, 0.08);
+    box-shadow: 0 15px 50px rgba(17, 34, 64, 0.06); /* Shadow to separate from bg */
 }
 
 .join-form {
@@ -1168,9 +1491,9 @@
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    border-color: #1a3462;
+    border-color: #d4af5b; /* Matches theme better than dark blue */
     background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(26, 52, 98, 0.1);
+    box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.2);
 }
 
 .form-group input.invalid,
@@ -1221,6 +1544,12 @@
 .file-upload-area:hover {
     border-color: #1a3462;
     background: #f2f6fc;
+}
+
+.file-upload-area.drag-over {
+    border-color: #d4af5b;
+    background: #fcf9f2;
+    transform: scale(1.02);
 }
 
 .file-upload-content {
@@ -1285,7 +1614,7 @@
     font-family: 'Darker Grotesque', sans-serif;
     font-size: 2rem;
     font-weight: 800;
-    color: #c9a96e;
+    color: #d4af5b;
     margin-bottom: 0.75rem;
 }
 
@@ -1348,8 +1677,8 @@
 
 .home-footer {
     padding: 3rem 4rem;
-    background: #f8fafc;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background: #112240; /* Brand dark blue */
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1368,7 +1697,7 @@
 }
 
 .footer-copy {
-    color: #6a7c9b;
+    color: #8fa3c8; /* Light blueish grey for contrast on dark background */
     font-size: 0.95rem;
     max-width: 600px;
     line-height: 1.6;
@@ -1376,7 +1705,7 @@
 }
 
 .footer-rights {
-    color: #8fa3c8;
+    color: #6a7c9b; /* Slightly darker than copy for secondary info */
     font-size: 0.8rem;
     margin-top: 1rem;
 }

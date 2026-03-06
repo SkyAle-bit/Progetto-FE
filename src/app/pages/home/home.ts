@@ -17,6 +17,7 @@ export class HomeComponent implements OnInit {
     semestralePlans: any[] = [];
     annualePlans: any[] = [];
     isAnnual: boolean = false;
+    isMobileMenuOpen: boolean = false;
 
     // Form candidatura
     applicationForm!: FormGroup;
@@ -25,6 +26,7 @@ export class HomeComponent implements OnInit {
     isSubmitting: boolean = false;
     submitSuccess: boolean = false;
     submitError: string = '';
+    isDragging: boolean = false;
 
     private authService = inject(AuthService);
     private router = inject(Router);
@@ -39,6 +41,16 @@ export class HomeComponent implements OnInit {
     toggleBilling(isAnnual: boolean): void {
         this.isAnnual = isAnnual;
         this.cdr.detectChanges();
+    }
+
+    toggleMobileMenu(): void {
+        this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    }
+
+    closeMobileMenu(): void {
+        // Close immediately — CSS transition on .mobile-menu-overlay handles
+        // the smooth slide-up animation automatically when .active is removed.
+        this.isMobileMenuOpen = false;
     }
 
     ngOnInit(): void {
@@ -73,7 +85,7 @@ export class HomeComponent implements OnInit {
     }
 
     goToRegister(planId: number): void {
-        this.router.navigate(['/register']);
+        this.router.navigate(['/register'], { queryParams: { plan: planId } });
     }
 
     // ── File handling ──
@@ -88,11 +100,19 @@ export class HomeComponent implements OnInit {
     onDragOver(event: DragEvent): void {
         event.preventDefault();
         event.stopPropagation();
+        this.isDragging = true;
+    }
+
+    onDragLeave(event: DragEvent): void {
+        event.preventDefault();
+        event.stopPropagation();
+        this.isDragging = false;
     }
 
     onDrop(event: DragEvent): void {
         event.preventDefault();
         event.stopPropagation();
+        this.isDragging = false;
         if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
             this.validateAndSetFile(event.dataTransfer.files[0]);
         }
