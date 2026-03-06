@@ -9,7 +9,7 @@
     <!-- Navbar -->
     <header class="home-header">
         <div class="brand">
-            <img src="assets/images/navalgold_logo.png" alt="Naval Gold Logo" class="brand-logo-img">
+            <h1 class="brand-text">Kore.</h1>
         </div>
         <div class="auth-buttons">
             <a routerLink="/login" class="btn-outline">Accedi</a>
@@ -19,10 +19,15 @@
 
     <!-- Hero Section -->
     <main class="hero-section">
+        <video autoplay loop muted playsinline class="hero-video">
+            <source src="assets/videos/video_home_page.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+
         <div class="hero-content">
-            <h2 class="hero-title">Forgia la tua eccellenza fisica e mentale</h2>
+            <h2 class="hero-title">Eccellenza fisica e mentale</h2>
             <p class="hero-subtitle">
-                Inizia il tuo percorso con Naval Gold: un ecosistema esclusivo dove allenamento premium e nutrizione
+                Inizia il tuo percorso con Kore: un ecosistema esclusivo dove allenamento premium e nutrizione
                 avanzata si uniscono per scolpire il tuo successo.
             </p>
 
@@ -31,49 +36,51 @@
                     Inizia il tuo percorso <span class="btn-arrow">→</span>
                 </a>
             </div>
+        </div>
+    </main>
 
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <span class="stat-number">50+</span>
-                    <span class="stat-label">Professionisti Qualificati</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item">
-                    <span class="stat-number">10k+</span>
-                    <span class="stat-label">Risultati Raggiunti</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat-item">
-                    <span class="stat-number">4.9/5</span>
-                    <span class="stat-label">Recensioni degli Utenti</span>
-                </div>
+    <!-- Intro Section (Stats & Features) -->
+    <section class="intro-section">
+        <div class="intro-stats">
+            <div class="stat-item">
+                <span class="stat-number">50+</span>
+                <span class="stat-label">Professionisti Qualificati</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">10k+</span>
+                <span class="stat-label">Risultati Raggiunti</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-number">4.9/5</span>
+                <span class="stat-label">Recensioni degli Utenti</span>
             </div>
         </div>
 
-        <!-- Features / Benefits -->
         <div class="features-grid">
-            <div class="feature-card glass-card">
+            <div class="feature-card minimal-card">
                 <div class="feature-icon">💪</div>
                 <h3 class="feature-title">Personal Trainer Dedicati</h3>
                 <p class="feature-desc">Protocolli di allenamento d'élite, progettati su di te per massimizzare forza,
                     ipertrofia e prestazioni.</p>
             </div>
 
-            <div class="feature-card glass-card">
+            <div class="feature-card minimal-card">
                 <div class="feature-icon">🥗</div>
                 <h3 class="feature-title">Piani Nutrizionali</h3>
                 <p class="feature-desc">Nutrizione strategica e mirata, il carburante essenziale per sostenere i tuoi
                     risultati e rigenerare corpo e mente.</p>
             </div>
 
-            <div class="feature-card glass-card">
+            <div class="feature-card minimal-card">
                 <div class="feature-icon">✨</div>
                 <h3 class="feature-title">Esperienza Premium</h3>
                 <p class="feature-desc">Un ambiente digitale senza compromessi. Traccia i progressi, gestisci il tuo
-                    abbonamento e chatta con i tuoi coach in un'unica piattaforma placcata in oro.</p>
+                    abbonamento e chatta con i tuoi coach in un'unica piattaforma essenziale e potente.</p>
             </div>
         </div>
-    </main>
+    </section>
 
     <!-- Pricing Section -->
     <section class="pricing-section" id="pricing">
@@ -97,7 +104,7 @@
         <!-- Piani -->
         <div class="pricing-grid">
             <!-- Generazione dinamica dei piani dal DB -->
-            <div class="pricing-card glass-card" *ngFor="let plan of displayedPlans; let i = index"
+            <div class="pricing-card minimal-card" *ngFor="let plan of displayedPlans; let i = index"
                 [class.popular]="i === 1">
                 <!-- Highlight piano intermedio -->
 
@@ -160,11 +167,11 @@
     <section class="join-section" id="lavora-con-noi">
         <div class="join-header">
             <h2 class="section-title">Lavora con Noi</h2>
-            <p class="section-subtitle">Sei un Personal Trainer o un Nutrizionista? Unisciti al team Naval Gold e
+            <p class="section-subtitle">Sei un Personal Trainer o un Nutrizionista? Unisciti al team Kore e
                 porta la tua carriera al livello successivo.</p>
         </div>
 
-        <div class="join-form-container glass-card">
+        <div class="join-form-container minimal-card join-card">
             <!-- Success message -->
             <div class="form-success" *ngIf="submitSuccess">
                 <div class="success-icon">✅</div>
@@ -273,15 +280,15 @@
     <!-- Footer -->
     <footer class="home-footer">
         <div class="footer-brand">
-            <img src="assets/images/navalgold_logo.png" alt="Naval Gold Logo" class="footer-logo">
+            <h2 class="brand-text footer-logo-text">Kore.</h2>
         </div>
         <p class="footer-copy">
-            Naval Gold rappresenta l'eccellenza nel fitness e nella nutrizione.
-            Crediamo in un approccio olistico, dove allenamento di alta qualità e alimentazione
+            Kore rappresenta l'eccellenza nel fitness e nella nutrizione.
+            Crediamo in un approccio essenziale e olistico, dove allenamento di alta qualità e alimentazione
             mirata si fondono per forgiare la migliore versione di te.
         </p>
         <p class="footer-rights">
-            &copy; 2026 Naval Gold. Tutti i diritti riservati.
+            &copy; 2026 Kore. Tutti i diritti riservati.
         </p>
     </footer>
 </div>
