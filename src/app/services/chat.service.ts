@@ -380,6 +380,10 @@ export class ChatService {
     this.messagesSubject.next([]);
   }
 
+  setMessages(msgs: ChatMessage[]): void {
+    this.messagesSubject.next(msgs);
+  }
+
   getConversationsSnapshot(): Conversation[] {
     return this.conversationsSubject.value;
   }

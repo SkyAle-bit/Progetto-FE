@@ -302,7 +302,9 @@ export class ChatTabComponent implements OnInit, OnDestroy {
         // Mantieni i messaggi locali ottimistici (id < 0) non ancora confermati dal server
         const localOptimistic = this.chatMessages.filter(m => m.id < 0 &&
           !serverMsgs.some(sm => sm.senderId === m.senderId && sm.content === m.content));
-        this.chatMessages = this.sortMessages([...serverMsgs, ...localOptimistic]);
+        const merged = this.sortMessages([...serverMsgs, ...localOptimistic]);
+        this.chatMessages = merged;
+        this.chatService.setMessages(merged); // Sincronizza lo stato globale WebSocket per evitare la scomparsa del primo messaggio
         this.chatLoading = false;
         this.cdr.detectChanges();
         setTimeout(() => this.scrollToBottom(), 50);
@@ -393,9 +395,12 @@ export class ChatTabComponent implements OnInit, OnDestroy {
       this.activeConversation.unreadCount = 0;
       this.activeConversation = null;
     }
+
+    this.chatService.leaveRoom();
+    this.chatService.activeConversation = null;
+
     this.chatView = 'list';
-    // NON azzeriamo activeConversation nel service né i messaggi:
-    // così se l'utente torna sulla stessa chat ritrova tutto intatto.
+    // Manteniamo this.chatMessages o svuotiamoli a seconda delle preferenze, svuotandoli è più pulito
     this.chatMessages = [];
     this.chatService.stopMessagePolling();
     this.loadConversations();
