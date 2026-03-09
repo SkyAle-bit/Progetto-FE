@@ -34,16 +34,13 @@ export class ClientsListComponent implements OnInit {
   }
 
   loadClients() {
-    console.log('Chiamo getMyClients per ID: ', this.professionalId);
     this.authService.getMyClients(this.professionalId).subscribe({
       next: (res: any) => {
-        console.log('Risposta OK dal backend: ', res);
         // Assicura che diventi un Array pulito, ed eseguiamo Change Detection forzata
         this.clients = Array.isArray(res) ? res : (res && res.value) ? res.value : [];
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Errore durante loadClients frontend: ', err);
       }
     });
   }

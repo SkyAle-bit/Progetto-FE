@@ -38,12 +38,10 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
-          console.log('Login completato con successo!', response);
           // Se va a buon fine, navighiamo verso una pagina protetta (es. la dashboard)
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {
-          console.error('Errore durante il login:', err);
           // Mostriamo un messaggio di errore a schermo (es. cattura il 401 Unauthorized)
           this.errorMessage = 'Email o password errati. Riprova.';
         }
@@ -55,5 +53,3 @@ export class LoginComponent {
   }
 }
 
-export class Login {
-}
