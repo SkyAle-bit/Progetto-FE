@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToastService, Toast } from '../../services/toast.service';
 import { Subscription } from 'rxjs';
@@ -57,10 +57,16 @@ import { Subscription } from 'rxjs';
 })
 export class ToastComponent implements OnInit, OnDestroy {
   private svc = inject(ToastService);
+  private cdr = inject(ChangeDetectorRef);
   private sub!: Subscription;
   toasts: Toast[] = [];
 
-  ngOnInit() { this.sub = this.svc.toasts$.subscribe(t => this.toasts = t); }
+  ngOnInit() { 
+    this.sub = this.svc.toasts$.subscribe(t => {
+      this.toasts = t;
+      this.cdr.detectChanges();
+    }); 
+  }
   ngOnDestroy() { this.sub?.unsubscribe(); }
   dismiss(id: number) { this.svc.dismiss(id); }
   trackById(_: number, t: Toast) { return t.id; }

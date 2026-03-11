@@ -29,6 +29,7 @@ export class AdminUsersTabComponent {
   newUser: any = { firstName: '', lastName: '', email: '', password: '', role: 'CLIENT', planId: null, assignedPTId: null, assignedNutritionistId: null };
   createError: string = '';
   creating: boolean = false;
+  showPassword: boolean = false;
 
   get filteredUsers(): any[] {
     let users = this.allUsers;
@@ -66,6 +67,7 @@ export class AdminUsersTabComponent {
     this.createError = '';
     this.currentStep = 1;
     this.showCreateModal = true;
+    this.showPassword = false;
   }
 
   closeCreateModal(): void { this.showCreateModal = false; }

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, ElementRef, NgZone } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -13,11 +13,37 @@ import { environment } from '../../../environments/environment';
     templateUrl: './home.html',
     styleUrls: ['./home.css']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     semestralePlans: any[] = [];
     annualePlans: any[] = [];
     isAnnual: boolean = false;
     isMobileMenuOpen: boolean = false;
+    isNavScrolled: boolean = false;
+
+    // FAQ
+    openFaqIndex: number = -1;
+    faqItems = [
+        {
+            question: 'Come funziona il sistema di crediti per le sessioni?',
+            answer: 'Ogni piano include un numero mensile di crediti per sessioni con Personal Trainer e Nutrizionista. I crediti si rinnovano ogni mese e puoi prenotare le sessioni direttamente dalla piattaforma in base alla tua disponibilità.'
+        },
+        {
+            question: 'Posso cambiare piano in qualsiasi momento?',
+            answer: 'Sì, puoi effettuare l\'upgrade o il downgrade del tuo piano in qualsiasi momento. La differenza di prezzo verrà calcolata in modo proporzionale al periodo rimanente del tuo abbonamento attuale.'
+        },
+        {
+            question: 'Come vengono personalizzati gli allenamenti?',
+            answer: 'Il tuo Personal Trainer analizzerà il tuo livello di partenza, i tuoi obiettivi e la tua disponibilità per creare un programma totalmente su misura. Il piano viene aggiornato mensilmente in base ai tuoi progressi reali.'
+        },
+        {
+            question: 'Il piano alimentare tiene conto di intolleranze e preferenze?',
+            answer: 'Assolutamente sì. Il nostro Nutrizionista crea piani alimentari personalizzati che rispettano intolleranze, allergie, preferenze alimentari e il tuo stile di vita, garantendo sempre un approccio sostenibile.'
+        },
+        {
+            question: 'Cosa include la polizza assicurativa sportiva?',
+            answer: 'Ogni membro Kore è coperto da una polizza assicurativa sportiva che protegge durante l\'attività fisica. La copertura è inclusa in tutti i piani senza costi aggiuntivi.'
+        }
+    ];
 
     // Form candidatura
     applicationForm!: FormGroup;
@@ -33,6 +59,12 @@ export class HomeComponent implements OnInit {
     private cdr = inject(ChangeDetectorRef);
     private fb = inject(FormBuilder);
     private http = inject(HttpClient);
+    private el = inject(ElementRef);
+    private zone = inject(NgZone);
+
+    private revealObserver!: IntersectionObserver;
+    private counterObserver!: IntersectionObserver;
+    private scrollListener!: () => void;
 
     get displayedPlans() {
         return this.isAnnual ? this.annualePlans : this.semestralePlans;
@@ -41,6 +73,7 @@ export class HomeComponent implements OnInit {
     toggleBilling(isAnnual: boolean): void {
         this.isAnnual = isAnnual;
         this.cdr.detectChanges();
+        setTimeout(() => this.observeNewRevealElements(), 0);
     }
 
     toggleMobileMenu(): void {
@@ -48,9 +81,11 @@ export class HomeComponent implements OnInit {
     }
 
     closeMobileMenu(): void {
-        // Close immediately — CSS transition on .mobile-menu-overlay handles
-        // the smooth slide-up animation automatically when .active is removed.
         this.isMobileMenuOpen = false;
+    }
+
+    toggleFaq(index: number): void {
+        this.openFaqIndex = this.openFaqIndex === index ? -1 : index;
     }
 
     ngOnInit(): void {
@@ -74,6 +109,7 @@ export class HomeComponent implements OnInit {
                     this.annualePlans = [];
                 }
                 this.cdr.detectChanges();
+                setTimeout(() => this.observeNewRevealElements(), 0);
             },
             error: (err) => {
                 console.error("Errore caricamento piani", err);
@@ -82,6 +118,108 @@ export class HomeComponent implements OnInit {
                 this.cdr.detectChanges();
             }
         });
+    }
+
+    ngAfterViewInit(): void {
+        this.zone.runOutsideAngular(() => {
+            this.initScrollReveal();
+            this.initCounterAnimation();
+            this.initScrollEffects();
+        });
+    }
+
+    ngOnDestroy(): void {
+        if (this.revealObserver) this.revealObserver.disconnect();
+        if (this.counterObserver) this.counterObserver.disconnect();
+        const container = this.el.nativeElement.querySelector('.home-page');
+        if (container && this.scrollListener) {
+            container.removeEventListener('scroll', this.scrollListener);
+        }
+    }
+
+    // ── Scroll Reveal ──
+    private initScrollReveal(): void {
+        this.revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    (entry.target as HTMLElement).classList.add('revealed');
+                    this.revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        this.observeNewRevealElements();
+    }
+
+    private observeNewRevealElements(): void {
+        if (!this.revealObserver || !this.el?.nativeElement) return;
+        const elements = this.el.nativeElement.querySelectorAll('[data-reveal]:not(.revealed)');
+        elements.forEach((el: HTMLElement) => this.revealObserver.observe(el));
+    }
+
+    // ── Counter Animation ──
+    private initCounterAnimation(): void {
+        this.counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    this.animateCounter(entry.target as HTMLElement);
+                    this.counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const counters = this.el.nativeElement.querySelectorAll('[data-counter]');
+        counters.forEach((el: HTMLElement) => this.counterObserver.observe(el));
+    }
+
+    private animateCounter(el: HTMLElement): void {
+        const target = parseInt(el.getAttribute('data-counter') || '0', 10);
+        const suffix = el.getAttribute('data-counter-suffix') || '';
+        const duration = 1500;
+        const startTime = performance.now();
+
+        const step = (currentTime: number) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // Easing: ease-out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = Math.round(eased * target);
+            el.textContent = current + suffix;
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            }
+        };
+        requestAnimationFrame(step);
+    }
+
+    // ── Scroll Effects (sticky navbar + parallax) ──
+    private initScrollEffects(): void {
+        const container = this.el.nativeElement.querySelector('.home-page');
+        if (!container) return;
+
+        const header = this.el.nativeElement.querySelector('.home-header');
+        const parallaxElements = this.el.nativeElement.querySelectorAll('[data-parallax]');
+
+        this.scrollListener = () => {
+            const scrollTop = container.scrollTop;
+
+            // Sticky navbar effect
+            if (header) {
+                if (scrollTop > 10) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            }
+
+            // Parallax effect
+            parallaxElements.forEach((el: HTMLElement) => {
+                const speed = parseFloat(el.getAttribute('data-parallax') || '0.3');
+                el.style.transform = `translateY(${scrollTop * speed}px)`;
+            });
+        };
+
+        container.addEventListener('scroll', this.scrollListener, { passive: true });
     }
 
     goToRegister(planId: number): void {

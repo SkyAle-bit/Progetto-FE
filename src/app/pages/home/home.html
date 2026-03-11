@@ -16,15 +16,16 @@
             <a href="#how-it-works" class="nav-link">Il Metodo</a>
             <a href="#testimonials" class="nav-link">Dicono di noi</a>
             <a href="#pricing" class="nav-link">Piani</a>
+            <a href="#faq" class="nav-link">FAQ</a>
             <a href="#lavora-con-noi" class="nav-link">Team</a>
         </nav>
         <div class="auth-buttons">
-            <a routerLink="/login" class="btn-outline">Accedi</a>
-            <a routerLink="/register" class="btn-primary">Registrati</a>
+            <a routerLink="/login" class="btn-outline" aria-label="Accedi al tuo account">Accedi</a>
+            <a routerLink="/register" class="btn-primary" aria-label="Crea un nuovo account">Registrati</a>
         </div>
 
         <!-- Mobile Menu Toggle -->
-        <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" [class.open]="isMobileMenuOpen" aria-label="Menu">
+        <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" [class.open]="isMobileMenuOpen" aria-label="Apri menu di navigazione">
             <span class="hamburger-line"></span>
             <span class="hamburger-line"></span>
             <span class="hamburger-line"></span>
@@ -38,85 +39,121 @@
             <a href="#how-it-works" class="mobile-nav-link" (click)="closeMobileMenu()">Il Metodo</a>
             <a href="#testimonials" class="mobile-nav-link" (click)="closeMobileMenu()">Dicono di noi</a>
             <a href="#pricing" class="mobile-nav-link" (click)="closeMobileMenu()">Piani</a>
+            <a href="#faq" class="mobile-nav-link" (click)="closeMobileMenu()">FAQ</a>
             <a href="#lavora-con-noi" class="mobile-nav-link" (click)="closeMobileMenu()">Team</a>
         </nav>
         <div class="mobile-auth-buttons">
-            <a routerLink="/login" class="btn-outline" (click)="closeMobileMenu()">Accedi</a>
-            <a routerLink="/register" class="btn-primary" (click)="closeMobileMenu()">Registrati</a>
+            <a routerLink="/login" class="btn-outline" (click)="closeMobileMenu()" aria-label="Accedi al tuo account">Accedi</a>
+            <a routerLink="/register" class="btn-primary" (click)="closeMobileMenu()" aria-label="Crea un nuovo account">Registrati</a>
         </div>
     </div>
 
-    <!-- Hero Section -->
+    <!-- ═══════════════════════════════════════════════════════
+         HERO SECTION
+         ═══════════════════════════════════════════════════════ -->
     <main class="hero-section">
         <video autoplay loop muted playsinline class="hero-video">
             <source src="assets/videos/video_home_page.mp4" type="video/mp4">
         </video>
         <div class="hero-overlay"></div>
 
+        <!-- Mesh gradient decorative -->
+        <div class="hero-mesh" data-parallax="0.15"></div>
+
         <div class="hero-content">
-            <h2 class="hero-title">Forgia la tua migliore versione</h2>
+            <h2 class="hero-title">
+                <span class="hero-line" style="--line-index: 0">Forgia la tua</span>
+                <span class="hero-line" style="--line-index: 1">migliore versione</span>
+            </h2>
             <p class="hero-subtitle">
-                Benvenuto in Kore, l'ecosistema esclusivo progettato per trasformare il tuo corpo e la tua mente. 
-                Allenamento d'élite, nutrizione avanzata e supporto costante si fondono in un'unica piattaforma per 
+                Benvenuto in Kore, l'ecosistema esclusivo progettato per trasformare il tuo corpo e la tua mente.
+                Allenamento d'élite, nutrizione avanzata e supporto costante si fondono in un'unica piattaforma per
                 scolpire il tuo successo senza compromessi.
             </p>
 
             <div class="hero-cta">
-                <a routerLink="/register" class="btn-primary btn-large">
+                <a routerLink="/register" class="btn-primary btn-large btn-shimmer" aria-label="Inizia il tuo percorso con Kore">
                     Inizia il tuo percorso <span class="btn-arrow">→</span>
+                </a>
+                <a href="#features" class="btn-ghost btn-large" aria-label="Scopri i servizi di Kore">
+                    Scopri di più
                 </a>
             </div>
         </div>
     </main>
 
-    <!-- Intro Section (Features) -->
+    <!-- ═══════════════════════════════════════════════════════
+         FEATURES SECTION
+         ═══════════════════════════════════════════════════════ -->
     <section class="intro-section" id="features">
+        <div class="section-header text-center" data-reveal>
+            <h2 class="section-title">I nostri servizi</h2>
+            <p class="section-subtitle">Un ecosistema completo per la tua trasformazione.</p>
+        </div>
 
         <div class="features-grid">
-            <div class="feature-card minimal-card">
-                <div class="feature-icon">💪</div>
+            <div class="feature-card minimal-card" data-reveal>
+                <div class="feature-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M6 4v16"/><path d="M18 4v16"/><path d="M6 12h12"/><circle cx="6" cy="4" r="2"/><circle cx="6" cy="20" r="2"/><circle cx="18" cy="4" r="2"/><circle cx="18" cy="20" r="2"/>
+                    </svg>
+                </div>
                 <h3 class="feature-title">Allenamento Su Misura</h3>
                 <p class="feature-desc">Abbandona le schede preimpostate. Ricevi protocolli di allenamento d'élite dai nostri Personal Trainer, costantemente aggiornati sui tuoi progressi per massimizzare forza e ipertrofia.</p>
             </div>
 
-            <div class="feature-card minimal-card">
-                <div class="feature-icon">🥗</div>
+            <div class="feature-card minimal-card" data-reveal>
+                <div class="feature-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 2a5 5 0 0 1 5 5c0 2-1.5 3.5-3 4.5V14h-4v-2.5C8.5 10.5 7 9 7 7a5 5 0 0 1 5-5Z"/><path d="M10 14v3a2 2 0 0 0 4 0v-3"/><path d="M8 21h8"/>
+                    </svg>
+                </div>
                 <h3 class="feature-title">Nutrizione Strategica</h3>
                 <p class="feature-desc">Nutrizione non significa rinuncia, ma carburante. I nostri specialisti creeranno un piano alimentare bilanciato sul tuo metabolismo e stile di vita per sostenere le tue performance.</p>
             </div>
 
-            <div class="feature-card minimal-card">
-                <div class="feature-icon">✨</div>
+            <div class="feature-card minimal-card" data-reveal>
+                <div class="feature-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 2L2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
                 <h3 class="feature-title">Un Ecosistema Premium</h3>
                 <p class="feature-desc">Gestisci tutto in un unico ambiente digitale fluido e potente. Traccia i tuoi record, sblocca crediti per sessioni private e comunica direttamente con i tuoi coach in qualsiasi momento.</p>
             </div>
 
-            <div class="feature-card minimal-card">
-                <div class="feature-icon">🛡️</div>
+            <div class="feature-card minimal-card" data-reveal>
+                <div class="feature-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>
+                    </svg>
+                </div>
                 <h3 class="feature-title">Polizza Assicurativa</h3>
                 <p class="feature-desc">Il tuo allenamento è protetto. Ogni membro Kore è coperto da una polizza assicurativa sportiva inclusa nel piano, per allenarti in totale sicurezza senza pensieri.</p>
             </div>
         </div>
     </section>
 
-    <!-- Come Funziona Section -->
+    <!-- ═══════════════════════════════════════════════════════
+         COME FUNZIONA SECTION
+         ═══════════════════════════════════════════════════════ -->
     <section class="how-it-works-section" id="how-it-works">
-        <div class="section-header text-center">
+        <div class="section-header text-center" data-reveal>
             <h2 class="section-title">Il tuo percorso verso il successo</h2>
             <p class="section-subtitle">Un metodo diviso in tre fasi semplici, chiare e misurabili.</p>
         </div>
         <div class="steps-grid">
-            <div class="step-card minimal-card">
+            <div class="step-card minimal-card" data-reveal>
                 <div class="step-number">01</div>
                 <h3 class="step-title">Analisi e Pianificazione</h3>
                 <p class="step-desc">Il tuo coach analizza il tuo punto di partenza e definisce gli obiettivi a breve e lungo termine.</p>
             </div>
-            <div class="step-card minimal-card">
+            <div class="step-card minimal-card" data-reveal>
                 <div class="step-number">02</div>
                 <h3 class="step-title">Azione e Costanza</h3>
                 <p class="step-desc">Ricevi il tuo piano su misura e inizia ad allenarti. I nostri professionisti ti guidano passo dopo passo.</p>
             </div>
-            <div class="step-card minimal-card">
+            <div class="step-card minimal-card" data-reveal>
                 <div class="step-number">03</div>
                 <h3 class="step-title">Feedback e Risultati</h3>
                 <p class="step-desc">Monitoriamo i tuoi progressi ogni settimana, regolando i carichi e l'alimentazione per ottimizzare i risultati.</p>
@@ -124,14 +161,16 @@
         </div>
     </section>
 
-    <!-- Testimonials Section -->
+    <!-- ═══════════════════════════════════════════════════════
+         TESTIMONIALS SECTION
+         ═══════════════════════════════════════════════════════ -->
     <section class="testimonials-section" id="testimonials">
-        <div class="section-header text-center">
+        <div class="section-header text-center" data-reveal>
             <h2 class="section-title">Storie di successo</h2>
             <p class="section-subtitle">Scopri chi ha già trasformato la propria vita con Kore.</p>
         </div>
         <div class="testimonials-grid">
-            <div class="testimonial-card minimal-card">
+            <div class="testimonial-card minimal-card" data-reveal>
                 <div class="testimonial-content">
                     <p>"Avere personal trainer e nutrizionista nello stesso ecosistema fa davvero la differenza. Mai più senza."</p>
                 </div>
@@ -143,7 +182,7 @@
                     </div>
                 </div>
             </div>
-            <div class="testimonial-card minimal-card">
+            <div class="testimonial-card minimal-card" data-reveal>
                 <div class="testimonial-content">
                     <p>"L'attenzione ai dettagli è maniacale. I miei risultati in questi primi 3 mesi hanno superato le mie aspettative."</p>
                 </div>
@@ -155,7 +194,7 @@
                     </div>
                 </div>
             </div>
-            <div class="testimonial-card minimal-card">
+            <div class="testimonial-card minimal-card" data-reveal>
                 <div class="testimonial-content">
                     <p>"L'app è intuitiva e bellissima. Finalmente un approccio serio al fitness, senza le solite schede copia-incolla."</p>
                 </div>
@@ -170,9 +209,11 @@
         </div>
     </section>
 
-    <!-- Pricing Section -->
+    <!-- ═══════════════════════════════════════════════════════
+         PRICING SECTION
+         ═══════════════════════════════════════════════════════ -->
     <section class="pricing-section" id="pricing">
-        <div class="pricing-header">
+        <div class="pricing-header" data-reveal>
             <h2 class="section-title">Scegli il livello del tuo successo</h2>
             <p class="section-subtitle">Piani trasparenti pensati per portarti esattamente dove vuoi arrivare.</p>
 
@@ -180,7 +221,7 @@
             <div class="billing-toggle">
                 <span class="toggle-label" [class.active]="!isAnnual" (click)="toggleBilling(false)">Semestrale</span>
                 <button class="toggle-switch" [class.on]="isAnnual" (click)="toggleBilling(!isAnnual)"
-                    aria-label="Cambia durata">
+                    aria-label="Cambia durata abbonamento">
                     <span class="toggle-knob"></span>
                 </button>
                 <span class="toggle-label" [class.active]="isAnnual" (click)="toggleBilling(true)">
@@ -191,12 +232,10 @@
 
         <!-- Piani -->
         <div class="pricing-grid">
-            <!-- Generazione dinamica dei piani dal DB -->
             <div class="pricing-card minimal-card" *ngFor="let plan of displayedPlans; let i = index"
-                [class.popular]="i === 1">
-                <!-- Highlight piano intermedio -->
+                [class.popular]="i === 1" data-reveal>
 
-                <div class="popular-badge" *ngIf="i === 1">Most Popular</div>
+                <div class="popular-badge" *ngIf="i === 1">Più Popolare</div>
 
                 <div class="pc-header">
                     <h3 class="pc-name">{{ plan.name }}</h3>
@@ -213,7 +252,8 @@
                         plan.fullPrice }}</p>
                 </div>
 
-                <button class="btn-primary pc-cta" [class.btn-outline]="i !== 1" (click)="goToRegister(plan.id)">
+                <button class="btn-primary btn-shimmer pc-cta" [class.btn-outline]="i !== 1" (click)="goToRegister(plan.id)"
+                    [attr.aria-label]="'Inizia con il piano ' + plan.name">
                     Inizia Ora <span *ngIf="i === 1" class="btn-arrow">→</span>
                 </button>
 
@@ -251,15 +291,46 @@
         </div>
     </section>
 
-    <!-- Lavora con Noi Section -->
+    <!-- ═══════════════════════════════════════════════════════
+         FAQ SECTION
+         ═══════════════════════════════════════════════════════ -->
+    <section class="faq-section" id="faq">
+        <div class="section-header text-center" data-reveal>
+            <h2 class="section-title">Domande frequenti</h2>
+            <p class="section-subtitle">Tutto quello che devi sapere prima di iniziare.</p>
+        </div>
+
+        <div class="faq-list" data-reveal>
+            <div class="faq-item" *ngFor="let item of faqItems; let i = index" [class.open]="openFaqIndex === i">
+                <button class="faq-question"
+                        (click)="toggleFaq(i)"
+                        [attr.aria-expanded]="openFaqIndex === i"
+                        [attr.aria-controls]="'faq-answer-' + i"
+                        aria-label="Espandi domanda">
+                    <span>{{ item.question }}</span>
+                    <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
+                <div class="faq-answer" [id]="'faq-answer-' + i" role="region">
+                    <p>{{ item.answer }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         LAVORA CON NOI SECTION
+         ═══════════════════════════════════════════════════════ -->
     <section class="join-section" id="lavora-con-noi">
-        <div class="join-header">
+        <div class="join-header" data-reveal>
             <h2 class="section-title">Lavora con Noi</h2>
             <p class="section-subtitle">Sei un Personal Trainer o un Nutrizionista? Unisciti al team Kore e
                 porta la tua carriera al livello successivo.</p>
         </div>
 
-        <div class="join-form-container minimal-card join-card">
+        <div class="join-form-container minimal-card join-card" data-reveal>
             <!-- Success message -->
             <div class="form-success" *ngIf="submitSuccess">
                 <div class="success-icon">✅</div>
@@ -294,7 +365,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="email">Email *</label>
-                        <input id="email" type="email" formControlName="email" placeholder="email@esempio.com"
+                        <input id="email" type="email" formControlName="email" placeholder="email&#64;esempio.com"
                             [class.invalid]="applicationForm.get('email')?.invalid && applicationForm.get('email')?.touched">
                         <span class="field-error"
                             *ngIf="applicationForm.get('email')?.hasError('required') && applicationForm.get('email')?.touched">
@@ -352,7 +423,8 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-primary btn-large" [disabled]="isSubmitting">
+                    <button type="submit" class="btn-primary btn-large btn-shimmer" [disabled]="isSubmitting"
+                        aria-label="Invia la tua candidatura">
                         <span *ngIf="!isSubmitting">Invia Candidatura <span class="btn-arrow">→</span></span>
                         <span *ngIf="isSubmitting">Invio in corso...</span>
                     </button>
@@ -365,18 +437,42 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- ═══════════════════════════════════════════════════════
+         FOOTER
+         ═══════════════════════════════════════════════════════ -->
     <footer class="home-footer">
-        <div class="footer-brand">
-            <h2 class="brand-text footer-logo-text">Kore<span class="brand-dot">.</span></h2>
+        <div class="footer-top">
+            <div class="footer-col footer-brand-col">
+                <h2 class="brand-text footer-logo-text">Kore<span class="brand-dot">.</span></h2>
+                <p class="footer-copy">
+                    Kore rappresenta l'eccellenza nel fitness e nella nutrizione.
+                    Un approccio essenziale e olistico per forgiare la migliore versione di te.
+                </p>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-col-title">Servizi</h4>
+                <a href="#features" class="footer-link">Allenamento</a>
+                <a href="#features" class="footer-link">Nutrizione</a>
+                <a href="#features" class="footer-link">Piattaforma</a>
+                <a href="#features" class="footer-link">Assicurazione</a>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-col-title">Azienda</h4>
+                <a href="#how-it-works" class="footer-link">Il Metodo</a>
+                <a href="#testimonials" class="footer-link">Testimonianze</a>
+                <a href="#lavora-con-noi" class="footer-link">Lavora con noi</a>
+                <a href="#faq" class="footer-link">FAQ</a>
+            </div>
+            <div class="footer-col">
+                <h4 class="footer-col-title">Contatti</h4>
+                <span class="footer-link footer-info">info&#64;kore.fit</span>
+                <span class="footer-link footer-info">Milano, Italia</span>
+            </div>
         </div>
-        <p class="footer-copy">
-            Kore rappresenta l'eccellenza nel fitness e nella nutrizione.
-            Crediamo in un approccio essenziale e olistico, dove allenamento di alta qualità e alimentazione
-            mirata si fondono per forgiare la migliore versione di te.
-        </p>
-        <p class="footer-rights">
-            &copy; 2026 Kore. Tutti i diritti riservati.
-        </p>
+        <div class="footer-bottom">
+            <p class="footer-rights">
+                &copy; 2026 Kore. Tutti i diritti riservati.
+            </p>
+        </div>
     </footer>
 </div>
