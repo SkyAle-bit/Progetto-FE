@@ -1,308 +1,317 @@
 <div class="register-page" [class.step2]="currentStep === 2">
 
-  <button routerLink="/" class="btn-back">
-    <span class="back-arrow">←</span> Home
-  </button>
-
-  <!-- Sfondo animato -->
-  <div class="bg-shapes">
-    <div class="shape shape-1"></div>
-    <div class="shape shape-2"></div>
-    <div class="shape shape-3"></div>
+  <!-- ═══ LEFT: Video ═══ -->
+  <div class="register-left">
+    <video autoplay muted loop playsinline class="register-video">
+      <source src="assets/videos/register_video.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
   </div>
 
-  <div class="register-wrapper" [class.wide]="currentStep === 2">
+  <!-- ═══ RIGHT: Form ═══ -->
+  <div class="register-right">
 
-    <!-- Brand -->
-    <div class="brand">
-      <img src="assets/images/navalgold_logo.png" alt="Naval Gold Logo" class="brand-logo-img">
-    </div>
+    <!-- Back Button -->
+    <button routerLink="/" class="btn-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Home
+    </button>
 
-    <form [formGroup]="registerForm" class="glass-card" [class.wide]="currentStep === 2">
+    <div class="register-center" [class.wide]="currentStep === 2">
 
-      <!-- Header step -->
-      <ng-container *ngIf="currentStep !== 3">
-        <div class="card-header">
-          <h2 class="card-title">Crea il tuo Account</h2>
-          <div class="step-track">
-            <div class="step-pill" [class.active]="currentStep === 1" [class.done]="currentStep > 1">
-              <span class="step-num">1</span>
-              <span class="step-label">Dati Personali</span>
-            </div>
-            <div class="step-line" [class.done]="currentStep > 1"></div>
-            <div class="step-pill" [class.active]="currentStep === 2">
-              <span class="step-num">2</span>
-              <span class="step-label">Piano</span>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-
-      <!-- STEP 1 -->
-      <div *ngIf="currentStep === 1" class="step-body">
-
-        <!-- Avatar upload -->
-        <div class="avatar-upload">
-          <input type="file" id="actual-btn" (change)="onFileSelected($event)" accept="image/*" hidden />
-          <label for="actual-btn" class="avatar-label">
-            <ng-container *ngIf="profilePictureBase64">
-              <img [src]="profilePictureBase64" alt="Anteprima" class="avatar-preview">
-              <div class="avatar-overlay">📷</div>
-            </ng-container>
-            <ng-container *ngIf="!profilePictureBase64">
-              <div class="avatar-placeholder">
-                <span class="avatar-plus">+</span>
-                <span class="avatar-text">Foto</span>
-              </div>
-            </ng-container>
-          </label>
-          <p class="avatar-hint">Opzionale</p>
-        </div>
-
-        <!-- Campi in griglia -->
-        <div class="fields-grid">
-          <div class="field-group">
-            <label class="field-label">Nome</label>
-            <input type="text" formControlName="firstName" placeholder="Mario" class="field-input">
-          </div>
-          <div class="field-group">
-            <label class="field-label">Cognome</label>
-            <input type="text" formControlName="lastName" placeholder="Rossi" class="field-input">
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Email</label>
-          <div class="input-wrapper">
-            <span class="input-icon">@</span>
-            <input type="email" formControlName="email" placeholder="mario@example.com" class="field-input with-icon">
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Password</label>
-          <div class="input-wrapper">
-            <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
-            <input [type]="showPassword ? 'text' : 'password'" formControlName="password"
-              placeholder="Minimo 6 caratteri" class="field-input with-icon"
-              [class.invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-            <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility()"
-              [attr.aria-label]="showPassword ? 'Nascondi' : 'Mostra'">
-              <svg *ngIf="!showPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path
-                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                <line x1="1" y1="1" x2="23" y2="23" />
-              </svg>
-              <svg *ngIf="showPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </button>
-          </div>
-          <div class="field-error"
-            *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-            <span *ngIf="registerForm.get('password')?.errors?.['required']">La password è obbligatoria</span>
-            <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Minimo 6 caratteri</span>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Conferma Password</label>
-          <div class="input-wrapper">
-            <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9 12l2 2 4-4" />
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
-            <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword"
-              placeholder="Ripeti la password" class="field-input with-icon"
-              [class.invalid]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched">
-            <button type="button" class="btn-toggle-password" (click)="toggleConfirmPasswordVisibility()"
-              [attr.aria-label]="showConfirmPassword ? 'Nascondi' : 'Mostra'">
-              <svg *ngIf="!showConfirmPassword" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path
-                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                <line x1="1" y1="1" x2="23" y2="23" />
-              </svg>
-              <svg *ngIf="showConfirmPassword" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </button>
-          </div>
-          <div class="field-error"
-            *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched">
-            <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Conferma la password</span>
-            <span *ngIf="registerForm.get('confirmPassword')?.errors?.['mismatch']">Le password non corrispondono</span>
-          </div>
-        </div>
-
-        <button type="button" class="btn-primary" (click)="goToStep2()">
-          <span>Avanti</span><span class="btn-arrow">→</span>
-        </button>
-
-        <div class="card-footer">
-          Hai già un account? <a routerLink="/login" class="link">Accedi</a>
-        </div>
+      <!-- Brand -->
+      <div class="brand">
+        <img src="assets/images/kore_login.png" alt="Naval Gold Logo" class="brand-logo-img">
       </div>
 
-      <!-- STEP 2 -->
-      <div *ngIf="currentStep === 2" class="step-body">
+      <form [formGroup]="registerForm" class="register-form" [class.wide]="currentStep === 2">
 
-        <div class="field-group plans-section">
-          <label class="field-label text-center">Scegli il tuo Piano</label>
-
-          <div class="pricing-carousel">
-            <div class="pricing-card" *ngFor="let plan of plans; let i = index"
-              [class.selected]="registerForm.value.selectedPlanId === plan.id" (click)="selectPlan(plan.id)">
-
-              <!-- Badge "Popular", "Best", "New" in base all'indice -->
-              <div class="pc-badge" *ngIf="i === 1">Vantaggioso</div>
-              <div class="pc-badge" *ngIf="i === 2">Premium</div>
-
-              <div class="pc-header">
-                <h3 class="pc-name">{{ plan.name }}</h3>
+        <!-- Header step -->
+        <ng-container *ngIf="currentStep !== 3">
+          <div class="card-header">
+            <h2 class="card-title">Crea il tuo Account</h2>
+            <p class="card-subtitle">Completa la registrazione in pochi passaggi</p>
+            <div class="step-track">
+              <div class="step-pill" [class.active]="currentStep === 1" [class.done]="currentStep > 1">
+                <span class="step-num">1</span>
+                <span class="step-label">Dati Personali</span>
               </div>
-
-              <div class="pc-price-block">
-                <div class="pc-price">
-                  <span class="currency">€</span>
-                  <span class="amount">{{ plan.fullPrice }}</span>
-                </div>
-                <span class="pc-period">Contratto {{ plan.name }}</span>
+              <div class="step-line" [class.done]="currentStep > 1"></div>
+              <div class="step-pill" [class.active]="currentStep === 2">
+                <span class="step-num">2</span>
+                <span class="step-label">Piano</span>
               </div>
+            </div>
+          </div>
+        </ng-container>
 
-              <div class="pc-features">
-                <div class="feature-item">
-                  <span class="feature-dot"></span> Schede PT personalizzate
-                </div>
-                <div class="feature-item">
-                  <span class="feature-dot"></span> Piano alimentare mensile
-                </div>
-                <div class="feature-item">
-                  <span class="feature-dot"></span> Appuntamenti inclusi
-                </div>
-              </div>
+        <!-- STEP 1 -->
+        <div *ngIf="currentStep === 1" class="step-body">
 
-              <button type="button" class="btn-select-plan">
-                {{ registerForm.value.selectedPlanId === plan.id ? 'Selezionato' : 'Scegli' }}
+          <!-- Avatar upload -->
+          <div class="avatar-upload">
+            <input type="file" id="actual-btn" (change)="onFileSelected($event)" accept="image/*" hidden />
+            <label for="actual-btn" class="avatar-label">
+              <ng-container *ngIf="profilePictureBase64">
+                <img [src]="profilePictureBase64" alt="Anteprima" class="avatar-preview">
+                <div class="avatar-overlay">📷</div>
+              </ng-container>
+              <ng-container *ngIf="!profilePictureBase64">
+                <div class="avatar-placeholder">
+                  <span class="avatar-plus">+</span>
+                  <span class="avatar-text">Foto</span>
+                </div>
+              </ng-container>
+            </label>
+            <p class="avatar-hint">Opzionale</p>
+          </div>
+
+          <!-- Campi in griglia -->
+          <div class="fields-grid">
+            <div class="field-group">
+              <label class="field-label">Nome</label>
+              <input type="text" formControlName="firstName" placeholder="Mario" class="field-input">
+            </div>
+            <div class="field-group">
+              <label class="field-label">Cognome</label>
+              <input type="text" formControlName="lastName" placeholder="Rossi" class="field-input">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Email</label>
+            <div class="input-wrapper">
+              <span class="input-icon">&#64;</span>
+              <input type="email" formControlName="email" placeholder="mario&#64;example.com" class="field-input with-icon">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label">Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <input [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                placeholder="Minimo 6 caratteri" class="field-input with-icon"
+                [class.invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+              <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility()"
+                [attr.aria-label]="showPassword ? 'Nascondi' : 'Mostra'">
+                <svg *ngIf="!showPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                  <line x1="1" y1="1" x2="23" y2="23" />
+                </svg>
+                <svg *ngIf="showPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
               </button>
             </div>
-          </div>
-
-          <!-- L'input reale rimane nascosto -->
-          <input type="hidden" formControlName="selectedPlanId">
-        </div>
-
-        <div class="field-group">
-          <label class="field-label text-center">Metodo di pagamento</label>
-          <select formControlName="paymentFrequency" class="field-select">
-            <option value="UNICA_SOLUZIONE">Pagamento Unico (Risparmia)</option>
-            <option value="RATE_MENSILI">Rate Mensili</option>
-          </select>
-        </div>
-
-        <div class="section-divider"></div>
-        <h3 class="section-heading">Scegli i tuoi Professionisti</h3>
-
-        <!-- PT Picker -->
-        <div class="field-group">
-          <label class="field-label">💪 Personal Trainer</label>
-          <div class="prof-search-wrap">
-            <span class="prof-search-icon">🔍</span>
-            <input type="text" class="prof-search-input" placeholder="Cerca per nome..." [(ngModel)]="ptSearch"
-              [ngModelOptions]="{standalone: true}">
-          </div>
-          <div class="prof-grid">
-            <div class="prof-card" *ngFor="let pt of filteredPts"
-              [class.selected]="registerForm.value.selectedPtId === pt.id" [class.sold-out]="pt.isSoldOut"
-              (click)="!pt.isSoldOut && selectPt(pt.id)">
-              <div class="prof-avatar">
-                <img *ngIf="pt.profilePicture" [src]="pt.profilePicture" [alt]="pt.fullName">
-                <span *ngIf="!pt.profilePicture" class="prof-initials">{{ getInitials(pt.fullName) }}</span>
-              </div>
-              <div class="prof-info">
-                <span class="prof-name">{{ pt.fullName }}</span>
-                <span class="prof-rating">
-                  ⭐ {{ (pt.averageRating | number:'1.1-1') }}<span class="prof-rating-max">/5</span>
-                </span>
-              </div>
-              <span *ngIf="pt.isSoldOut" class="prof-sold-out-badge">Completo</span>
-              <span *ngIf="registerForm.value.selectedPtId === pt.id" class="prof-check">✓</span>
-              <button type="button" class="btn-view-reviews"
-                (click)="$event.stopPropagation(); openReviewsModal(pt)">Vedi recensioni</button>
+            <div class="field-error"
+              *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+              <span *ngIf="registerForm.get('password')?.errors?.['required']">La password è obbligatoria</span>
+              <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Minimo 6 caratteri</span>
             </div>
-            <div *ngIf="filteredPts.length === 0" class="prof-empty">Nessun risultato</div>
           </div>
-          <input type="hidden" formControlName="selectedPtId">
-        </div>
 
-        <!-- Nutrizionista Picker -->
-        <div class="field-group">
-          <label class="field-label">🥗 Nutrizionista</label>
-          <div class="prof-search-wrap">
-            <span class="prof-search-icon">🔍</span>
-            <input type="text" class="prof-search-input" placeholder="Cerca per nome..." [(ngModel)]="nutSearch"
-              [ngModelOptions]="{standalone: true}">
-          </div>
-          <div class="prof-grid">
-            <div class="prof-card" *ngFor="let nut of filteredNuts"
-              [class.selected]="registerForm.value.selectedNutritionistId === nut.id" [class.sold-out]="nut.isSoldOut"
-              (click)="!nut.isSoldOut && selectNut(nut.id)">
-              <div class="prof-avatar">
-                <img *ngIf="nut.profilePicture" [src]="nut.profilePicture" [alt]="nut.fullName">
-                <span *ngIf="!nut.profilePicture" class="prof-initials">{{ getInitials(nut.fullName) }}</span>
-              </div>
-              <div class="prof-info">
-                <span class="prof-name">{{ nut.fullName }}</span>
-                <span class="prof-rating">
-                  ⭐ {{ (nut.averageRating | number:'1.1-1') }}<span class="prof-rating-max">/5</span>
-                </span>
-              </div>
-              <span *ngIf="nut.isSoldOut" class="prof-sold-out-badge">Completo</span>
-              <span *ngIf="registerForm.value.selectedNutritionistId === nut.id" class="prof-check">✓</span>
-              <button type="button" class="btn-view-reviews"
-                (click)="$event.stopPropagation(); openReviewsModal(nut)">Vedi recensioni</button>
+          <div class="field-group">
+            <label class="field-label">Conferma Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 12l2 2 4-4" />
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword"
+                placeholder="Ripeti la password" class="field-input with-icon"
+                [class.invalid]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched">
+              <button type="button" class="btn-toggle-password" (click)="toggleConfirmPasswordVisibility()"
+                [attr.aria-label]="showConfirmPassword ? 'Nascondi' : 'Mostra'">
+                <svg *ngIf="!showConfirmPassword" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                <line x1="1" y1="1" x2="23" y2="23" />
+                </svg>
+                <svg *ngIf="showConfirmPassword" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
             </div>
-            <div *ngIf="filteredNuts.length === 0" class="prof-empty">Nessun risultato</div>
+            <div class="field-error"
+              *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched">
+              <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Conferma la password</span>
+              <span *ngIf="registerForm.get('confirmPassword')?.errors?.['mismatch']">Le password non corrispondono</span>
+            </div>
           </div>
-          <input type="hidden" formControlName="selectedNutritionistId">
-        </div>
 
-
-        <div class="btn-row">
-          <button type="button" class="btn-secondary" (click)="goToStep1()" [disabled]="isLoading">
-            ← Indietro
+          <button type="button" class="btn-primary" (click)="goToStep2()">
+            <span>Avanti</span><span class="btn-arrow">→</span>
           </button>
-          <button type="button" class="btn-primary btn-submit" (click)="onSubmit()" [disabled]="isLoading">
-            <span *ngIf="!isLoading">Completa →</span>
-            <span *ngIf="isLoading" class="loading-dots">Invio<span>.</span><span>.</span><span>.</span></span>
-          </button>
+
+          <div class="card-footer">
+            Hai già un account? <a routerLink="/login" class="link">Accedi</a>
+          </div>
         </div>
 
-      </div>
+        <!-- STEP 2 -->
+        <div *ngIf="currentStep === 2" class="step-body">
 
-      <!-- STEP 3: Successo -->
-      <div *ngIf="currentStep === 3" class="success-body">
-        <div class="success-ring">
-          <div class="success-check">✓</div>
+          <div class="field-group plans-section">
+            <label class="field-label text-center">Scegli il tuo Piano</label>
+
+            <div class="pricing-carousel">
+              <div class="pricing-card" *ngFor="let plan of plans; let i = index"
+                [class.selected]="registerForm.value.selectedPlanId === plan.id" (click)="selectPlan(plan.id)">
+
+                <div class="pc-badge" *ngIf="i === 1">Vantaggioso</div>
+                <div class="pc-badge" *ngIf="i === 2">Premium</div>
+
+                <div class="pc-header">
+                  <h3 class="pc-name">{{ plan.name }}</h3>
+                </div>
+
+                <div class="pc-price-block">
+                  <div class="pc-price">
+                    <span class="currency">€</span>
+                    <span class="amount">{{ plan.fullPrice }}</span>
+                  </div>
+                  <span class="pc-period">Contratto {{ plan.name }}</span>
+                </div>
+
+                <div class="pc-features">
+                  <div class="feature-item">
+                    <span class="feature-dot"></span> Schede PT personalizzate
+                  </div>
+                  <div class="feature-item">
+                    <span class="feature-dot"></span> Piano alimentare mensile
+                  </div>
+                  <div class="feature-item">
+                    <span class="feature-dot"></span> Appuntamenti inclusi
+                  </div>
+                </div>
+
+                <button type="button" class="btn-select-plan">
+                  {{ registerForm.value.selectedPlanId === plan.id ? 'Selezionato' : 'Scegli' }}
+                </button>
+              </div>
+            </div>
+
+            <input type="hidden" formControlName="selectedPlanId">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label text-center">Metodo di pagamento</label>
+            <select formControlName="paymentFrequency" class="field-select">
+              <option value="UNICA_SOLUZIONE">Pagamento Unico (Risparmia)</option>
+              <option value="RATE_MENSILI">Rate Mensili</option>
+            </select>
+          </div>
+
+          <div class="section-divider"></div>
+          <h3 class="section-heading">Scegli i tuoi Professionisti</h3>
+
+          <!-- PT Picker -->
+          <div class="field-group">
+            <label class="field-label">💪 Personal Trainer</label>
+            <div class="prof-search-wrap">
+              <span class="prof-search-icon">🔍</span>
+              <input type="text" class="prof-search-input" placeholder="Cerca per nome..." [(ngModel)]="ptSearch"
+                [ngModelOptions]="{standalone: true}">
+            </div>
+            <div class="prof-grid">
+              <div class="prof-card" *ngFor="let pt of filteredPts"
+                [class.selected]="registerForm.value.selectedPtId === pt.id" [class.sold-out]="pt.isSoldOut"
+                (click)="!pt.isSoldOut && selectPt(pt.id)">
+                <div class="prof-avatar">
+                  <img *ngIf="pt.profilePicture" [src]="pt.profilePicture" [alt]="pt.fullName">
+                  <span *ngIf="!pt.profilePicture" class="prof-initials">{{ getInitials(pt.fullName) }}</span>
+                </div>
+                <div class="prof-info">
+                  <span class="prof-name">{{ pt.fullName }}</span>
+                  <span class="prof-rating">
+                    ⭐ {{ (pt.averageRating | number:'1.1-1') }}<span class="prof-rating-max">/5</span>
+                  </span>
+                </div>
+                <span *ngIf="pt.isSoldOut" class="prof-sold-out-badge">Completo</span>
+                <span *ngIf="registerForm.value.selectedPtId === pt.id" class="prof-check">✓</span>
+                <button type="button" class="btn-view-reviews"
+                  (click)="$event.stopPropagation(); openReviewsModal(pt)">Vedi recensioni</button>
+              </div>
+              <div *ngIf="filteredPts.length === 0" class="prof-empty">Nessun risultato</div>
+            </div>
+            <input type="hidden" formControlName="selectedPtId">
+          </div>
+
+          <!-- Nutrizionista Picker -->
+          <div class="field-group">
+            <label class="field-label">🥗 Nutrizionista</label>
+            <div class="prof-search-wrap">
+              <span class="prof-search-icon">🔍</span>
+              <input type="text" class="prof-search-input" placeholder="Cerca per nome..." [(ngModel)]="nutSearch"
+                [ngModelOptions]="{standalone: true}">
+            </div>
+            <div class="prof-grid">
+              <div class="prof-card" *ngFor="let nut of filteredNuts"
+                [class.selected]="registerForm.value.selectedNutritionistId === nut.id" [class.sold-out]="nut.isSoldOut"
+                (click)="!nut.isSoldOut && selectNut(nut.id)">
+                <div class="prof-avatar">
+                  <img *ngIf="nut.profilePicture" [src]="nut.profilePicture" [alt]="nut.fullName">
+                  <span *ngIf="!nut.profilePicture" class="prof-initials">{{ getInitials(nut.fullName) }}</span>
+                </div>
+                <div class="prof-info">
+                  <span class="prof-name">{{ nut.fullName }}</span>
+                  <span class="prof-rating">
+                    ⭐ {{ (nut.averageRating | number:'1.1-1') }}<span class="prof-rating-max">/5</span>
+                  </span>
+                </div>
+                <span *ngIf="nut.isSoldOut" class="prof-sold-out-badge">Completo</span>
+                <span *ngIf="registerForm.value.selectedNutritionistId === nut.id" class="prof-check">✓</span>
+                <button type="button" class="btn-view-reviews"
+                  (click)="$event.stopPropagation(); openReviewsModal(nut)">Vedi recensioni</button>
+              </div>
+              <div *ngIf="filteredNuts.length === 0" class="prof-empty">Nessun risultato</div>
+            </div>
+            <input type="hidden" formControlName="selectedNutritionistId">
+          </div>
+
+          <div class="btn-row">
+            <button type="button" class="btn-secondary" (click)="goToStep1()" [disabled]="isLoading">
+              ← Indietro
+            </button>
+            <button type="button" class="btn-primary btn-submit" (click)="onSubmit()" [disabled]="isLoading">
+              <span *ngIf="!isLoading">Completa →</span>
+              <span *ngIf="isLoading" class="loading-dots">Invio<span>.</span><span>.</span><span>.</span></span>
+            </button>
+          </div>
+
         </div>
-        <h3 class="success-title">Benvenuto/a!</h3>
-        <p class="success-text">Il tuo account è stato creato con successo.</p>
-        <p class="success-redirect">Reindirizzamento al login in corso...</p>
-        <button type="button" class="btn-primary" routerLink="/login">Vai al Login →</button>
-      </div>
 
-    </form>
+        <!-- STEP 3: Successo -->
+        <div *ngIf="currentStep === 3" class="success-body">
+          <div class="success-ring">
+            <div class="success-check">✓</div>
+          </div>
+          <h3 class="success-title">Benvenuto/a!</h3>
+          <p class="success-text">Il tuo account è stato creato con successo.</p>
+          <p class="success-redirect">Reindirizzamento al login in corso...</p>
+          <button type="button" class="btn-primary" routerLink="/login">Vai al Login →</button>
+        </div>
+
+      </form>
+    </div>
+
   </div>
 
 </div>

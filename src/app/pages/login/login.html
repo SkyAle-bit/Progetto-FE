@@ -1,82 +1,114 @@
 <div class="login-page">
 
-  <!-- Back Button -->
-  <button routerLink="/" class="btn-back">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-    Home
-  </button>
+  <!-- ═══ LEFT: Form ═══ -->
+  <div class="login-left">
 
-  <!-- Background shapes -->
-  <div class="bg-shapes" aria-hidden="true">
-    <div class="shape shape-1"></div>
-    <div class="shape shape-2"></div>
-    <div class="shape shape-3"></div>
-  </div>
+    <!-- Back Button -->
+    <button routerLink="/" class="btn-back">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+      Home
+    </button>
 
-  <!-- Contenuto centrato -->
-  <div class="login-center">
+    <!-- Centered content -->
+    <div class="login-center">
 
-    <!-- Brand logo -->
-    <div class="brand">
-      <img src="assets/images/navalgold_logo.png" alt="Kore Logo" class="brand-logo-img">
-      <p class="brand-tagline">Accedi al tuo spazio Kore</p>
-    </div>
-
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="glass-card" novalidate>
-
-      <h2 class="card-title">Bentornato</h2>
-
-      <!-- Error Banner -->
-      <div *ngIf="errorMessage" class="error-banner" role="alert">
-        <span class="error-icon" aria-hidden="true">!</span>
-        {{ errorMessage }}
+      <!-- Brand logo -->
+      <div class="brand">
+        <img src="assets/images/kore_login.png" alt="Kore Logo" class="brand-logo-img">
       </div>
 
-      <!-- Email -->
-      <div class="field-group">
-        <label class="field-label" for="email">Email</label>
-        <div class="input-wrapper">
-          <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          <input id="email" type="email" formControlName="email" placeholder="mario.rossi@example.com" autocomplete="email"
-            [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-        </div>
-        <div class="field-error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-          <span *ngIf="loginForm.get('email')?.errors?.['required']">L'email è obbligatoria</span>
-          <span *ngIf="loginForm.get('email')?.errors?.['email']">Inserisci un'email valida</span>
-        </div>
+      <div class="login-heading">
+        <h2 class="card-title">Bentornato</h2>
+        <p class="card-subtitle">Inserisci le tue credenziali per continuare</p>
       </div>
 
-      <!-- Password -->
-      <div class="field-group">
-        <label class="field-label" for="password">Password</label>
-        <div class="input-wrapper">
-          <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
-            placeholder="La tua password" autocomplete="current-password"
-            [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword ? 'Nascondi password' : 'Mostra password'">
-            <svg *ngIf="!showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-            <svg *ngIf="showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-          </button>
-        </div>
-        <div class="field-error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-          La password è obbligatoria
-        </div>
-      </div>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form" novalidate>
 
-      <!-- Submit -->
-      <button type="submit" class="btn-primary">
-        <span>Accedi</span>
-        <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </button>
+        <!-- Error Banner -->
+        <div *ngIf="errorMessage" class="error-banner" role="alert">
+          <span class="error-icon" aria-hidden="true">!</span>
+          {{ errorMessage }}
+        </div>
 
-      <div class="form-divider"></div>
+        <!-- Email -->
+        <div class="field-group">
+          <label class="field-label" for="email">Email</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+            <input id="email" type="email" formControlName="email" placeholder="mario.rossi&#64;example.com"
+              autocomplete="email" [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          </div>
+          <div class="field-error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+            <span *ngIf="loginForm.get('email')?.errors?.['required']">L'email è obbligatoria</span>
+            <span *ngIf="loginForm.get('email')?.errors?.['email']">Inserisci un'email valida</span>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="field-group">
+          <label class="field-label" for="password">Password</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+              placeholder="La tua password" autocomplete="current-password"
+              [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <button type="button" class="btn-toggle-password" (click)="togglePasswordVisibility()"
+              [attr.aria-label]="showPassword ? 'Nascondi password' : 'Mostra password'">
+              <svg *ngIf="!showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                <line x1="1" y1="1" x2="23" y2="23" />
+              </svg>
+              <svg *ngIf="showPassword" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+          <div class="field-error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            La password è obbligatoria
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-primary">
+          <span>Accedi</span>
+          <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12" />
+            <polyline points="12 5 19 12 12 19" />
+          </svg>
+        </button>
+
+      </form>
 
       <div class="card-footer">
         Non hai un account? <a routerLink="/register" class="link">Registrati</a>
       </div>
 
-    </form>
+    </div>
+
+  </div>
+
+  <!-- ═══ RIGHT: Video ═══ -->
+  <div class="login-right">
+    <video autoplay muted loop playsinline class="login-video">
+      <source src="assets/videos/login_video.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay"></div>
   </div>
 
 </div>
