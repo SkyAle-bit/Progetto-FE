@@ -8,19 +8,19 @@ import { Subscription } from 'rxjs';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="fixed bottom-4 right-4 z-[5000] flex flex-col-reverse gap-2 max-w-[380px] w-[calc(100%-2rem)] sm:w-[380px] pointer-events-none">
+    <div class="fixed bottom-4 right-4 left-4 sm:left-auto z-[5000] flex flex-col-reverse gap-2 sm:max-w-[380px] sm:w-[380px] pointer-events-none" style="bottom: max(1rem, env(safe-area-inset-bottom))">
       <div *ngFor="let toast of toasts; trackBy: trackById"
-        class="toast-item pointer-events-auto flex items-start gap-3 px-4 py-3.5 rounded-xl shadow-[0_8px_32px_rgba(26,39,68,0.18)] border backdrop-blur-sm relative overflow-hidden cursor-pointer"
+        class="toast-item pointer-events-auto flex items-start gap-2.5 sm:gap-3 px-3.5 sm:px-4 py-3 sm:py-3.5 rounded-xl shadow-[0_8px_32px_rgba(26,39,68,0.18)] border backdrop-blur-sm relative overflow-hidden cursor-pointer"
         [ngClass]="getClasses(toast.type)"
         (click)="dismiss(toast.id)">
-        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
           [ngClass]="getIconBg(toast.type)">
-          <span class="text-[1rem]">{{ getIcon(toast.type) }}</span>
+          <span class="text-[0.9rem] sm:text-[1rem]">{{ getIcon(toast.type) }}</span>
         </div>
         <div class="flex-1 min-w-0">
-          <div class="text-[0.82rem] font-bold leading-tight"
+          <div class="text-[0.78rem] sm:text-[0.82rem] font-bold leading-tight"
             [ngClass]="getTitleCls(toast.type)">{{ toast.title }}</div>
-          <div class="text-[0.72rem] mt-0.5 leading-snug"
+          <div class="text-[0.68rem] sm:text-[0.72rem] mt-0.5 leading-snug break-words"
             [ngClass]="getMsgCls(toast.type)">{{ toast.message }}</div>
         </div>
         <button class="w-5 h-5 flex items-center justify-center rounded opacity-40 hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5"
@@ -61,11 +61,11 @@ export class ToastComponent implements OnInit, OnDestroy {
   private sub!: Subscription;
   toasts: Toast[] = [];
 
-  ngOnInit() { 
+  ngOnInit() {
     this.sub = this.svc.toasts$.subscribe(t => {
       this.toasts = t;
       this.cdr.detectChanges();
-    }); 
+    });
   }
   ngOnDestroy() { this.sub?.unsubscribe(); }
   dismiss(id: number) { this.svc.dismiss(id); }
