@@ -14,6 +14,7 @@
         <nav class="nav-links">
             <a href="#features" class="nav-link">Servizi</a>
             <a href="#how-it-works" class="nav-link">Il Metodo</a>
+            <a href="#experience-carousel" class="nav-link">Esperienza App</a>
             <a href="#testimonials" class="nav-link">Dicono di noi</a>
             <a href="#pricing" class="nav-link">Piani</a>
             <a href="#faq" class="nav-link">FAQ</a>
@@ -37,6 +38,7 @@
         <nav class="mobile-nav-links">
             <a href="#features" class="mobile-nav-link" (click)="closeMobileMenu()">Servizi</a>
             <a href="#how-it-works" class="mobile-nav-link" (click)="closeMobileMenu()">Il Metodo</a>
+            <a href="#experience-carousel" class="mobile-nav-link" (click)="closeMobileMenu()">Esperienza App</a>
             <a href="#testimonials" class="mobile-nav-link" (click)="closeMobileMenu()">Dicono di noi</a>
             <a href="#pricing" class="mobile-nav-link" (click)="closeMobileMenu()">Piani</a>
             <a href="#faq" class="mobile-nav-link" (click)="closeMobileMenu()">FAQ</a>
@@ -157,6 +159,48 @@
                 <div class="step-number">03</div>
                 <h3 class="step-title">Feedback e Risultati</h3>
                 <p class="step-desc">Monitoriamo i tuoi progressi ogni settimana, regolando i carichi e l'alimentazione per ottimizzare i risultati.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         VIDEO CAROUSEL SECTION
+         ═══════════════════════════════════════════════════════ -->
+    <section class="experience-carousel-section" id="experience-carousel">
+        <div class="section-header text-center" data-reveal>
+            <h2 class="section-title">Vivi l'esperienza Kore</h2>
+            <p class="section-subtitle">Il primo video parte subito e il carousel continua in loop automatico.</p>
+        </div>
+
+        <div class="experience-carousel" data-reveal>
+            <div class="carousel-video-frame">
+                <video
+                    #carouselVideo
+                    class="experience-video"
+                    autoplay
+                    muted
+                    playsinline
+                    preload="metadata"
+                    (ended)="onCarouselVideoEnded()"
+                    [attr.aria-label]="'Demo sezione ' + carouselVideos[currentCarouselVideoIndex].title">
+                    <source [src]="carouselVideos[currentCarouselVideoIndex].src" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="carousel-toolbar">
+                <div class="carousel-progress-pill" aria-label="Selettore video">
+                    <button
+                        *ngFor="let video of carouselVideos; let i = index"
+                        type="button"
+                        class="carousel-dot"
+                        [class.active]="i === currentCarouselVideoIndex"
+                        (click)="selectCarouselVideo(i)"
+                        [attr.aria-label]="'Vai al video ' + (i + 1) + ': ' + video.title">
+                    </button>
+                </div>
+                <button type="button" class="carousel-play-btn" (click)="onCarouselPlayClick()" aria-label="Avvia o riprendi il video corrente">
+                    ▶
+                </button>
             </div>
         </div>
     </section>

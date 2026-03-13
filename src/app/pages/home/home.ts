@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, ElementRef, NgZone } from '@angular/core';
+import { Component, inject, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, ElementRef, NgZone, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -19,6 +19,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     isAnnual: boolean = false;
     isMobileMenuOpen: boolean = false;
     isNavScrolled: boolean = false;
+
+    @ViewChild('carouselVideo') carouselVideoRef?: ElementRef<HTMLVideoElement>;
+
+    carouselVideos = [
+        { key: 'dashboard', title: 'Dashboard', src: 'assets/videos/carosello/dashboard.mp4' },
+        { key: 'calendario', title: 'Calendario', src: 'assets/videos/carosello/calendario.mp4' },
+        { key: 'prenotazione', title: 'Prenotazione', src: 'assets/videos/carosello/prenotazione.mp4' },
+        { key: 'chat', title: 'Chat', src: 'assets/videos/carosello/chat.mp4' },
+        { key: 'scheda', title: 'Scheda', src: 'assets/videos/carosello/scheda.mp4' }
+    ];
+    currentCarouselVideoIndex: number = 0;
+    private readonly maxCarouselAutoplayRetries = 6;
 
     // FAQ
     openFaqIndex: number = -1;
@@ -126,6 +138,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.initCounterAnimation();
             this.initScrollEffects();
         });
+
+        setTimeout(() => this.playCurrentCarouselVideo(), 0);
     }
 
     ngOnDestroy(): void {
@@ -224,6 +238,59 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     goToRegister(planId: number): void {
         this.router.navigate(['/register'], { queryParams: { plan: planId } });
+    }
+
+    nextCarouselVideo(): void {
+        this.currentCarouselVideoIndex = (this.currentCarouselVideoIndex + 1) % this.carouselVideos.length;
+        this.playCurrentCarouselVideo();
+    }
+
+    previousCarouselVideo(): void {
+        this.currentCarouselVideoIndex =
+            (this.currentCarouselVideoIndex - 1 + this.carouselVideos.length) % this.carouselVideos.length;
+        this.playCurrentCarouselVideo();
+    }
+
+    selectCarouselVideo(index: number): void {
+        if (index < 0 || index >= this.carouselVideos.length || index === this.currentCarouselVideoIndex) {
+            return;
+        }
+
+        this.currentCarouselVideoIndex = index;
+        this.playCurrentCarouselVideo();
+    }
+
+    onCarouselVideoEnded(): void {
+        this.nextCarouselVideo();
+    }
+
+    onCarouselPlayClick(): void {
+        this.playCurrentCarouselVideo();
+    }
+
+    private playCurrentCarouselVideo(retryCount: number = 0): void {
+        this.cdr.detectChanges();
+
+        queueMicrotask(() => {
+            const videoEl = this.carouselVideoRef?.nativeElement;
+            if (!videoEl) {
+                return;
+            }
+
+            // Forza attributi runtime utili per l'autoplay mobile/desktop.
+            videoEl.muted = true;
+            videoEl.defaultMuted = true;
+            videoEl.playsInline = true;
+            videoEl.autoplay = true;
+
+            videoEl.load();
+            videoEl.play().catch(() => {
+                // Ritenta per i browser che non avviano subito il primo frame.
+                if (retryCount < this.maxCarouselAutoplayRetries) {
+                    setTimeout(() => this.playCurrentCarouselVideo(retryCount + 1), 180);
+                }
+            });
+        });
     }
 
     // ── File handling ──

@@ -300,6 +300,100 @@ section[id] { scroll-margin-top: 70px; }
 .step-desc { font-size: 1.05rem; color: #6a7c9b; line-height: 1.6; }
 
 /* ══════════════════════════════════════════════════════════
+   EXPERIENCE CAROUSEL
+   ══════════════════════════════════════════════════════════ */
+.experience-carousel-section {
+    position: relative;
+    z-index: 10;
+    padding: 7rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+}
+.experience-carousel-section .section-title { color: #112240; }
+.experience-carousel-section .section-subtitle { color: #6b7280; }
+
+.experience-carousel {
+    width: 100%;
+    max-width: 1120px;
+    padding: 1.35rem;
+    border-radius: 34px;
+    background: #f4f4f8;
+    border: 1px solid #ebecef;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+}
+
+.carousel-video-frame {
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+    border-radius: 30px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    background: #e5e7eb;
+}
+
+.experience-video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+.carousel-toolbar {
+    margin-top: 1.05rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.85rem;
+}
+
+.carousel-progress-pill {
+    min-height: 52px;
+    padding: 0.6rem 1.3rem;
+    border-radius: 999px;
+    border: 1px solid #d9dbe2;
+    background: #e6e8ee;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.carousel-play-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid #d9dbe2;
+    background: #e6e8ee;
+    color: #111827;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+.carousel-play-btn:hover {
+    transform: translateY(-1px);
+    background: #dfe2ea;
+}
+.carousel-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    border: none;
+    background: #80828b;
+    opacity: 0.85;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.carousel-dot:hover { opacity: 1; }
+.carousel-dot.active {
+    width: 58px;
+    border-radius: 999px;
+    background: #6b7280;
+}
+
+/* ══════════════════════════════════════════════════════════
    TESTIMONIALS
    ══════════════════════════════════════════════════════════ */
 .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1200px; width: 100%; margin: 0 auto; }
@@ -569,7 +663,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     .btn-large { padding: 0.9rem 1.8rem; font-size: 0.95rem; }
     .hero-mesh { width: 350px; height: 350px; }
 
-    .intro-section, .how-it-works-section, .testimonials-section, .faq-section, .join-section { padding: 4.5rem 1.2rem; }
+    .intro-section, .how-it-works-section, .experience-carousel-section, .testimonials-section, .faq-section, .join-section { padding: 4.5rem 1.2rem; }
     .section-header { margin-bottom: 3rem; text-align: center; }
 
     .features-grid { grid-template-columns: repeat(2, 1fr); max-width: 100%; gap: 1rem; padding: 0 0.8rem; }
@@ -621,6 +715,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     .faq-answer p { font-size: 0.92rem; }
 
     .mobile-menu-overlay { padding-top: 50px; }
+
+    .experience-carousel { max-width: 100%; padding: 0.85rem; border-radius: 24px; }
+    .carousel-video-frame { max-width: 100%; border-radius: 24px; }
+    .experience-video { aspect-ratio: 4 / 3; }
+    .carousel-progress-pill { min-height: 46px; padding: 0.45rem 1rem; gap: 0.6rem; }
+    .carousel-dot.active { width: 44px; }
+    .carousel-play-btn { width: 46px; height: 46px; }
 }
 
 /* ── Smartphone ≤ 576px ── */
@@ -658,7 +759,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     .btn-ghost.btn-large { padding: 0.75rem 1.4rem; }
     .hero-mesh { width: 280px; height: 280px; filter: blur(80px); }
 
-    .intro-section, .how-it-works-section, .testimonials-section, .faq-section, .join-section { padding: 3rem 0.8rem; }
+    .intro-section, .how-it-works-section, .experience-carousel-section, .testimonials-section, .faq-section, .join-section { padding: 3rem 0.8rem; }
     .section-header { margin-bottom: 2rem; }
     .section-title { font-size: 1.7rem; }
     .section-subtitle { font-size: 0.85rem; margin-bottom: 1rem; }
@@ -720,6 +821,17 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     .mobile-menu-overlay { padding-top: 46px; gap: 2rem; }
     .mobile-nav-link { font-size: 1.2rem; }
     .mobile-auth-buttons a { padding: 0.75rem 1.2rem; font-size: 0.9rem; }
+
+    .experience-carousel-section { padding: 2.5rem 0.35rem; }
+    .experience-carousel { padding: 0.55rem; border-radius: 18px; }
+    .carousel-video-frame { border-radius: 18px; }
+    .experience-video { aspect-ratio: 4 / 3; }
+
+    .carousel-toolbar { gap: 0.6rem; }
+    .carousel-progress-pill { min-height: 42px; padding: 0.45rem 0.8rem; gap: 0.55rem; }
+    .carousel-dot { width: 9px; height: 9px; }
+    .carousel-dot.active { width: 34px; }
+    .carousel-play-btn { width: 42px; height: 42px; font-size: 0.85rem; }
 }
 
 /* ── Small phones ≤ 360px ── */
