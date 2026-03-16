@@ -169,38 +169,83 @@
     <section class="experience-carousel-section" id="experience-carousel">
         <div class="section-header text-center" data-reveal>
             <h2 class="section-title">Vivi l'esperienza Kore</h2>
-            <p class="section-subtitle">Il primo video parte subito e il carousel continua in loop automatico.</p>
+            <p class="section-subtitle">Scorri i video per scoprire tutte le funzionalità della piattaforma.</p>
         </div>
 
         <div class="experience-carousel" data-reveal>
-            <div class="carousel-video-frame">
+            <!-- Video fullscreen 16:9 -->
+            <div class="carousel-video-wrapper">
+                <!-- Stories-style progress bars (mobile only) -->
+                <div class="carousel-stories-bar">
+                    <div
+                        *ngFor="let video of carouselVideos; let i = index"
+                        class="stories-segment"
+                        [class.completed]="i < currentCarouselVideoIndex"
+                        [class.active]="i === currentCarouselVideoIndex"
+                        (click)="selectCarouselVideo(i)">
+                        <div class="stories-segment-fill" [style.width.%]="i < currentCarouselVideoIndex ? 100 : (i === currentCarouselVideoIndex ? videoProgress : 0)"></div>
+                    </div>
+                </div>
+
                 <video
                     #carouselVideo
                     class="experience-video"
-                    autoplay
                     muted
                     playsinline
                     preload="metadata"
                     (ended)="onCarouselVideoEnded()"
+                    (timeupdate)="onVideoTimeUpdate()"
                     [attr.aria-label]="'Demo sezione ' + carouselVideos[currentCarouselVideoIndex].title">
                     <source [src]="carouselVideos[currentCarouselVideoIndex].src" type="video/mp4">
                 </video>
+
+                <!-- Play overlay -->
+                <button
+                    *ngIf="!isCarouselPlaying"
+                    type="button"
+                    class="carousel-play-overlay"
+                    (click)="onCarouselPlayClick()"
+                    aria-label="Avvia il video">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z"/>
+                    </svg>
+                </button>
+
+                <!-- Navigation Arrows -->
+                <button
+                    type="button"
+                    class="carousel-nav-arrow prev"
+                    (click)="previousCarouselVideo()"
+                    aria-label="Video precedente">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <button
+                    type="button"
+                    class="carousel-nav-arrow next"
+                    (click)="nextCarouselVideo()"
+                    aria-label="Video successivo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </button>
             </div>
 
-            <div class="carousel-toolbar">
-                <div class="carousel-progress-pill" aria-label="Selettore video">
-                    <button
-                        *ngFor="let video of carouselVideos; let i = index"
-                        type="button"
-                        class="carousel-dot"
-                        [class.active]="i === currentCarouselVideoIndex"
-                        (click)="selectCarouselVideo(i)"
-                        [attr.aria-label]="'Vai al video ' + (i + 1) + ': ' + video.title">
-                    </button>
+            <!-- Card strip (desktop) -->
+            <div class="carousel-card-strip">
+                <div
+                    *ngFor="let video of carouselVideos; let i = index"
+                    class="carousel-card"
+                    [class.active]="i === currentCarouselVideoIndex"
+                    [style.transform]="getCardTransform(i)"
+                    [style.opacity]="getCardOpacity(i)"
+                    (click)="selectCarouselVideo(i)">
+                    <span class="carousel-card-title">{{ video.title }}</span>
+                    <div class="carousel-card-progress-track" *ngIf="i === currentCarouselVideoIndex">
+                        <div class="carousel-card-progress-bar" [style.width.%]="videoProgress"></div>
+                    </div>
                 </div>
-                <button type="button" class="carousel-play-btn" (click)="onCarouselPlayClick()" aria-label="Avvia o riprendi il video corrente">
-                    ▶
-                </button>
             </div>
         </div>
     </section>
