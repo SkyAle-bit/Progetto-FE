@@ -1,16 +1,16 @@
 <div class="px-4 py-5 sm:max-w-[900px] sm:mx-auto sm:py-8 sm:px-8">
-  <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[#1a2744] mb-1">I Miei Professionisti</h3>
-  <p class="text-[0.78rem] sm:text-[0.85rem] text-[#8fa3c8] mb-4 sm:mb-6">Prenota un appuntamento con i tuoi professionisti</p>
+  <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[var(--color-text-main)] mb-1">I Miei Professionisti</h3>
+  <p class="text-[0.78rem] sm:text-[0.85rem] text-[var(--color-text-muted)] mb-4 sm:mb-6">Prenota un appuntamento con i tuoi professionisti</p>
   <div class="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" *ngIf="professionals.length > 0">
     <div class="bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm" *ngFor="let p of professionals">
       <div class="flex items-center gap-3 mb-3">
-        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[#1a3462] to-[#2d5fa8] flex items-center justify-center border-2 border-[#c9a96e]/50 flex-shrink-0 text-[1.2rem]">{{ p.role === 'PERSONAL_TRAINER' ? '💪' : '🥗' }}</div>
+        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-primary-navy)] to-[#2d5fa8] flex items-center justify-center border-2 border-[var(--color-accent-gold)]/50 flex-shrink-0 text-[1.2rem]">{{ p.role === 'PERSONAL_TRAINER' ? '💪' : '🥗' }}</div>
         <div class="flex-1 min-w-0">
-          <div class="text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">{{ p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</div>
-          <div class="text-[0.95rem] font-bold text-[#1a2744] truncate">{{ p.fullName }}</div>
+          <div class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">{{ p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</div>
+          <div class="text-[0.95rem] font-bold text-[var(--color-text-main)] truncate">{{ p.fullName }}</div>
         </div>
       </div>
-      <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#c9a96e] to-[#a88a53] text-[#1a2744] text-[0.85rem] font-bold transition-all active:scale-[0.97] shadow-[0_4px_12px_rgba(201,169,110,0.25)]" (click)="bookProfessional.emit(p)">Prenota Appuntamento</button>
+      <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-[var(--color-accent-gold)] to-[#a88a53] text-[var(--color-text-main)] text-[0.85rem] font-bold transition-all active:scale-[0.97] shadow-[0_4px_12px_rgba(201,169,110,0.25)]" (click)="bookProfessional.emit(p)">Prenota Appuntamento</button>
     </div>
   </div>
   <div class="text-center py-12" *ngIf="professionals.length === 0">

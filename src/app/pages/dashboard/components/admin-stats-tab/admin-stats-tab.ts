@@ -50,10 +50,10 @@ export class AdminStatsTabComponent implements OnInit {
     switch (role) {
       case 'CLIENT': return '#2d5fa8';
       case 'PERSONAL_TRAINER': return '#059669';
-      case 'NUTRITIONIST': return '#c9a96e';
+      case 'NUTRITIONIST': return 'var(--color-accent-gold)';
       case 'ADMIN': return '#7c3aed';
       case 'INSURANCE_MANAGER': return '#4f46e5';
-      default: return '#8fa3c8';
+      default: return 'var(--color-text-muted)';
     }
   }
 

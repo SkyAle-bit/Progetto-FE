@@ -1,22 +1,22 @@
 <div class="px-5 py-6 flex flex-col gap-5 sm:max-w-[900px] sm:mx-auto sm:py-10 sm:px-8">
   <div class="text-center">
     <div class="relative inline-block mb-3">
-      <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar" class="w-20 h-20 rounded-full object-cover border-[3px] border-[#c9a96e] shadow-lg">
-      <div *ngIf="!currentUser?.profilePicture" class="w-20 h-20 rounded-full bg-gradient-to-br from-[#1a3462] to-[#2d5fa8] border-[3px] border-[#c9a96e] text-[#e8c97a] flex items-center justify-center text-[1.8rem] font-black font-['Darker_Grotesque'] shadow-lg">{{ getInitials() }}</div>
+      <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar" class="w-20 h-20 rounded-full object-cover border-[3px] border-[var(--color-accent-gold)] shadow-lg">
+      <div *ngIf="!currentUser?.profilePicture" class="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-primary-navy)] to-[#2d5fa8] border-[3px] border-[var(--color-accent-gold)] text-[var(--color-accent-gold-light)] flex items-center justify-center text-[1.8rem] font-black font-['Darker_Grotesque'] shadow-lg">{{ getInitials() }}</div>
     </div>
-    <h2 class="font-['Darker_Grotesque'] text-[1.6rem] font-black text-[#1a2744] leading-tight">Ciao, {{ profile?.firstName }}!</h2>
-    <p class="text-[0.82rem] text-[#8fa3c8] mt-1">{{ isProfessional ? 'Ecco un riepilogo della tua attività' : 'Ecco il tuo riepilogo' }}</p>
+    <h2 class="font-['Darker_Grotesque'] text-[1.6rem] font-black text-[var(--color-text-main)] leading-tight">Ciao, {{ profile?.firstName }}!</h2>
+    <p class="text-[0.82rem] text-[var(--color-text-muted)] mt-1">{{ isProfessional ? 'Ecco un riepilogo della tua attività' : 'Ecco il tuo riepilogo' }}</p>
   </div>
 
   <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm">
     <div class="flex items-center gap-3 mb-3">
-      <div class="w-10 h-10 rounded-xl bg-[#1a3462] flex items-center justify-center text-[1.1rem]">{{ isProfessional ? '🏆' : '⭐' }}</div>
+      <div class="w-10 h-10 rounded-xl bg-[var(--color-primary-navy)] flex items-center justify-center text-[1.1rem]">{{ isProfessional ? '🏆' : '⭐' }}</div>
       <div>
-        <div class="text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Il tuo ruolo</div>
-        <div class="text-[0.95rem] font-bold text-[#1a2744]">{{ profile?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : profile?.role === 'NUTRITIONIST' ? 'Nutrizionista' : profile?.role === 'ADMIN' ? 'Amministratore' : profile?.role === 'INSURANCE_MANAGER' ? 'Gestore Polizze' : 'Cliente' }}</div>
+        <div class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Il tuo ruolo</div>
+        <div class="text-[0.95rem] font-bold text-[var(--color-text-main)]">{{ profile?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : profile?.role === 'NUTRITIONIST' ? 'Nutrizionista' : profile?.role === 'ADMIN' ? 'Amministratore' : profile?.role === 'INSURANCE_MANAGER' ? 'Gestore Polizze' : 'Cliente' }}</div>
       </div>
     </div>
-    <div class="text-[0.78rem] text-[#8fa3c8]">{{ profile?.email }}</div>
+    <div class="text-[0.78rem] text-[var(--color-text-muted)]">{{ profile?.email }}</div>
   </div>
 
   <!-- Abbonamento -->
@@ -25,32 +25,32 @@
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl flex items-center justify-center text-[1.1rem]" [ngClass]="subscription.active ? 'bg-amber-100' : 'bg-gray-100'">{{ subscription.active ? '👑' : '⏸️' }}</div>
         <div>
-          <div class="text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Il tuo piano</div>
-          <div class="text-[0.95rem] font-bold text-[#1a2744]">{{ subscription.planName || 'Piano attivo' }}</div>
+          <div class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Il tuo piano</div>
+          <div class="text-[0.95rem] font-bold text-[var(--color-text-main)]">{{ subscription.planName || 'Piano attivo' }}</div>
         </div>
       </div>
       <span class="text-[0.65rem] font-bold px-2.5 py-1 rounded-full" [class.bg-emerald-50]="subscription.active" [class.text-emerald-600]="subscription.active" [class.bg-red-50]="!subscription.active" [class.text-red-500]="!subscription.active">{{ subscription.active ? 'Attivo' : 'Scaduto' }}</span>
     </div>
     <div class="flex gap-3 mb-4" *ngIf="subscription.active">
-      <div class="flex-1 bg-gradient-to-br from-[#1a3462] to-[#2d5fa8] rounded-xl p-3.5 text-center relative overflow-hidden">
+      <div class="flex-1 bg-gradient-to-br from-[var(--color-primary-navy)] to-[#2d5fa8] rounded-xl p-3.5 text-center relative overflow-hidden">
         <div class="absolute top-0 right-0 w-16 h-16 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
         <div class="text-[1.6rem] font-black text-white leading-none">{{ subscription.remainingPtCredits }}</div>
         <div class="text-[0.6rem] text-white/60 uppercase tracking-[0.08em] mt-[5px] font-semibold">Crediti PT</div>
         <div class="mt-2 text-[1rem]">💪</div>
       </div>
-      <div class="flex-1 bg-gradient-to-br from-[#c9a96e] to-[#a88a53] rounded-xl p-3.5 text-center relative overflow-hidden">
+      <div class="flex-1 bg-gradient-to-br from-[var(--color-accent-gold)] to-[#a88a53] rounded-xl p-3.5 text-center relative overflow-hidden">
         <div class="absolute top-0 right-0 w-16 h-16 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-        <div class="text-[1.6rem] font-black text-[#1a2744] leading-none">{{ subscription.remainingNutritionistCredits }}</div>
-        <div class="text-[0.6rem] text-[#1a2744]/60 uppercase tracking-[0.08em] mt-[5px] font-semibold">Crediti Nutrizionista</div>
+        <div class="text-[1.6rem] font-black text-[var(--color-text-main)] leading-none">{{ subscription.remainingNutritionistCredits }}</div>
+        <div class="text-[0.6rem] text-[var(--color-text-main)]/60 uppercase tracking-[0.08em] mt-[5px] font-semibold">Crediti Nutrizionista</div>
         <div class="mt-2 text-[1rem]">🥗</div>
       </div>
     </div>
     <div class="bg-[#f2f6fc] rounded-xl p-3 border border-[#ccd8ed]/60" *ngIf="subscription.active">
-      <div class="flex items-center justify-between mb-2"><span class="text-[0.72rem] text-[#8fa3c8] font-medium">Giorni rimanenti</span><span class="text-[0.88rem] font-black text-[#1a2744]">{{ getSubscriptionDaysLeft() }}</span></div>
+      <div class="flex items-center justify-between mb-2"><span class="text-[0.72rem] text-[var(--color-text-muted)] font-medium">Giorni rimanenti</span><span class="text-[0.88rem] font-black text-[var(--color-text-main)]">{{ getSubscriptionDaysLeft() }}</span></div>
       <div class="w-full h-[6px] bg-[#ccd8ed]/40 rounded-full overflow-hidden">
         <div class="h-full rounded-full transition-all duration-500" [style.width.%]="getSubscriptionDaysLeft() > 30 ? 100 : (getSubscriptionDaysLeft() / 30) * 100" [class.bg-emerald-500]="getSubscriptionDaysLeft() > 10" [class.bg-amber-500]="getSubscriptionDaysLeft() <= 10 && getSubscriptionDaysLeft() > 3" [class.bg-red-500]="getSubscriptionDaysLeft() <= 3"></div>
       </div>
-      <div class="flex items-center justify-between mt-2"><span class="text-[0.65rem] text-[#8fa3c8]">{{ subscription.startDate | date:'dd MMM yyyy' }}</span><span class="text-[0.65rem] text-[#8fa3c8]">{{ subscription.endDate | date:'dd MMM yyyy' }}</span></div>
+      <div class="flex items-center justify-between mt-2"><span class="text-[0.65rem] text-[var(--color-text-muted)]">{{ subscription.startDate | date:'dd MMM yyyy' }}</span><span class="text-[0.65rem] text-[var(--color-text-muted)]">{{ subscription.endDate | date:'dd MMM yyyy' }}</span></div>
     </div>
     <div class="bg-red-50 rounded-xl p-4 border border-red-200 text-center" *ngIf="!subscription.active">
       <p class="text-[0.82rem] text-red-600 font-medium">Il tuo abbonamento è scaduto.</p>
@@ -60,21 +60,21 @@
 
   <div class="bg-white rounded-2xl border border-[#ccd8ed] border-dashed p-5 shadow-sm text-center" *ngIf="isClient && !subscription">
     <div class="text-[2rem] mb-2 opacity-50">📋</div>
-    <h4 class="text-[0.95rem] font-bold text-[#1a2744] mb-1">Nessun abbonamento attivo</h4>
-    <p class="text-[0.78rem] text-[#8fa3c8]">Non hai ancora un piano. Contatta il supporto per attivarne uno.</p>
+    <h4 class="text-[0.95rem] font-bold text-[var(--color-text-main)] mb-1">Nessun abbonamento attivo</h4>
+    <p class="text-[0.78rem] text-[var(--color-text-muted)]">Non hai ancora un piano. Contatta il supporto per attivarne uno.</p>
   </div>
 
   <!-- Prossimo appuntamento -->
   <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm" *ngIf="bookings.length > 0">
-    <div class="flex items-center gap-2 mb-3"><span class="text-[1.1rem]">📅</span><span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Prossimo appuntamento</span></div>
+    <div class="flex items-center gap-2 mb-3"><span class="text-[1.1rem]">📅</span><span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Prossimo appuntamento</span></div>
     <div class="flex items-center gap-3 bg-[#f2f6fc] rounded-xl p-3 border border-[#ccd8ed]/60">
       <div class="w-12 text-center flex-shrink-0">
-        <div class="text-[1.2rem] font-black text-[#1a2744] leading-none">{{ getDayNumber(toDate(bookings[0].date)) }}</div>
-        <div class="text-[0.55rem] font-semibold uppercase text-[#8fa3c8] mt-[2px]">{{ getMonthShort(toDate(bookings[0].date)) }}</div>
+        <div class="text-[1.2rem] font-black text-[var(--color-text-main)] leading-none">{{ getDayNumber(toDate(bookings[0].date)) }}</div>
+        <div class="text-[0.55rem] font-semibold uppercase text-[var(--color-text-muted)] mt-[2px]">{{ getMonthShort(toDate(bookings[0].date)) }}</div>
       </div>
       <div class="flex-1 min-w-0">
-        <div class="text-[0.88rem] font-bold text-[#1a2744] truncate">{{ getBookingLabel(bookings[0]) }}</div>
-        <div class="text-[0.75rem] text-[#8fa3c8]">{{ bookings[0].startTime }} – {{ bookings[0].endTime }}</div>
+        <div class="text-[0.88rem] font-bold text-[var(--color-text-main)] truncate">{{ getBookingLabel(bookings[0]) }}</div>
+        <div class="text-[0.75rem] text-[var(--color-text-muted)]">{{ bookings[0].startTime }} – {{ bookings[0].endTime }}</div>
       </div>
       <span class="text-[0.65rem] font-bold px-2 py-0.5 rounded-full" [class.bg-emerald-50]="bookings[0].status === 'CONFIRMED'" [class.text-emerald-600]="bookings[0].status === 'CONFIRMED'" [class.bg-amber-50]="bookings[0].status === 'PENDING'" [class.text-amber-600]="bookings[0].status === 'PENDING'">{{ bookings[0].status === 'CONFIRMED' ? 'Confermato' : 'In attesa' }}</span>
     </div>
@@ -82,29 +82,29 @@
 
   <!-- Azioni rapide (clienti) -->
   <div class="grid grid-cols-3 gap-3" *ngIf="isClient">
-    <button class="bg-[#1a3462] text-white rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.72rem] font-semibold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('book-call')"><span class="text-[1.2rem]">📞</span>Prenota</button>
-    <button class="bg-[#c9a96e] text-[#1a2744] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.72rem] font-bold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('my-services')"><span class="text-[1.2rem]">📂</span>Servizi</button>
-    <button class="bg-white border border-[#ccd8ed] text-[#1a2744] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.72rem] font-semibold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('calendar')"><span class="text-[1.2rem]">📅</span>Calendario</button>
+    <button class="bg-[var(--color-primary-navy)] text-white rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.72rem] font-semibold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('book-call')"><span class="text-[1.2rem]">📞</span>Prenota</button>
+    <button class="bg-[var(--color-accent-gold)] text-[var(--color-text-main)] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.72rem] font-bold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('my-services')"><span class="text-[1.2rem]">📂</span>Servizi</button>
+    <button class="bg-white border border-[#ccd8ed] text-[var(--color-text-main)] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.72rem] font-semibold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('calendar')"><span class="text-[1.2rem]">📅</span>Calendario</button>
   </div>
 
   <!-- ═══ STATISTICHE PROFESSIONISTA ═══ -->
 
   <!-- Statistiche compatte -->
   <div class="grid grid-cols-3 gap-2.5 sm:gap-3" *ngIf="isProfessional">
-    <div class="bg-gradient-to-br from-[#1a3462] to-[#2d5fa8] rounded-xl p-3 sm:p-3.5 text-center relative overflow-hidden">
+    <div class="bg-gradient-to-br from-[var(--color-primary-navy)] to-[#2d5fa8] rounded-xl p-3 sm:p-3.5 text-center relative overflow-hidden">
       <div class="absolute top-0 right-0 w-12 h-12 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
       <div class="text-[1.4rem] sm:text-[1.6rem] font-black text-white leading-none">{{ proStats?.todayBookingsCount ?? 0 }}</div>
       <div class="text-[0.55rem] sm:text-[0.6rem] text-white/60 uppercase tracking-[0.08em] mt-[4px] font-semibold">Oggi</div>
       <div class="mt-1.5 text-[0.85rem]">📅</div>
     </div>
     <div class="bg-white rounded-xl p-3 sm:p-3.5 text-center border border-[#ccd8ed] relative overflow-hidden">
-      <div class="text-[1.4rem] sm:text-[1.6rem] font-black text-[#1a2744] leading-none">{{ weekBookingsCount }}</div>
-      <div class="text-[0.55rem] sm:text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.08em] mt-[4px] font-semibold">Settimana</div>
+      <div class="text-[1.4rem] sm:text-[1.6rem] font-black text-[var(--color-text-main)] leading-none">{{ weekBookingsCount }}</div>
+      <div class="text-[0.55rem] sm:text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] mt-[4px] font-semibold">Settimana</div>
       <div class="mt-1.5 text-[0.85rem]">📊</div>
     </div>
     <div class="bg-white rounded-xl p-3 sm:p-3.5 text-center border border-[#ccd8ed] relative overflow-hidden">
-      <div class="text-[1.4rem] sm:text-[1.6rem] font-black text-[#1a2744] leading-none">{{ myClients.length }}</div>
-      <div class="text-[0.55rem] sm:text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.08em] mt-[4px] font-semibold">Clienti</div>
+      <div class="text-[1.4rem] sm:text-[1.6rem] font-black text-[var(--color-text-main)] leading-none">{{ myClients.length }}</div>
+      <div class="text-[0.55rem] sm:text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] mt-[4px] font-semibold">Clienti</div>
       <div class="mt-1.5 text-[0.85rem]">👥</div>
     </div>
   </div>
@@ -114,19 +114,19 @@
     <div class="flex items-center justify-between mb-3">
       <div class="flex items-center gap-2">
         <span class="text-[1.1rem]">🕐</span>
-        <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Appuntamenti oggi</span>
+        <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Appuntamenti oggi</span>
       </div>
-      <span class="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-[#1a3462] text-white">{{ proStats.todayBookingsCount }}</span>
+      <span class="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-[var(--color-primary-navy)] text-white">{{ proStats.todayBookingsCount }}</span>
     </div>
     <div class="flex flex-col gap-2">
       <div class="flex items-center gap-3 bg-[#f2f6fc] rounded-xl p-3 border border-[#ccd8ed]/60" *ngFor="let b of proStats.todayBookings">
         <div class="w-10 sm:w-11 flex-shrink-0 text-center">
-          <div class="text-[0.82rem] sm:text-[0.88rem] font-black text-[#1a3462] leading-tight">{{ b.startTime }}</div>
-          <div class="text-[0.58rem] text-[#8fa3c8]">{{ b.endTime }}</div>
+          <div class="text-[0.82rem] sm:text-[0.88rem] font-black text-[var(--color-primary-navy)] leading-tight">{{ b.startTime }}</div>
+          <div class="text-[0.58rem] text-[var(--color-text-muted)]">{{ b.endTime }}</div>
         </div>
         <div class="w-[1px] h-8 bg-[#ccd8ed]/60 flex-shrink-0"></div>
         <div class="flex-1 min-w-0">
-          <div class="text-[0.85rem] font-bold text-[#1a2744] truncate">{{ b.clientName }}</div>
+          <div class="text-[0.85rem] font-bold text-[var(--color-text-main)] truncate">{{ b.clientName }}</div>
           <span class="text-[0.6rem] font-semibold px-1.5 py-[1px] rounded-full"
             [ngClass]="b.status === 'CONFIRMED' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'">
             {{ b.status === 'CONFIRMED' ? 'Confermato' : 'In attesa' }}
@@ -141,8 +141,8 @@
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-[1.1rem]">✅</div>
       <div>
-        <div class="text-[0.88rem] font-bold text-[#1a2744]">Nessun appuntamento oggi</div>
-        <div class="text-[0.72rem] text-[#8fa3c8]">La tua giornata è libera</div>
+        <div class="text-[0.88rem] font-bold text-[var(--color-text-main)]">Nessun appuntamento oggi</div>
+        <div class="text-[0.72rem] text-[var(--color-text-muted)]">La tua giornata è libera</div>
       </div>
     </div>
   </div>
@@ -156,19 +156,19 @@
       </div>
       <span class="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">{{ proStats.clientsNeedingAttentionCount }}</span>
     </div>
-    <p class="text-[0.78rem] text-[#8fa3c8] mb-3">
+    <p class="text-[0.78rem] text-[var(--color-text-muted)] mb-3">
       {{ proStats.clientsNeedingAttentionCount }} {{ proStats.clientsNeedingAttentionCount === 1 ? 'cliente non ha' : 'clienti non hanno' }} una {{ getDocTypeLabel() }} aggiornata negli ultimi 7 giorni
     </p>
     <div class="flex flex-col gap-1.5">
       <div class="flex items-center gap-2.5 px-3 py-2 bg-amber-50/60 rounded-lg" *ngFor="let c of proStats.clientsNeedingAttention">
-        <div class="w-7 h-7 rounded-full bg-[#1a3462] flex items-center justify-center text-[#e8c97a] text-[0.5rem] font-bold flex-shrink-0">{{ c.firstName?.charAt(0) }}{{ c.lastName?.charAt(0) }}</div>
+        <div class="w-7 h-7 rounded-full bg-[var(--color-primary-navy)] flex items-center justify-center text-[var(--color-accent-gold-light)] text-[0.5rem] font-bold flex-shrink-0">{{ c.firstName?.charAt(0) }}{{ c.lastName?.charAt(0) }}</div>
         <div class="flex-1 min-w-0">
-          <span class="text-[0.82rem] font-semibold text-[#1a2744] truncate block">{{ c.firstName }} {{ c.lastName }}</span>
+          <span class="text-[0.82rem] font-semibold text-[var(--color-text-main)] truncate block">{{ c.firstName }} {{ c.lastName }}</span>
         </div>
         <span class="text-[0.62rem] text-amber-600 font-medium flex-shrink-0 whitespace-nowrap">{{ getAttentionLabel(c) }}</span>
       </div>
     </div>
-    <button class="w-full mt-3 py-2.5 rounded-xl bg-[#c9a96e] text-[#1a2744] text-[0.78rem] font-bold transition-all active:scale-[0.97] hover:shadow-md"
+    <button class="w-full mt-3 py-2.5 rounded-xl bg-[var(--color-accent-gold)] text-[var(--color-text-main)] text-[0.78rem] font-bold transition-all active:scale-[0.97] hover:shadow-md"
       (click)="setTabEvent.emit('clients')">
       Vai ai Clienti →
     </button>
@@ -177,25 +177,25 @@
   <!-- Documenti caricati questa settimana -->
   <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm" *ngIf="isProfessional && proStats">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-xl bg-[#c9a96e]/15 flex items-center justify-center text-[1.1rem]">📄</div>
+      <div class="w-10 h-10 rounded-xl bg-[var(--color-accent-gold)]/15 flex items-center justify-center text-[1.1rem]">📄</div>
       <div class="flex-1">
-        <div class="text-[0.65rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Documenti caricati questa settimana</div>
-        <div class="text-[1.1rem] font-black text-[#1a2744]">{{ proStats.docsUploadedThisWeek }}</div>
+        <div class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Documenti caricati questa settimana</div>
+        <div class="text-[1.1rem] font-black text-[var(--color-text-main)]">{{ proStats.docsUploadedThisWeek }}</div>
       </div>
     </div>
   </div>
 
   <!-- Azioni rapide (professionisti) -->
   <div class="flex gap-3" *ngIf="isProfessional">
-    <button class="flex-1 bg-[#1a3462] text-white rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-semibold transition-all active:scale-[0.97]" (click)="openAvailabilityEvent.emit()"><span class="text-[1.2rem]">📅</span>Disponibilità</button>
-    <button class="flex-1 bg-[#c9a96e] text-[#1a2744] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-bold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('clients')"><span class="text-[1.2rem]">👥</span>I Miei Clienti</button>
+    <button class="flex-1 bg-[var(--color-primary-navy)] text-white rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-semibold transition-all active:scale-[0.97]" (click)="openAvailabilityEvent.emit()"><span class="text-[1.2rem]">📅</span>Disponibilità</button>
+    <button class="flex-1 bg-[var(--color-accent-gold)] text-[var(--color-text-main)] rounded-xl py-3.5 flex flex-col items-center gap-1 text-[0.78rem] font-bold transition-all active:scale-[0.97]" (click)="setTabEvent.emit('clients')"><span class="text-[1.2rem]">👥</span>I Miei Clienti</button>
   </div>
 
   <!-- ═══ CRONOLOGIA ATTIVITÀ ═══ -->
   <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm" *ngIf="activityFeed.length > 0">
     <div class="flex items-center gap-2 mb-4">
       <span class="text-[1.1rem]">🕐</span>
-      <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Attività recenti</span>
+      <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Attività recenti</span>
     </div>
 
     <div class="relative">
@@ -209,13 +209,13 @@
           [class.pb-0]="last">
           <!-- Pallino timeline -->
           <div class="w-[30px] h-[30px] rounded-full flex items-center justify-center flex-shrink-0 z-10 text-[0.8rem]"
-            [ngClass]="item.type === 'booking' ? 'bg-[#f2f6fc] border border-[#ccd8ed]/60' : 'bg-[#c9a96e]/10 border border-[#c9a96e]/30'">
+            [ngClass]="item.type === 'booking' ? 'bg-[#f2f6fc] border border-[#ccd8ed]/60' : 'bg-[var(--color-accent-gold)]/10 border border-[var(--color-accent-gold)]/30'">
             {{ item.icon }}
           </div>
           <!-- Contenuto -->
           <div class="flex-1 min-w-0 pt-[3px]">
-            <p class="text-[0.78rem] text-[#1a2744] leading-snug">{{ item.text }}</p>
-            <span class="text-[0.62rem] text-[#8fa3c8] font-medium mt-[2px] block">{{ item.timeAgo }}</span>
+            <p class="text-[0.78rem] text-[var(--color-text-main)] leading-snug">{{ item.text }}</p>
+            <span class="text-[0.62rem] text-[var(--color-text-muted)] font-medium mt-[2px] block">{{ item.timeAgo }}</span>
           </div>
         </div>
       </div>
@@ -225,6 +225,6 @@
   <!-- Nessuna attività -->
   <div class="bg-white rounded-2xl border border-[#ccd8ed] border-dashed p-5 shadow-sm text-center" *ngIf="activityFeed.length === 0">
     <div class="text-[1.8rem] mb-2 opacity-40">🕐</div>
-    <p class="text-[0.82rem] text-[#8fa3c8]">Nessuna attività recente</p>
+    <p class="text-[0.82rem] text-[var(--color-text-muted)]">Nessuna attività recente</p>
   </div>
 </div>

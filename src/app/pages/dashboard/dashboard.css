@@ -37,7 +37,7 @@
 .nav-btn:hover {
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(201, 169, 110, 0.50);
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
 }
 
 .today-btn:hover {
@@ -54,13 +54,13 @@
 .view-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.16);
   border-color: rgba(201, 169, 110, 0.40);
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
 }
 
 .view-toggle-btn.active {
   background: rgba(201, 169, 110, 0.18);
   border-color: rgba(201, 169, 110, 0.55);
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
   box-shadow: 0 0 10px rgba(201, 169, 110, 0.18);
 }
 
@@ -74,13 +74,13 @@
 .agenda-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.16);
   border-color: rgba(201, 169, 110, 0.40);
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
 }
 
 .agenda-toggle-btn.active {
   background: rgba(201, 169, 110, 0.18);
   border-color: rgba(201, 169, 110, 0.55);
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
   box-shadow: 0 0 10px rgba(201, 169, 110, 0.18);
 }
 
@@ -97,7 +97,7 @@
 
 /* Badge data "oggi" — highlight champagne */
 .today-badge {
-  border-color: #c9a96e !important;
+  border-color: var(--color-accent-gold) !important;
   background: rgba(201, 169, 110, 0.08);
 }
 
@@ -109,7 +109,7 @@
 
 /* ── Book button topbar ─────────────────────────────────────────────────── */
 .btn-book-topbar {
-  background: linear-gradient(135deg, #c9a96e 0%, #a88a53 100%);
+  background: linear-gradient(135deg, var(--color-accent-gold) 0%, #a88a53 100%);
   box-shadow: 0 4px 12px rgba(201, 169, 110, 0.25);
   font-family: 'Outfit', sans-serif;
   letter-spacing: 0.02em;
@@ -138,7 +138,7 @@
 /* ── Profile button active/hover ────────────────────────────────────────── */
 .profile-btn:hover,
 .profile-btn.active {
-  border-color: #c9a96e;
+  border-color: var(--color-accent-gold);
   box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.18), 0 2px 14px rgba(201, 169, 110, 0.22);
 }
 
@@ -169,7 +169,7 @@
 
 .time-slot-label.full-hour {
   border-top: 1px solid #ccd8ed;
-  color: #8fa3c8;
+  color: var(--color-text-muted);
 }
 
 .time-slot-label.half-hour {
@@ -244,7 +244,7 @@
 
 /* ── Today highlight ────────────────────────────────────────────────────── */
 /* day-name and day-number: explicit colors needed because the root div's
-   inherited color (#1a2744) overrides Tailwind's text-white/xx utilities */
+   inherited color (var(--color-text-main)) overrides Tailwind's text-white/xx utilities */
 .day-name {
   color: rgba(255, 255, 255, 0.42);
 }
@@ -254,12 +254,12 @@
 }
 
 .day-header.today .day-name {
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
 }
 
 .day-number.today-circle {
-  background: linear-gradient(135deg, #c9a96e, #e8c97a);
-  color: #1a3462;
+  background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-gold-light));
+  color: var(--color-primary-navy);
   font-weight: 700;
   box-shadow: 0 2px 12px rgba(201, 169, 110, 0.40);
 }
@@ -289,8 +289,8 @@
 
 .booking-pt {
   background: rgba(26, 52, 98, 0.10);
-  border-color: #1a3462;
-  color: #1a3462;
+  border-color: var(--color-primary-navy);
+  color: var(--color-primary-navy);
 }
 
 .booking-nutrition {
@@ -302,7 +302,7 @@
 .booking-cancelled {
   background: rgba(143, 163, 200, 0.08);
   border-color: #ccd8ed;
-  color: #8fa3c8;
+  color: var(--color-text-muted);
   opacity: 0.60;
 }
 
@@ -339,7 +339,7 @@
 
 /* Gradient text */
 .panel-title {
-  background: linear-gradient(90deg, #e8c97a, #c9a96e);
+  background: linear-gradient(90deg, var(--color-accent-gold-light), var(--color-accent-gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -393,7 +393,7 @@
   background: rgba(26, 52, 98, 0.07);
   border: 1px solid rgba(26, 52, 98, 0.20);
   border-radius: 10px;
-  color: #1a3462;
+  color: var(--color-primary-navy);
   font-size: 0.84rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
@@ -413,7 +413,7 @@
 
 .btn-availability-arrow {
   margin-left: auto;
-  color: #c9a96e;
+  color: var(--color-accent-gold);
   font-weight: 700;
 }
 
@@ -446,7 +446,7 @@
 
 /* Gradient text header modale */
 .avail-title {
-  background: linear-gradient(90deg, #e8c97a, #c9a96e);
+  background: linear-gradient(90deg, var(--color-accent-gold-light), var(--color-accent-gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -475,7 +475,7 @@
 
 .avail-time-label.full-hour {
   border-top: 1px solid #ccd8ed;
-  color: #8fa3c8;
+  color: var(--color-text-muted);
 }
 
 .avail-time-label.half-hour {
@@ -510,7 +510,7 @@
 .avail-slot.selected {
   background: rgba(26, 52, 98, 0.15);
   border-top-color: rgba(26, 52, 98, 0.20) !important;
-  box-shadow: inset 3px 0 0 #c9a96e;
+  box-shadow: inset 3px 0 0 var(--color-accent-gold);
 }
 
 .avail-slot.selected::after {
@@ -575,7 +575,7 @@
   background: transparent;
   border: 1px solid rgba(26, 52, 98, 0.18);
   border-radius: 4px;
-  color: #8fa3c8;
+  color: var(--color-text-muted);
   font-size: 0.55rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
@@ -588,8 +588,8 @@
 
 .btn-copy-day:hover:not(:disabled) {
   background: rgba(201, 169, 110, 0.10);
-  border-color: #c9a96e;
-  color: #c9a96e;
+  border-color: var(--color-accent-gold);
+  color: var(--color-accent-gold);
 }
 
 .btn-copy-day:disabled {
@@ -617,10 +617,10 @@
 .btn-paste-day {
   margin-top: 0.1rem;
   padding: 0.12rem 0.5rem;
-  background: linear-gradient(135deg, #c9a96e, #e8c97a);
+  background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-gold-light));
   border: none;
   border-radius: 4px;
-  color: #1a2744;
+  color: var(--color-text-main);
   font-size: 0.58rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
@@ -702,7 +702,7 @@
   background: transparent;
   border: 1px solid #ccd8ed;
   border-radius: 8px;
-  color: #8fa3c8;
+  color: var(--color-text-muted);
   font-size: 0.82rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 500;
@@ -711,16 +711,16 @@
 }
 
 .btn-avail-cancel:hover {
-  border-color: #8fa3c8;
-  color: #1a2744;
+  border-color: var(--color-text-muted);
+  color: var(--color-text-main);
 }
 
 .btn-avail-confirm {
   padding: 0.55rem 1.4rem;
-  background: linear-gradient(135deg, #c9a96e, #e8c97a);
+  background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-gold-light));
   border: none;
   border-radius: 8px;
-  color: #1a2744;
+  color: var(--color-text-main);
   font-size: 0.82rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
@@ -751,7 +751,7 @@
   background: rgba(201, 169, 110, 0.15);
   border: 1px solid rgba(201, 169, 110, 0.42);
   border-radius: 7px;
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
   font-size: 0.78rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 600;
@@ -769,10 +769,10 @@
 /* ── Booking modal buttons ──────────────────────────────────────────────── */
 .btn-book-sm {
   padding: 0.35rem 0.8rem;
-  background: linear-gradient(135deg, #c9a96e, #e8c97a);
+  background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-gold-light));
   border: none;
   border-radius: 6px;
-  color: #1a2744;
+  color: var(--color-text-main);
   font-size: 0.72rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
@@ -790,10 +790,10 @@
 
 .btn-book-confirm {
   padding: 0.55rem 1.4rem;
-  background: linear-gradient(135deg, #c9a96e, #e8c97a);
+  background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-gold-light));
   border: none;
   border-radius: 8px;
-  color: #1a2744;
+  color: var(--color-text-main);
   font-size: 0.82rem;
   font-family: 'DM Sans', sans-serif;
   font-weight: 700;
@@ -814,21 +814,21 @@
 
 /* Booking day card states */
 .booking-day-card:hover {
-  border-color: #c9a96e;
+  border-color: var(--color-accent-gold);
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(201, 169, 110, 0.15);
 }
 
 .booking-day-card.selected {
-  background: #1a2744;
-  border-color: #1a2744;
+  background: var(--color-text-main);
+  border-color: var(--color-text-main);
   box-shadow: 0 4px 12px rgba(26, 39, 68, 0.25);
   transform: translateY(-2px);
 }
 
 .booking-day-card.selected .bdc-name,
 .booking-day-card.selected .bdc-month {
-  color: #8fa3c8;
+  color: var(--color-text-muted);
 }
 
 .booking-day-card.selected .bdc-num {
@@ -847,15 +847,15 @@
 
 /* Booking time pill states */
 .booking-time-pill:hover {
-  border-color: #c9a96e;
-  color: #c9a96e;
+  border-color: var(--color-accent-gold);
+  color: var(--color-accent-gold);
   background: rgba(201, 169, 110, 0.05);
 }
 
 .booking-time-pill.selected {
-  background: linear-gradient(135deg, #c9a96e, #e8c97a);
-  border-color: #c9a96e;
-  color: #1a2744;
+  background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-gold-light));
+  border-color: var(--color-accent-gold);
+  color: var(--color-text-main);
   box-shadow: 0 4px 12px rgba(201, 169, 110, 0.35);
   transform: scale(1.05);
 }
@@ -1091,7 +1091,7 @@
 }
 
 .bottom-nav-item {
-  color: #8fa3c8;
+  color: var(--color-text-muted);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -1108,16 +1108,16 @@
 }
 
 .bottom-nav-item.active {
-  color: #1a3462;
+  color: var(--color-primary-navy);
 }
 
 .bottom-nav-item.active svg {
-  color: #c9a96e;
+  color: var(--color-accent-gold);
   transform: translateY(-1px);
 }
 
 .bottom-nav-item.active span {
-  color: #1a3462;
+  color: var(--color-primary-navy);
   font-weight: 700;
 }
 
@@ -1129,7 +1129,7 @@
   transform: translateX(-50%);
   width: 32px;
   height: 3px;
-  background: linear-gradient(90deg, #c9a96e, #e8c97a);
+  background: linear-gradient(90deg, var(--color-accent-gold), var(--color-accent-gold-light));
   border-radius: 0 0 3px 3px;
 }
 
@@ -1176,13 +1176,13 @@
 }
 
 .desktop-nav-item.active {
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
   background: rgba(201, 169, 110, 0.12);
   border-color: rgba(201, 169, 110, 0.25);
 }
 
 .desktop-nav-item.active svg {
-  color: #c9a96e;
+  color: var(--color-accent-gold);
 }
 
 .desktop-nav-item svg {
@@ -1206,7 +1206,7 @@
 
 /* Bolla messaggio — mio (destra) */
 .chat-bubble-mine {
-  background: linear-gradient(135deg, #1a3462, #1f3d6e);
+  background: linear-gradient(135deg, var(--color-primary-navy), #1f3d6e);
   color: #fff;
   border-bottom-right-radius: 6px !important;
   box-shadow: 0 1px 3px rgba(26, 52, 98, 0.15);
@@ -1215,7 +1215,7 @@
 /* Bolla messaggio — altro (sinistra) */
 .chat-bubble-other {
   background: #fff;
-  color: #1a2744;
+  color: var(--color-text-main);
   border-bottom-left-radius: 6px !important;
   box-shadow: 0 1px 3px rgba(26, 52, 98, 0.08);
 }
@@ -1235,12 +1235,12 @@
 /* Send button */
 .chat-send-btn {
   background: #ccd8ed;
-  color: #8fa3c8;
+  color: var(--color-text-muted);
 }
 
 .chat-send-btn.active {
-  background: linear-gradient(135deg, #c9a96e, #a88a53);
-  color: #1a2744;
+  background: linear-gradient(135deg, var(--color-accent-gold), #a88a53);
+  color: var(--color-text-main);
   box-shadow: 0 2px 10px rgba(201, 169, 110, 0.35);
 }
 
@@ -1261,7 +1261,7 @@
 /* Conversazione attiva nella sidebar desktop */
 .chat-conv-active {
   background: #e8edf5 !important;
-  border-left: 3px solid #c9a96e;
+  border-left: 3px solid var(--color-accent-gold);
 }
 
 /* Chat sidebar desktop */

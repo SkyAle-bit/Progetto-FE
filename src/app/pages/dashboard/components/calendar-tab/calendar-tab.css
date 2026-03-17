@@ -6,7 +6,7 @@
 .nav-btn:hover {
   background: rgba(255, 255, 255, 0.18);
   border-color: rgba(201, 169, 110, 0.50);
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
 }
 
 .today-btn:hover {
@@ -24,13 +24,13 @@
 .agenda-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.16);
   border-color: rgba(201, 169, 110, 0.40);
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
 }
 
 .agenda-toggle-btn.active {
   background: rgba(201, 169, 110, 0.18);
   border-color: rgba(201, 169, 110, 0.55);
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
   box-shadow: 0 0 10px rgba(201, 169, 110, 0.18);
 }
 
@@ -47,7 +47,7 @@
 
 /* Badge data "oggi" — highlight champagne */
 .today-badge {
-  border-color: #c9a96e !important;
+  border-color: var(--color-accent-gold) !important;
   background: rgba(201, 169, 110, 0.08);
 }
 
@@ -75,7 +75,7 @@
 
 .time-slot-label.full-hour {
   border-top: 1px solid #ccd8ed;
-  color: #8fa3c8;
+  color: var(--color-text-muted);
 }
 
 .time-slot-label.half-hour {
@@ -154,12 +154,12 @@
 }
 
 .day-header.today .day-name {
-  color: #e8c97a;
+  color: var(--color-accent-gold-light);
 }
 
 .day-number.today-circle {
-  background: linear-gradient(135deg, #c9a96e, #e8c97a);
-  color: #1a3462;
+  background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-gold-light));
+  color: var(--color-primary-navy);
   font-weight: 700;
   box-shadow: 0 2px 12px rgba(201, 169, 110, 0.40);
 }
@@ -189,8 +189,8 @@
 
 .booking-pt {
   background: rgba(26, 52, 98, 0.10);
-  border-color: #1a3462;
-  color: #1a3462;
+  border-color: var(--color-primary-navy);
+  color: var(--color-primary-navy);
 }
 
 .booking-nutrition {
@@ -202,7 +202,7 @@
 .booking-cancelled {
   background: rgba(143, 163, 200, 0.08);
   border-color: #ccd8ed;
-  color: #8fa3c8;
+  color: var(--color-text-muted);
   opacity: 0.60;
 }
 

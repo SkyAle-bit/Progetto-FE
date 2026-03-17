@@ -93,19 +93,19 @@ export class ToastComponent implements OnInit, OnDestroy {
     return type === 'success' ? 'text-emerald-800'
       : type === 'error' ? 'text-red-800'
       : type === 'warning' ? 'text-amber-800'
-      : 'text-[#1a2744]';
+      : 'text-[var(--color-text-main)]';
   }
   getMsgCls(type: string) {
     return type === 'success' ? 'text-emerald-600/80'
       : type === 'error' ? 'text-red-500/80'
       : type === 'warning' ? 'text-amber-600/80'
-      : 'text-[#8fa3c8]';
+      : 'text-[var(--color-text-muted)]';
   }
   getBarCls(type: string) {
     return type === 'success' ? 'bg-emerald-400'
       : type === 'error' ? 'bg-red-400'
       : type === 'warning' ? 'bg-amber-400'
-      : 'bg-[#c9a96e]';
+      : 'bg-[var(--color-accent-gold)]';
   }
 }
 

@@ -2,13 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+/* General Design System variables */
+:root {
+  /* Brand Colors - Navy */
+  --color-primary-navy: #1a3462;
+  --color-primary-navy-dark: #112344;
+  --color-primary-navy-darker: #0d1b3e;
+  --color-primary-navy-darkest: #080e1c;
+
+  /* Brand Colors - Gold */
+  --color-accent-gold: #c9a96e;
+  --color-accent-gold-light: #e8c97a;
+  --color-accent-gold-dark: #b5955a;
+
+  /* Text Colors */
+  --color-text-main: #1a2744;
+  --color-text-muted: #8fa3c8;
+  --color-text-light: #ffffff;
+
+  /* Backgrounds & Borders */
+  --color-bg-page: #fbfcfe;
+  --color-bg-panel: #ffffff;
+  --color-bg-subtle: #f2f6fc;
+  --color-border-subtle: #ccd8ed;
+
+  /* Typography */
+  --font-heading: 'Darker Grotesque', sans-serif;
+  --font-body: 'Outfit', 'DM Sans', sans-serif;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 30px;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(26, 52, 98, 0.05);
+  --shadow-md: 0 10px 30px rgba(26, 52, 98, 0.08);
+}
+
 /* Global overrides */
 html, body {
   margin: 0 !important;
   padding: 0 !important;
   height: 100%;
   overflow: hidden;
-  background: #080e1c;
+  background: var(--color-primary-navy-darkest);
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     isNavScrolled: boolean = false;
 
     @ViewChild('carouselVideo') carouselVideoRef?: ElementRef<HTMLVideoElement>;
+    @ViewChild('heroVideo') heroVideoRef?: ElementRef<HTMLVideoElement>;
 
     carouselVideos = [
         { key: 'dashboard', title: 'Dashboard', src: 'assets/videos/carosello/dashboard.mp4', mobileSrc: 'assets/videos/carosello_mobile/dashboard.mp4' },
@@ -157,6 +158,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             this.initScrollReveal();
             this.initCounterAnimation();
             this.initScrollEffects();
+
+            setTimeout(() => {
+                if (this.heroVideoRef && this.heroVideoRef.nativeElement) {
+                    this.heroVideoRef.nativeElement.muted = true;
+                    this.heroVideoRef.nativeElement.play().catch(e => console.warn('Hero video autoplay prevented:', e));
+                }
+            }, 50);
         });
 
         setTimeout(() => this.initCarouselSectionObserver(), 0);

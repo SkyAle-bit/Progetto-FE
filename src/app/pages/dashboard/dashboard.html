@@ -1,4 +1,4 @@
-<div class="flex flex-col h-[100dvh] overflow-hidden bg-[#f2f6fc] font-['DM_Sans'] text-[#1a2744]">
+<div class="flex flex-col h-[100dvh] overflow-hidden bg-[#f2f6fc] font-['DM_Sans'] text-[var(--color-text-main)]">
 
   <!-- ══════════════════════════════════════════════════════════
        TOPBAR — Logo + Nav desktop al centro, Profilo dx
@@ -6,7 +6,7 @@
   <header class="flex-shrink-0 flex items-center justify-between relative
                  px-4 lg:px-7 h-[calc(3.5rem+env(safe-area-inset-top))] sm:h-[calc(4rem+env(safe-area-inset-top))]
                  pt-[env(safe-area-inset-top)]
-                 bg-[#1a3462] border-b border-[#c9a96e]/20
+                 bg-[var(--color-primary-navy)] border-b border-[var(--color-accent-gold)]/20
                  shadow-[0_2px_20px_rgba(26,52,98,0.30)] z-50">
 
     <!-- Brand logo (sinistra) -->
@@ -47,7 +47,7 @@
         </svg>
         Chat
         <span class="absolute -top-1 -right-1.5 min-w-[17px] h-[17px] px-[3px] rounded-full
-                       bg-[#c9a96e] text-[#1a2744] text-[0.55rem] font-black
+                       bg-[var(--color-accent-gold)] text-[var(--color-text-main)] text-[0.55rem] font-black
                        flex items-center justify-center shadow-sm" *ngIf="getTotalUnread() > 0">{{ getTotalUnread() > 9
           ? '9+' : getTotalUnread() }}</span>
       </button>
@@ -121,7 +121,7 @@
       <!-- Week stat (professionals only) — desktop only, visible on calendar tab -->
       <div class="hidden md:flex flex-col items-end gap-[1px]"
         *ngIf="!isLoading && isProfessional() && activeTab === 'calendar'">
-        <span class="text-[1.1rem] font-bold text-[#e8c97a] leading-none tabular-nums">{{ countWeekBookings() }}</span>
+        <span class="text-[1.1rem] font-bold text-[var(--color-accent-gold-light)] leading-none tabular-nums">{{ countWeekBookings() }}</span>
         <span class="text-[0.6rem] text-white/40 uppercase tracking-[0.10em]">questa settimana</span>
       </div>
 
@@ -130,14 +130,14 @@
         *ngIf="!isLoading && isClient() && subscription?.active && activeTab === 'calendar'">
         <div class="flex items-center gap-1">
           <div class="topbar-credit-badge flex items-center gap-1 px-2 py-[0.2rem]
-                       bg-[#c9a96e]/15 border border-[#c9a96e]/30 rounded-[6px]
-                       text-[#e8c97a] text-[0.8rem] font-semibold transition-all">
+                       bg-[var(--color-accent-gold)]/15 border border-[var(--color-accent-gold)]/30 rounded-[6px]
+                       text-[var(--color-accent-gold-light)] text-[0.8rem] font-semibold transition-all">
             <span>💪</span>
             <span class="tabular-nums">{{ subscription.remainingPtCredits }}</span>
           </div>
           <div class="topbar-credit-badge flex items-center gap-1 px-2 py-[0.2rem]
-                       bg-[#c9a96e]/15 border border-[#c9a96e]/30 rounded-[6px]
-                       text-[#e8c97a] text-[0.8rem] font-semibold transition-all">
+                       bg-[var(--color-accent-gold)]/15 border border-[var(--color-accent-gold)]/30 rounded-[6px]
+                       text-[var(--color-accent-gold-light)] text-[0.8rem] font-semibold transition-all">
             <span>🥗</span>
             <span class="tabular-nums">{{ subscription.remainingNutritionistCredits }}</span>
           </div>
@@ -152,20 +152,20 @@
       </button>
 
       <!-- Profile button (clienti e professionisti) -->
-      <button *ngIf="!isAdmin() && !isInsuranceManager()" class="profile-btn w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full border-2 border-[#c9a96e]/50
-                     bg-[#c9a96e]/12 cursor-pointer flex items-center justify-center
+      <button *ngIf="!isAdmin() && !isInsuranceManager()" class="profile-btn w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full border-2 border-[var(--color-accent-gold)]/50
+                     bg-[var(--color-accent-gold)]/12 cursor-pointer flex items-center justify-center
                      transition-all overflow-hidden p-0 flex-shrink-0" (click)="toggleProfile()"
         [class.active]="isProfileOpen">
         <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar"
           class="w-full h-full object-cover">
-        <span *ngIf="!currentUser?.profilePicture" class="text-[0.78rem] font-bold text-[#c9a96e]">{{ getInitials()
+        <span *ngIf="!currentUser?.profilePicture" class="text-[0.78rem] font-bold text-[var(--color-accent-gold)]">{{ getInitials()
           }}</span>
       </button>
 
       <!-- Logout button (Admin e Insurance Manager) -->
-      <button *ngIf="isAdmin() || isInsuranceManager()" class="flex items-center gap-1.5 px-3 py-[0.35rem] rounded-lg border border-[#c9a96e]/40
-               bg-[#c9a96e]/10 text-[#c9a96e] text-[0.78rem] font-semibold
-               hover:bg-[#c9a96e]/20 transition-all flex-shrink-0" (click)="logout()">
+      <button *ngIf="isAdmin() || isInsuranceManager()" class="flex items-center gap-1.5 px-3 py-[0.35rem] rounded-lg border border-[var(--color-accent-gold)]/40
+               bg-[var(--color-accent-gold)]/10 text-[var(--color-accent-gold)] text-[0.78rem] font-semibold
+               hover:bg-[var(--color-accent-gold)]/20 transition-all flex-shrink-0" (click)="logout()">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -187,8 +187,8 @@
     <!-- Loading overlay -->
     <div class="loading-overlay absolute inset-0 bg-[#f2f6fc]/88 z-20
                 flex flex-col items-center justify-center gap-4 backdrop-blur-[6px]" *ngIf="isLoading">
-      <div class="loading-spinner w-9 h-9 rounded-full border-2 border-[#c9a96e]/20 border-t-[#c9a96e]"></div>
-      <span class="text-[0.8rem] text-[#8fa3c8] uppercase tracking-[0.08em]">Caricamento in corso...</span>
+      <div class="loading-spinner w-9 h-9 rounded-full border-2 border-[var(--color-accent-gold)]/20 border-t-[var(--color-accent-gold)]"></div>
+      <span class="text-[0.8rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em]">Caricamento in corso...</span>
     </div>
 
     <!-- ┌──────────────────────────────────────────────────────┐
@@ -325,7 +325,7 @@
           </path>
         </svg>
         <span class="absolute -top-1 -right-2 min-w-[17px] h-[17px] px-[3px] rounded-full
-                     bg-[#c9a96e] text-[#1a2744] text-[0.55rem] font-black
+                     bg-[var(--color-accent-gold)] text-[var(--color-text-main)] text-[0.55rem] font-black
                      flex items-center justify-center shadow-sm" *ngIf="getTotalUnread() > 0">{{ getTotalUnread() > 9 ?
           '9+' : getTotalUnread() }}</span>
       </div>
@@ -404,11 +404,11 @@
        ══════════════════════════════════════════════════════════ -->
 
   <!-- ── MODALE ACCESSO CALL ── -->
-  <div class="fixed inset-0 bg-[#1a3462]/30 backdrop-blur-[4px] z-[120] flex items-center justify-center p-4"
+  <div class="fixed inset-0 bg-[var(--color-primary-navy)]/30 backdrop-blur-[4px] z-[120] flex items-center justify-center p-4"
     style="animation: fadeIn 0.2s ease" *ngIf="isCallModalOpen">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden flex flex-col"
       style="animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)">
-      <div class="px-6 py-5 bg-[#1a3462] border-b border-[#c9a96e]/20 flex justify-between items-start">
+      <div class="px-6 py-5 bg-[var(--color-primary-navy)] border-b border-[var(--color-accent-gold)]/20 flex justify-between items-start">
         <h3 class="text-xl font-bold text-white leading-tight">Dettagli Chiamata</h3>
         <button class="text-white/60 hover:text-white transition-colors" (click)="closeCallModal()">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -419,24 +419,24 @@
       <div class="p-6 flex flex-col gap-4" *ngIf="selectedCallBooking">
         <div class="flex items-center gap-3">
           <div
-            class="w-10 h-10 rounded-full bg-[#f2f6fc] flex items-center justify-center text-[#1a2744] font-bold text-lg">
+            class="w-10 h-10 rounded-full bg-[#f2f6fc] flex items-center justify-center text-[var(--color-text-main)] font-bold text-lg">
             {{ selectedCallBooking.professionalName ? selectedCallBooking.professionalName.charAt(0) :
             selectedCallBooking.clientName?.charAt(0) }}
           </div>
           <div>
-            <div class="text-[0.7rem] uppercase tracking-wider text-[#8fa3c8] font-bold mb-[2px]">Con chi</div>
-            <div class="text-[1.05rem] font-bold text-[#1a2744]">{{ getBookingLabel(selectedCallBooking) }}</div>
+            <div class="text-[0.7rem] uppercase tracking-wider text-[var(--color-text-muted)] font-bold mb-[2px]">Con chi</div>
+            <div class="text-[1.05rem] font-bold text-[var(--color-text-main)]">{{ getBookingLabel(selectedCallBooking) }}</div>
           </div>
         </div>
         <div class="h-px bg-[#ccd8ed]/50 my-1"></div>
         <div class="flex gap-6">
           <div>
-            <div class="text-[0.7rem] uppercase tracking-wider text-[#8fa3c8] font-bold mb-[2px]">Data</div>
-            <div class="text-[0.95rem] font-semibold text-[#1a2744]">{{ selectedCallBooking.date }}</div>
+            <div class="text-[0.7rem] uppercase tracking-wider text-[var(--color-text-muted)] font-bold mb-[2px]">Data</div>
+            <div class="text-[0.95rem] font-semibold text-[var(--color-text-main)]">{{ selectedCallBooking.date }}</div>
           </div>
           <div>
-            <div class="text-[0.7rem] uppercase tracking-wider text-[#8fa3c8] font-bold mb-[2px]">Orario</div>
-            <div class="text-[0.95rem] font-semibold text-[#1a2744]">{{ selectedCallBooking.startTime }} - {{
+            <div class="text-[0.7rem] uppercase tracking-wider text-[var(--color-text-muted)] font-bold mb-[2px]">Orario</div>
+            <div class="text-[0.95rem] font-semibold text-[var(--color-text-main)]">{{ selectedCallBooking.startTime }} - {{
               selectedCallBooking.endTime }}</div>
           </div>
         </div>
@@ -457,9 +457,9 @@
             'In attesa' : 'Annullata' }}
           </span>
         </div>
-        <p class="text-[0.8rem] text-[#8fa3c8] leading-relaxed mt-2"
+        <p class="text-[0.8rem] text-[var(--color-text-muted)] leading-relaxed mt-2"
           *ngIf="selectedCallBooking.status === 'CONFIRMED' && !canJoinCallNow">
-          Il link per accedere alla videochiamata sarà disponibile <strong class="text-[#1a2744]">30 minuti
+          Il link per accedere alla videochiamata sarà disponibile <strong class="text-[var(--color-text-main)]">30 minuti
             prima</strong> dell'inizio.
         </p>
         <p class="text-[0.8rem] text-emerald-600 font-medium leading-relaxed mt-2"
@@ -472,7 +472,7 @@
         </p>
         <button
           class="mt-4 w-full py-3.5 rounded-xl text-[0.95rem] font-bold uppercase tracking-wide transition-all flex items-center justify-center gap-2"
-          [ngClass]="canJoinCallNow && selectedCallBooking.status === 'CONFIRMED' ? 'bg-[#1a3462] hover:bg-[#112344] text-white shadow-lg shadow-[#1a3462]/20' : 'bg-[#e0e8f5] text-[#8fa3c8] cursor-not-allowed'"
+          [ngClass]="canJoinCallNow && selectedCallBooking.status === 'CONFIRMED' ? 'bg-[var(--color-primary-navy)] hover:bg-[var(--color-primary-navy-dark)] text-white shadow-lg shadow-[var(--color-primary-navy)]/20' : 'bg-[#e0e8f5] text-[var(--color-text-muted)] cursor-not-allowed'"
           [disabled]="!canJoinCallNow || selectedCallBooking.status !== 'CONFIRMED'" (click)="joinCall()">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
             *ngIf="canJoinCallNow && selectedCallBooking.status === 'CONFIRMED'">
@@ -494,7 +494,7 @@
   </div>
 
   <!-- ── OVERLAY PROFILO ── -->
-  <div class="fixed inset-0 bg-[#1a3462]/28 z-[100] backdrop-blur-[4px]" style="animation: fadeIn 0.2s ease"
+  <div class="fixed inset-0 bg-[var(--color-primary-navy)]/28 z-[100] backdrop-blur-[4px]" style="animation: fadeIn 0.2s ease"
     *ngIf="isProfileOpen" (click)="closeProfile()"></div>
 
   <!-- ── PANNELLO PROFILO ── -->
@@ -502,7 +502,7 @@
                 bg-white border-l border-[#ccd8ed] z-[101]
                 flex flex-col shadow-[-12px_0_48px_rgba(26,52,98,0.14)]" [class.open]="isProfileOpen">
     <div
-      class="panel-header flex items-center justify-between px-6 py-5 border-b border-[#ccd8ed] flex-shrink-0 bg-[#1a3462]">
+      class="panel-header flex items-center justify-between px-6 py-5 border-b border-[#ccd8ed] flex-shrink-0 bg-[var(--color-primary-navy)]">
       <span class="panel-title font-['Darker_Grotesque'] text-[1.15rem] font-extrabold tracking-[0.03em]">Il tuo
         Profilo</span>
       <button
@@ -518,17 +518,17 @@
       <ng-container *ngIf="!isLoading && dashboardData">
         <div class="panel-avatar-wrap relative mb-1">
           <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar"
-            class="w-[82px] h-[82px] rounded-full object-cover border-2 border-[#c9a96e] relative z-[1]">
+            class="w-[82px] h-[82px] rounded-full object-cover border-2 border-[var(--color-accent-gold)] relative z-[1]">
           <div *ngIf="!currentUser?.profilePicture"
             class="panel-avatar-fallback w-[82px] h-[82px] rounded-full
-                      bg-gradient-to-br from-[#1a3462] to-[#2d5fa8] border-2 border-[#c9a96e] text-[#e8c97a]
+                      bg-gradient-to-br from-[var(--color-primary-navy)] to-[#2d5fa8] border-2 border-[var(--color-accent-gold)] text-[var(--color-accent-gold-light)]
                       flex items-center justify-center text-[1.8rem] font-black relative z-[1] font-['Darker_Grotesque']">{{ getInitials() }}</div>
-          <div class="panel-avatar-ring absolute rounded-full border border-[#c9a96e]/28" style="inset: -6px"></div>
+          <div class="panel-avatar-ring absolute rounded-full border border-[var(--color-accent-gold)]/28" style="inset: -6px"></div>
         </div>
-        <div class="font-['Darker_Grotesque'] text-[1.35rem] font-black text-[#1a2744] text-center tracking-[0.02em]">{{
+        <div class="font-['Darker_Grotesque'] text-[1.35rem] font-black text-[var(--color-text-main)] text-center tracking-[0.02em]">{{
           profile?.firstName }} {{ profile?.lastName }}</div>
         <div
-          class="bg-[#1a3462]/8 border border-[#1a3462]/20 text-[#1a3462] px-4 py-[0.22rem] rounded-full text-[0.68rem] font-semibold tracking-[0.12em] uppercase">
+          class="bg-[var(--color-primary-navy)]/8 border border-[var(--color-primary-navy)]/20 text-[var(--color-primary-navy)] px-4 py-[0.22rem] rounded-full text-[0.68rem] font-semibold tracking-[0.12em] uppercase">
           {{ profile?.role }}</div>
 
         <button *ngIf="isProfessional()" class="btn-availability" (click)="openAvailability()">
@@ -537,50 +537,50 @@
         </button>
 
         <div
-          class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-2">
+          class="w-full text-[0.62rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-2">
           Dati Personali</div>
         <div class="w-full flex flex-col gap-2 mb-2">
           <div
             class="detail-row flex items-center gap-3 px-4 py-[0.65rem] bg-white border border-[#ccd8ed] rounded-[10px] transition-all">
-            <span class="text-[0.88rem] text-[#c9a96e] w-[18px] text-center flex-shrink-0">✉</span>
+            <span class="text-[0.88rem] text-[var(--color-accent-gold)] w-[18px] text-center flex-shrink-0">✉</span>
             <div class="flex flex-col gap-[0.08rem] min-w-0">
-              <span class="text-[0.60rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Email</span>
-              <span class="text-[0.84rem] text-[#1a2744] overflow-hidden text-ellipsis whitespace-nowrap">{{
+              <span class="text-[0.60rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Email</span>
+              <span class="text-[0.84rem] text-[var(--color-text-main)] overflow-hidden text-ellipsis whitespace-nowrap">{{
                 profile?.email }}</span>
             </div>
           </div>
 
           <button
-            class="w-full py-[0.65rem] rounded-xl bg-white border border-[#ccd8ed] text-[#1a2744] text-[0.8rem] font-bold hover:bg-[#f2f6fc] hover:border-[#1a3462]/30 transition-all flex items-center justify-center gap-2 shadow-sm"
+            class="w-full py-[0.65rem] rounded-xl bg-white border border-[#ccd8ed] text-[var(--color-text-main)] text-[0.8rem] font-bold hover:bg-[#f2f6fc] hover:border-[var(--color-primary-navy)]/30 transition-all flex items-center justify-center gap-2 shadow-sm"
             (click)="openProfileEditModal()">
             <span class="text-[1.1rem]">✏️</span> Modifica Profilo
           </button>
         </div>
 
         <div
-          class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-1">
+          class="w-full text-[0.62rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-1">
           Supporto
         </div>
         <div class="w-full flex flex-col gap-2">
           <button (click)="contactAdmin()"
-            class="w-full py-[0.65rem] rounded-xl bg-gradient-to-r from-[#1a3462] to-[#2d5fa8] text-white text-[0.8rem] font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
+            class="w-full py-[0.65rem] rounded-xl bg-gradient-to-r from-[var(--color-primary-navy)] to-[#2d5fa8] text-white text-[0.8rem] font-bold hover:shadow-lg transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
             <span class="text-[1.1rem]">📞</span> Contatta Amministrazione
           </button>
         </div>
 
         <ng-container *ngIf="isClient() && subscription">
           <div
-            class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-1">
+            class="w-full text-[0.62rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-1">
             Abbonamento</div>
           <div class="subscription-card w-full rounded-xl p-4 flex flex-col gap-2"
             [class.inactive]="!subscription.isActive">
-            <div class="text-[0.95rem] font-semibold text-[#1a2744]">{{ subscription.planName }}</div>
-            <div class="sub-status flex items-center gap-2 text-[0.78rem] text-[#8fa3c8]">
+            <div class="text-[0.95rem] font-semibold text-[var(--color-text-main)]">{{ subscription.planName }}</div>
+            <div class="sub-status flex items-center gap-2 text-[0.78rem] text-[var(--color-text-muted)]">
               <span class="sub-dot w-[7px] h-[7px] rounded-full bg-[#ccd8ed] flex-shrink-0"
                 [class.active]="subscription.isActive"></span>
               {{ subscription.isActive ? 'Attivo' : 'Scaduto' }}
             </div>
-            <div class="text-[0.77rem] text-[#8fa3c8]">Scade il {{ subscription.endDate | date:'d MMMM yyyy':'':'it' }}
+            <div class="text-[0.77rem] text-[var(--color-text-muted)]">Scade il {{ subscription.endDate | date:'d MMMM yyyy':'':'it' }}
             </div>
             <div class="text-[0.74rem] text-[#b8922a] font-medium" *ngIf="subscription.isActive">{{
               getSubscriptionDaysLeft() }} giorni rimanenti</div>
@@ -588,13 +588,13 @@
               <div
                 class="credit-item flex-1 bg-white border border-[#ccd8ed] rounded-lg p-2 flex flex-col items-center gap-[0.2rem]">
                 <span class="text-base">💪</span><span
-                  class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.08em]">PT</span>
+                  class="text-[0.58rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em]">PT</span>
                 <span class="text-[1.1rem] font-bold text-[#b8922a]">{{ subscription.remainingPtCredits }}</span>
               </div>
               <div
                 class="credit-item flex-1 bg-white border border-[#ccd8ed] rounded-lg p-2 flex flex-col items-center gap-[0.2rem]">
                 <span class="text-base">🥗</span><span
-                  class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.08em]">Nutrizione</span>
+                  class="text-[0.58rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em]">Nutrizione</span>
                 <span class="text-[1.1rem] font-bold text-[#b8922a]">{{ subscription.remainingNutritionistCredits
                   }}</span>
               </div>
@@ -604,18 +604,18 @@
 
         <ng-container *ngIf="isClient() && professionals.length > 0">
           <div
-            class="w-full text-[0.62rem] font-semibold text-[#8fa3c8] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-1">
+            class="w-full text-[0.62rem] font-semibold text-[var(--color-text-muted)] uppercase tracking-[0.12em] pb-[0.3rem] border-b border-[#ccd8ed] mt-1">
             I tuoi Professionisti</div>
           <div class="w-full flex flex-col gap-2">
             <div
               class="detail-row flex items-center gap-3 px-4 py-[0.65rem] bg-white border border-[#ccd8ed] rounded-[10px] transition-all"
               *ngFor="let p of professionals">
-              <span class="text-[0.88rem] text-[#c9a96e] w-[18px] text-center flex-shrink-0">{{ p.role ===
+              <span class="text-[0.88rem] text-[var(--color-accent-gold)] w-[18px] text-center flex-shrink-0">{{ p.role ===
                 'PERSONAL_TRAINER' ? '💪' : '🥗' }}</span>
               <div class="flex flex-col gap-[0.08rem] min-w-0 flex-1">
-                <span class="text-[0.60rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">{{ p.role ===
+                <span class="text-[0.60rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">{{ p.role ===
                   'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</span>
-                <span class="text-[0.84rem] text-[#1a2744] overflow-hidden text-ellipsis whitespace-nowrap">{{
+                <span class="text-[0.84rem] text-[var(--color-text-main)] overflow-hidden text-ellipsis whitespace-nowrap">{{
                   p.fullName }}</span>
               </div>
               <button class="btn-book-sm" (click)="openBooking(p)">Prenota</button>
@@ -628,12 +628,12 @@
   </aside>
 
   <!-- ── MODALE DISPONIBILITÀ ── -->
-  <div class="fixed inset-0 bg-[#1a3462]/38 z-[200] backdrop-blur-[5px]" style="animation: fadeIn 0.2s ease"
+  <div class="fixed inset-0 bg-[var(--color-primary-navy)]/38 z-[200] backdrop-blur-[5px]" style="animation: fadeIn 0.2s ease"
     *ngIf="isAvailabilityOpen" (click)="closeAvailability()"></div>
   <div class="avail-modal fixed z-[201] bg-white overflow-hidden flex flex-col top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
               w-[min(96vw,920px)] h-[min(92vh,700px)] rounded-2xl max-sm:top-0 max-sm:left-0 max-sm:translate-x-0 max-sm:translate-y-0
               max-sm:w-screen max-sm:h-[100dvh] max-sm:rounded-none" *ngIf="isAvailabilityOpen">
-    <div class="flex items-center justify-between px-6 py-[1.1rem] bg-[#1a3462] flex-shrink-0">
+    <div class="flex items-center justify-between px-6 py-[1.1rem] bg-[var(--color-primary-navy)] flex-shrink-0">
       <div class="flex flex-col gap-[0.15rem]">
         <span class="avail-title font-['Darker_Grotesque'] text-[1.1rem] font-black tracking-[0.02em]">Disponibilità
           Settimana Prossima</span>
@@ -650,9 +650,9 @@
       </div>
       <div class="avail-day-header flex flex-col items-center py-[0.55rem] border-r border-[#ccd8ed]/60 gap-[0.2rem]"
         *ngFor="let day of nextWeekDays" [class.is-copy-source]="isCopiedDay(day)">
-        <span class="avail-day-name text-[0.60rem] max-sm:text-[0.52rem] font-bold text-[#8fa3c8] tracking-[0.12em]">{{
+        <span class="avail-day-name text-[0.60rem] max-sm:text-[0.52rem] font-bold text-[var(--color-text-muted)] tracking-[0.12em]">{{
           getDayName(day) }}</span>
-        <span class="avail-day-number text-[0.9rem] max-sm:text-[0.78rem] font-semibold text-[#1a2744]">{{
+        <span class="avail-day-number text-[0.9rem] max-sm:text-[0.78rem] font-semibold text-[var(--color-text-main)]">{{
           getDayNumber(day) }}</span>
         <span *ngIf="isCopiedDay(day)" class="badge-copied">✓ Copiato</span>
         <button *ngIf="isCopyMode && !isCopiedDay(day)" class="btn-paste-day" (click)="pasteDay(day)">⬇ Incolla</button>
@@ -680,9 +680,9 @@
     </div>
     <div
       class="avail-footer flex items-center justify-between flex-wrap gap-4 px-6 py-[0.9rem] border-t border-[#ccd8ed] bg-white flex-shrink-0 max-sm:flex-col max-sm:items-stretch">
-      <span class="flex items-center gap-2 text-[0.82rem] text-[#8fa3c8]">
-        <span class="text-[1.1rem] font-bold text-[#1a3462]">{{ getSelectedCount() }}</span> slot selezionati
-        <span class="text-[0.75rem] text-[#c9a96e] font-medium">({{ (getSelectedCount() * 0.5).toFixed(1) }}h
+      <span class="flex items-center gap-2 text-[0.82rem] text-[var(--color-text-muted)]">
+        <span class="text-[1.1rem] font-bold text-[var(--color-primary-navy)]">{{ getSelectedCount() }}</span> slot selezionati
+        <span class="text-[0.75rem] text-[var(--color-accent-gold)] font-medium">({{ (getSelectedCount() * 0.5).toFixed(1) }}h
           totali)</span>
       </span>
       <div class="flex gap-2 max-sm:justify-end">
@@ -694,16 +694,16 @@
   </div>
 
   <!-- ── MODALE PRENOTAZIONE CLIENTE ── -->
-  <div class="fixed inset-0 bg-[#1a2744]/40 backdrop-blur-[4px] z-[2000]" style="animation: fadeIn 0.3s ease"
+  <div class="fixed inset-0 bg-[var(--color-text-main)]/40 backdrop-blur-[4px] z-[2000]" style="animation: fadeIn 0.3s ease"
     *ngIf="isBookingOpen" (click)="closeBooking()"></div>
   <div
     class="booking-modal fixed z-[2001] bg-white rounded-xl overflow-hidden flex flex-col top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[540px] max-h-[90vh]"
     *ngIf="isBookingOpen">
-    <div class="flex justify-between items-start px-6 py-5 bg-[#1a2744] border-b-2 border-[#c9a96e]">
+    <div class="flex justify-between items-start px-6 py-5 bg-[var(--color-text-main)] border-b-2 border-[var(--color-accent-gold)]">
       <div class="flex flex-col gap-[0.3rem]">
         <span class="font-['Darker_Grotesque'] text-[1.6rem] font-extrabold leading-tight text-white">Prenota con {{
           selectedProfessional?.fullName }}</span>
-        <span class="text-[0.85rem] text-[#c9a96e] font-medium tracking-[0.03em] uppercase">{{
+        <span class="text-[0.85rem] text-[var(--color-accent-gold)] font-medium tracking-[0.03em] uppercase">{{
           selectedProfessional?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</span>
       </div>
       <button
@@ -717,12 +717,12 @@
     <div class="booking-body flex-1 overflow-y-auto px-6 py-6 flex flex-col bg-[#f8f9fc]" *ngIf="!isLoading">
       <div class="text-center py-8 px-4" *ngIf="bookingDays.length === 0">
         <div class="text-[2.5rem] mb-4 opacity-80">📅</div>
-        <p class="text-[1.1rem] font-semibold text-[#1a2744] mb-2">Nessuna disponibilità</p>
+        <p class="text-[1.1rem] font-semibold text-[var(--color-text-main)] mb-2">Nessuna disponibilità</p>
         <p class="text-[0.9rem] text-[#64748b] leading-[1.5]">Questo professionista non ha ancora inserito
           disponibilità.</p>
       </div>
       <ng-container *ngIf="bookingDays.length > 0">
-        <div class="text-[0.9rem] font-bold text-[#1a2744] mb-3 uppercase tracking-[0.03em]">Seleziona una data</div>
+        <div class="text-[0.9rem] font-bold text-[var(--color-text-main)] mb-3 uppercase tracking-[0.03em]">Seleziona una data</div>
         <div class="booking-day-selector flex gap-3 overflow-x-auto pb-2">
           <button
             class="booking-day-card flex-[0_0_auto] w-[72px] py-3 flex flex-col items-center justify-center bg-white border border-[#e2e8f0] rounded-[10px] cursor-pointer transition-all"
@@ -732,35 +732,35 @@
             <span class="bdc-name text-[0.75rem] text-[#64748b] uppercase font-semibold mb-[0.2rem]">{{ getDayName(day)
               }}</span>
             <span
-              class="bdc-num font-['Darker_Grotesque'] text-[1.8rem] font-extrabold leading-none text-[#1a2744] mb-[0.1rem]">{{
+              class="bdc-num font-['Darker_Grotesque'] text-[1.8rem] font-extrabold leading-none text-[var(--color-text-main)] mb-[0.1rem]">{{
               getDayNumber(day) }}</span>
-            <span class="bdc-month text-[0.75rem] text-[#8fa3c8] font-medium capitalize">{{
+            <span class="bdc-month text-[0.75rem] text-[var(--color-text-muted)] font-medium capitalize">{{
               day.toLocaleDateString('it-IT', { month: 'short' }) }}</span>
           </button>
         </div>
-        <div class="text-[0.9rem] font-bold text-[#1a2744] uppercase tracking-[0.03em] mt-6 mb-3">Orari disponibili
+        <div class="text-[0.9rem] font-bold text-[var(--color-text-main)] uppercase tracking-[0.03em] mt-6 mb-3">Orari disponibili
         </div>
         <div class="flex flex-wrap gap-[0.6rem]" *ngIf="slotsForSelectedDay.length > 0">
           <button
-            class="booking-time-pill px-5 py-[0.6rem] bg-white border border-[#e2e8f0] rounded-full text-[#1a2744] font-semibold text-[0.9rem] cursor-pointer transition-all"
+            class="booking-time-pill px-5 py-[0.6rem] bg-white border border-[#e2e8f0] rounded-full text-[var(--color-text-main)] font-semibold text-[0.9rem] cursor-pointer transition-all"
             *ngFor="let slot of slotsForSelectedDay" [class.selected]="isBookingSlotSelected(slot)"
             (click)="toggleBookingSlot(slot)">
             {{ getSlotTimeLabel(slot) }}
           </button>
         </div>
-        <div class="p-4 bg-[#1a2744]/3 rounded-lg text-[#64748b] text-[0.9rem] text-center italic"
+        <div class="p-4 bg-[var(--color-text-main)]/3 rounded-lg text-[#64748b] text-[0.9rem] text-center italic"
           *ngIf="selectedBookingDay && slotsForSelectedDay.length === 0">Nessun orario disponibile in questa data.</div>
       </ng-container>
     </div>
     <div class="flex flex-col gap-4 px-6 py-5 bg-white border-t border-[#e2e8f0]" *ngIf="!isLoading">
       <div
-        class="booking-selection-info flex items-center gap-2 text-[0.95rem] px-[0.6rem] py-[0.6rem] bg-[#c9a96e]/10 rounded-md text-[#1a2744]"
+        class="booking-selection-info flex items-center gap-2 text-[0.95rem] px-[0.6rem] py-[0.6rem] bg-[var(--color-accent-gold)]/10 rounded-md text-[var(--color-text-main)]"
         style="animation: fadeIn 0.3s" *ngIf="selectedBookingSlot && selectedBookingDay">
         <span class="font-medium text-[#64748b]">Data selezionata:</span>
-        <span class="font-bold text-[#1a2744]">{{ selectedBookingDay.toLocaleDateString('it-IT', { weekday: 'long', day:
+        <span class="font-bold text-[var(--color-text-main)]">{{ selectedBookingDay.toLocaleDateString('it-IT', { weekday: 'long', day:
           'numeric', month: 'long' }) }} alle {{ getSlotTimeLabel(selectedBookingSlot) }}</span>
       </div>
-      <div class="text-[#8fa3c8] italic text-[0.95rem]" *ngIf="!selectedBookingSlot">Seleziona un orario per continuare
+      <div class="text-[var(--color-text-muted)] italic text-[0.95rem]" *ngIf="!selectedBookingSlot">Seleziona un orario per continuare
       </div>
       <div class="flex gap-2 justify-end">
         <button class="btn-avail-cancel" (click)="closeBooking()">Annulla</button>
@@ -771,12 +771,12 @@
   </div>
 
   <!-- ── MODALE MODIFICA PROFILO ── -->
-  <div class="fixed inset-0 bg-[#1a2744]/40 backdrop-blur-[4px] z-[2000]" style="animation: fadeIn 0.2s ease"
+  <div class="fixed inset-0 bg-[var(--color-text-main)]/40 backdrop-blur-[4px] z-[2000]" style="animation: fadeIn 0.2s ease"
     *ngIf="isProfileEditOpen" (click)="closeProfileEditModal()"></div>
   <div
     class="fixed z-[2001] bg-white rounded-xl overflow-hidden flex flex-col top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[450px] shadow-2xl"
     *ngIf="isProfileEditOpen">
-    <div class="flex justify-between items-center px-6 py-4 bg-[#1a3462]">
+    <div class="flex justify-between items-center px-6 py-4 bg-[var(--color-primary-navy)]">
       <span class="font-['Darker_Grotesque'] text-[1.4rem] font-bold text-white">Modifica Profilo</span>
       <button
         class="w-7 h-7 bg-white/10 rounded-full text-white text-[0.8rem] flex items-center justify-center transition-all hover:bg-white/20"
@@ -785,34 +785,34 @@
     <div class="p-6 flex flex-col gap-4">
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="text-[0.65rem] text-[#8fa3c8] uppercase font-semibold mb-1 block">Nome</label>
+          <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase font-semibold mb-1 block">Nome</label>
           <input type="text" [(ngModel)]="profileEditData.firstName"
-            class="w-full px-3 py-2 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] focus:outline-none focus:border-[#c9a96e]">
+            class="w-full px-3 py-2 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] focus:outline-none focus:border-[var(--color-accent-gold)]">
         </div>
         <div>
-          <label class="text-[0.65rem] text-[#8fa3c8] uppercase font-semibold mb-1 block">Cognome</label>
+          <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase font-semibold mb-1 block">Cognome</label>
           <input type="text" [(ngModel)]="profileEditData.lastName"
-            class="w-full px-3 py-2 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] focus:outline-none focus:border-[#c9a96e]">
+            class="w-full px-3 py-2 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] focus:outline-none focus:border-[var(--color-accent-gold)]">
         </div>
       </div>
       <div>
-        <label class="text-[0.65rem] text-[#8fa3c8] uppercase font-semibold mb-1 block">Nuova Password <span
+        <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase font-semibold mb-1 block">Nuova Password <span
             class="text-[0.6rem] font-normal lowercase">(lascia vuoto per non cambiare)</span></label>
         <input type="password" [(ngModel)]="profileEditData.password" placeholder="••••••••"
-          class="w-full px-3 py-2 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] focus:outline-none focus:border-[#c9a96e]">
+          class="w-full px-3 py-2 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] focus:outline-none focus:border-[var(--color-accent-gold)]">
       </div>
       <div>
-        <label class="text-[0.65rem] text-[#8fa3c8] uppercase font-semibold mb-1 block">URL Immagine Profilo</label>
+        <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase font-semibold mb-1 block">URL Immagine Profilo</label>
         <input type="text" [(ngModel)]="profileEditData.profilePicture" placeholder="https://..."
-          class="w-full px-3 py-2 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] focus:outline-none focus:border-[#c9a96e]">
+          class="w-full px-3 py-2 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] focus:outline-none focus:border-[var(--color-accent-gold)]">
       </div>
     </div>
     <div class="px-6 py-4 bg-[#f2f6fc] border-t border-[#ccd8ed] flex gap-3 justify-end">
       <button
-        class="px-4 py-2 rounded-xl bg-white border border-[#ccd8ed] text-[#1a2744] text-[0.85rem] font-semibold hover:bg-[#f8f9fc]"
+        class="px-4 py-2 rounded-xl bg-white border border-[#ccd8ed] text-[var(--color-text-main)] text-[0.85rem] font-semibold hover:bg-[#f8f9fc]"
         (click)="closeProfileEditModal()">Annulla</button>
       <button
-        class="px-4 py-2 rounded-xl bg-[#1a3462] border border-[#1a3462] text-white text-[0.85rem] font-bold hover:bg-[#112344]"
+        class="px-4 py-2 rounded-xl bg-[var(--color-primary-navy)] border border-[var(--color-primary-navy)] text-white text-[0.85rem] font-bold hover:bg-[var(--color-primary-navy-dark)]"
         [class.opacity-50]="isSavingProfile" [disabled]="isSavingProfile" (click)="saveProfileChanges()">
         {{ isSavingProfile ? 'Salvataggio...' : 'Salva' }}
       </button>

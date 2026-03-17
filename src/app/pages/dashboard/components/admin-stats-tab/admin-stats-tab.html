@@ -2,7 +2,7 @@
 
   <!-- Loading -->
   <div class="flex items-center justify-center py-16" *ngIf="loading">
-    <div class="w-8 h-8 border-3 border-[#c9a96e] border-t-transparent rounded-full animate-spin"></div>
+    <div class="w-8 h-8 border-3 border-[var(--color-accent-gold)] border-t-transparent rounded-full animate-spin"></div>
   </div>
 
   <ng-container *ngIf="!loading && stats">
@@ -11,29 +11,29 @@
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#6b21a8] to-[#9333ea] flex items-center justify-center text-white text-[1.1rem]">📈</div>
       <div>
-        <h2 class="font-['Darker_Grotesque'] text-[1.4rem] font-black text-[#1a2744] leading-tight">Statistiche Piattaforma</h2>
-        <p class="text-[0.72rem] text-[#8fa3c8]">Panoramica business di Kore</p>
+        <h2 class="font-['Darker_Grotesque'] text-[1.4rem] font-black text-[var(--color-text-main)] leading-tight">Statistiche Piattaforma</h2>
+        <p class="text-[0.72rem] text-[var(--color-text-muted)]">Panoramica business di Kore</p>
       </div>
     </div>
 
     <!-- ═══ KPI ROW ═══ -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      <div class="bg-gradient-to-br from-[#1a3462] to-[#2d5fa8] rounded-2xl p-4 text-center relative overflow-hidden">
+      <div class="bg-gradient-to-br from-[var(--color-primary-navy)] to-[#2d5fa8] rounded-2xl p-4 text-center relative overflow-hidden">
         <div class="absolute top-0 right-0 w-16 h-16 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
         <div class="text-[1.8rem] font-black text-white leading-none">€{{ stats.monthlyRevenue }}</div>
         <div class="text-[0.58rem] text-white/60 uppercase tracking-[0.10em] mt-1 font-semibold">Ricavi / mese</div>
       </div>
       <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 text-center">
         <div class="text-[1.8rem] font-black text-emerald-600 leading-none">{{ stats.totalActiveSubscriptions }}</div>
-        <div class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1 font-semibold">Abbonamenti attivi</div>
+        <div class="text-[0.58rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1 font-semibold">Abbonamenti attivi</div>
       </div>
       <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 text-center">
-        <div class="text-[1.8rem] font-black text-[#1a2744] leading-none">{{ stats.bookingsThisMonth }}</div>
-        <div class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1 font-semibold">Prenotazioni mese</div>
+        <div class="text-[1.8rem] font-black text-[var(--color-text-main)] leading-none">{{ stats.bookingsThisMonth }}</div>
+        <div class="text-[0.58rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1 font-semibold">Prenotazioni mese</div>
       </div>
       <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 text-center">
-        <div class="text-[1.8rem] font-black text-[#c9a96e] leading-none">€{{ stats.yearlyRevenue }}</div>
-        <div class="text-[0.58rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1 font-semibold">Stima annuale</div>
+        <div class="text-[1.8rem] font-black text-[var(--color-accent-gold)] leading-none">€{{ stats.yearlyRevenue }}</div>
+        <div class="text-[0.58rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1 font-semibold">Stima annuale</div>
       </div>
     </div>
 
@@ -41,7 +41,7 @@
     <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm">
       <div class="flex items-center gap-2 mb-5">
         <span class="text-[1.1rem]">📊</span>
-        <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Nuovi utenti per mese</span>
+        <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Nuovi utenti per mese</span>
       </div>
       <div class="flex items-end gap-2 h-[140px]">
         <div class="flex-1 flex flex-col items-center gap-1.5" *ngFor="let m of stats.usersPerMonth">
@@ -49,14 +49,14 @@
           <div class="w-full rounded-t-lg transition-all duration-500 relative group"
             [style.height.%]="getBarHeight(m.count)"
             [style.min-height.px]="4"
-            [ngClass]="m.count > 0 ? 'bg-gradient-to-t from-[#1a3462] to-[#2d5fa8]' : 'bg-[#ccd8ed]/30'">
+            [ngClass]="m.count > 0 ? 'bg-gradient-to-t from-[var(--color-primary-navy)] to-[#2d5fa8]' : 'bg-[#ccd8ed]/30'">
             <!-- Tooltip -->
-            <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[#1a2744] text-white text-[0.6rem] font-bold px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            <div class="absolute -top-7 left-1/2 -translate-x-1/2 bg-[var(--color-text-main)] text-white text-[0.6rem] font-bold px-2 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
               {{ m.count }}
             </div>
           </div>
           <!-- Label -->
-          <span class="text-[0.58rem] text-[#8fa3c8] font-semibold uppercase">{{ m.month }}</span>
+          <span class="text-[0.58rem] text-[var(--color-text-muted)] font-semibold uppercase">{{ m.month }}</span>
         </div>
       </div>
     </div>
@@ -65,30 +65,30 @@
     <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm">
       <div class="flex items-center gap-2 mb-4">
         <span class="text-[1.1rem]">👑</span>
-        <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Piani più sottoscritti</span>
+        <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Piani più sottoscritti</span>
       </div>
       <div class="flex flex-col gap-3">
         <div class="flex items-center gap-3" *ngFor="let plan of stats.planPopularity; let i = index">
           <div class="w-8 h-8 rounded-lg flex items-center justify-center text-[0.75rem] font-black flex-shrink-0"
-            [ngClass]="i === 0 ? 'bg-[#c9a96e]/20 text-[#c9a96e]' : 'bg-[#f2f6fc] text-[#8fa3c8]'">
+            [ngClass]="i === 0 ? 'bg-[var(--color-accent-gold)]/20 text-[var(--color-accent-gold)]' : 'bg-[#f2f6fc] text-[var(--color-text-muted)]'">
             {{ i + 1 }}
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between mb-1">
-              <span class="text-[0.82rem] font-bold text-[#1a2744] truncate">{{ plan.name }}</span>
-              <span class="text-[0.72rem] font-bold text-[#1a3462] flex-shrink-0 ml-2">{{ plan.activeCount }}</span>
+              <span class="text-[0.82rem] font-bold text-[var(--color-text-main)] truncate">{{ plan.name }}</span>
+              <span class="text-[0.72rem] font-bold text-[var(--color-primary-navy)] flex-shrink-0 ml-2">{{ plan.activeCount }}</span>
             </div>
             <!-- Progress bar -->
             <div class="h-2 bg-[#f2f6fc] rounded-full overflow-hidden">
               <div class="h-full rounded-full transition-all duration-700"
                 [style.width.%]="plan.percentage || 0"
-                [ngClass]="i === 0 ? 'bg-gradient-to-r from-[#c9a96e] to-[#a88a53]' : 'bg-[#1a3462]'">
+                [ngClass]="i === 0 ? 'bg-gradient-to-r from-[var(--color-accent-gold)] to-[#a88a53]' : 'bg-[var(--color-primary-navy)]'">
               </div>
             </div>
           </div>
-          <span class="text-[0.65rem] text-[#8fa3c8] font-semibold flex-shrink-0 w-10 text-right">{{ plan.percentage }}%</span>
+          <span class="text-[0.65rem] text-[var(--color-text-muted)] font-semibold flex-shrink-0 w-10 text-right">{{ plan.percentage }}%</span>
         </div>
-        <div class="text-center text-[0.72rem] text-[#8fa3c8] py-2" *ngIf="stats.planPopularity?.length === 0">
+        <div class="text-center text-[0.72rem] text-[var(--color-text-muted)] py-2" *ngIf="stats.planPopularity?.length === 0">
           Nessun piano creato
         </div>
       </div>
@@ -98,69 +98,69 @@
     <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm">
       <div class="flex items-center gap-2 mb-4">
         <span class="text-[1.1rem]">🎯</span>
-        <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Crediti mensili globali</span>
+        <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Crediti mensili globali</span>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <!-- PT Credits -->
         <div class="bg-[#f2f6fc] rounded-xl p-4 border border-[#ccd8ed]/40">
           <div class="flex items-center gap-2 mb-3">
             <span class="text-[0.95rem]">💪</span>
-            <span class="text-[0.78rem] font-bold text-[#1a2744]">Personal Trainer</span>
+            <span class="text-[0.78rem] font-bold text-[var(--color-text-main)]">Personal Trainer</span>
           </div>
           <!-- Ring chart simulato -->
           <div class="flex items-center gap-4">
             <div class="relative w-16 h-16 flex-shrink-0">
               <svg class="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
                 <path class="stroke-[#ccd8ed]/30" fill="none" stroke-width="3.5" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                <path class="stroke-[#1a3462]" fill="none" stroke-width="3.5" stroke-linecap="round"
+                <path class="stroke-[var(--color-primary-navy)]" fill="none" stroke-width="3.5" stroke-linecap="round"
                   [attr.stroke-dasharray]="stats.credits.ptPercentUsed + ', 100'"
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
               </svg>
               <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-[0.72rem] font-black text-[#1a2744]">{{ stats.credits.ptPercentUsed }}%</span>
+                <span class="text-[0.72rem] font-black text-[var(--color-text-main)]">{{ stats.credits.ptPercentUsed }}%</span>
               </div>
             </div>
             <div class="flex flex-col gap-1">
               <div class="flex items-center gap-1.5">
-                <div class="w-2.5 h-2.5 rounded-full bg-[#1a3462]"></div>
-                <span class="text-[0.68rem] text-[#1a2744]">Usati: <b>{{ stats.credits.ptConsumed }}</b></span>
+                <div class="w-2.5 h-2.5 rounded-full bg-[var(--color-primary-navy)]"></div>
+                <span class="text-[0.68rem] text-[var(--color-text-main)]">Usati: <b>{{ stats.credits.ptConsumed }}</b></span>
               </div>
               <div class="flex items-center gap-1.5">
                 <div class="w-2.5 h-2.5 rounded-full bg-[#ccd8ed]/50"></div>
-                <span class="text-[0.68rem] text-[#8fa3c8]">Disponibili: <b>{{ stats.credits.ptAvailable }}</b></span>
+                <span class="text-[0.68rem] text-[var(--color-text-muted)]">Disponibili: <b>{{ stats.credits.ptAvailable }}</b></span>
               </div>
-              <span class="text-[0.6rem] text-[#8fa3c8] mt-0.5">Totale: {{ stats.credits.ptTotal }}</span>
+              <span class="text-[0.6rem] text-[var(--color-text-muted)] mt-0.5">Totale: {{ stats.credits.ptTotal }}</span>
             </div>
           </div>
         </div>
         <!-- Nutri Credits -->
-        <div class="bg-[#c9a96e]/5 rounded-xl p-4 border border-[#c9a96e]/15">
+        <div class="bg-[var(--color-accent-gold)]/5 rounded-xl p-4 border border-[var(--color-accent-gold)]/15">
           <div class="flex items-center gap-2 mb-3">
             <span class="text-[0.95rem]">🥗</span>
-            <span class="text-[0.78rem] font-bold text-[#1a2744]">Nutrizionista</span>
+            <span class="text-[0.78rem] font-bold text-[var(--color-text-main)]">Nutrizionista</span>
           </div>
           <div class="flex items-center gap-4">
             <div class="relative w-16 h-16 flex-shrink-0">
               <svg class="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
-                <path class="stroke-[#c9a96e]/20" fill="none" stroke-width="3.5" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
-                <path class="stroke-[#c9a96e]" fill="none" stroke-width="3.5" stroke-linecap="round"
+                <path class="stroke-[var(--color-accent-gold)]/20" fill="none" stroke-width="3.5" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                <path class="stroke-[var(--color-accent-gold)]" fill="none" stroke-width="3.5" stroke-linecap="round"
                   [attr.stroke-dasharray]="stats.credits.nutriPercentUsed + ', 100'"
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
               </svg>
               <div class="absolute inset-0 flex items-center justify-center">
-                <span class="text-[0.72rem] font-black text-[#1a2744]">{{ stats.credits.nutriPercentUsed }}%</span>
+                <span class="text-[0.72rem] font-black text-[var(--color-text-main)]">{{ stats.credits.nutriPercentUsed }}%</span>
               </div>
             </div>
             <div class="flex flex-col gap-1">
               <div class="flex items-center gap-1.5">
-                <div class="w-2.5 h-2.5 rounded-full bg-[#c9a96e]"></div>
-                <span class="text-[0.68rem] text-[#1a2744]">Usati: <b>{{ stats.credits.nutriConsumed }}</b></span>
+                <div class="w-2.5 h-2.5 rounded-full bg-[var(--color-accent-gold)]"></div>
+                <span class="text-[0.68rem] text-[var(--color-text-main)]">Usati: <b>{{ stats.credits.nutriConsumed }}</b></span>
               </div>
               <div class="flex items-center gap-1.5">
-                <div class="w-2.5 h-2.5 rounded-full bg-[#c9a96e]/20"></div>
-                <span class="text-[0.68rem] text-[#8fa3c8]">Disponibili: <b>{{ stats.credits.nutriAvailable }}</b></span>
+                <div class="w-2.5 h-2.5 rounded-full bg-[var(--color-accent-gold)]/20"></div>
+                <span class="text-[0.68rem] text-[var(--color-text-muted)]">Disponibili: <b>{{ stats.credits.nutriAvailable }}</b></span>
               </div>
-              <span class="text-[0.6rem] text-[#8fa3c8] mt-0.5">Totale: {{ stats.credits.nutriTotal }}</span>
+              <span class="text-[0.6rem] text-[var(--color-text-muted)] mt-0.5">Totale: {{ stats.credits.nutriTotal }}</span>
             </div>
           </div>
         </div>
@@ -171,13 +171,13 @@
     <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm">
       <div class="flex items-center gap-2 mb-4">
         <span class="text-[1.1rem]">👥</span>
-        <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Distribuzione utenti</span>
+        <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Distribuzione utenti</span>
       </div>
       <div class="flex flex-col gap-2.5">
         <div class="flex items-center gap-3" *ngFor="let entry of stats.usersByRole | keyvalue">
           <div class="w-3 h-3 rounded-full flex-shrink-0" [style.background]="getRoleColor($any(entry.key))"></div>
-          <span class="text-[0.78rem] text-[#1a2744] font-medium flex-1">{{ getRoleLabel($any(entry.key)) }}</span>
-          <span class="text-[0.85rem] font-black text-[#1a2744]">{{ entry.value }}</span>
+          <span class="text-[0.78rem] text-[var(--color-text-main)] font-medium flex-1">{{ getRoleLabel($any(entry.key)) }}</span>
+          <span class="text-[0.85rem] font-black text-[var(--color-text-main)]">{{ entry.value }}</span>
         </div>
       </div>
     </div>
@@ -186,20 +186,20 @@
     <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm" *ngIf="stats.professionalWorkload?.length > 0">
       <div class="flex items-center gap-2 mb-4">
         <span class="text-[1.1rem]">🏋️</span>
-        <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Carico professionisti</span>
+        <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Carico professionisti</span>
       </div>
       <div class="flex flex-col gap-2">
         <div class="flex items-center gap-3 bg-[#f2f6fc]/60 rounded-xl px-3 py-2.5" *ngFor="let pro of stats.professionalWorkload">
-          <div class="w-8 h-8 rounded-full bg-[#1a3462] flex items-center justify-center flex-shrink-0">
-            <span class="text-[#e8c97a] text-[0.55rem] font-bold">{{ pro.name.split(' ')[0]?.charAt(0) }}{{ pro.name.split(' ')[1]?.charAt(0) }}</span>
+          <div class="w-8 h-8 rounded-full bg-[var(--color-primary-navy)] flex items-center justify-center flex-shrink-0">
+            <span class="text-[var(--color-accent-gold-light)] text-[0.55rem] font-bold">{{ pro.name.split(' ')[0]?.charAt(0) }}{{ pro.name.split(' ')[1]?.charAt(0) }}</span>
           </div>
           <div class="flex-1 min-w-0">
-            <span class="text-[0.78rem] font-semibold text-[#1a2744] truncate block">{{ pro.name }}</span>
+            <span class="text-[0.78rem] font-semibold text-[var(--color-text-main)] truncate block">{{ pro.name }}</span>
           </div>
           <span class="text-[0.6rem] font-semibold px-2 py-0.5 rounded-full" [ngClass]="getProRoleColor(pro.role)">{{ getProRoleLabel(pro.role) }}</span>
           <div class="flex items-center gap-1 flex-shrink-0">
-            <span class="text-[1rem] font-black text-[#1a2744]">{{ pro.clientCount }}</span>
-            <span class="text-[0.6rem] text-[#8fa3c8]">clienti</span>
+            <span class="text-[1rem] font-black text-[var(--color-text-main)]">{{ pro.clientCount }}</span>
+            <span class="text-[0.6rem] text-[var(--color-text-muted)]">clienti</span>
           </div>
         </div>
       </div>

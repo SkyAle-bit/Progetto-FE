@@ -1,20 +1,20 @@
 /* ── Root ── */
 .mp-page {
     font-family: 'DM Sans', sans-serif;
-    color: #1a2744;
+    color: var(--color-text-main);
 }
 
 .mp-title {
     font-family: 'Darker Grotesque', sans-serif;
     font-size: 1.45rem;
     font-weight: 900;
-    color: #1a2744;
+    color: var(--color-text-main);
     margin-bottom: .25rem;
 }
 
 .mp-subtitle {
     font-size: .78rem;
-    color: #8fa3c8;
+    color: var(--color-text-muted);
     margin-bottom: 1.5rem;
 }
 
@@ -52,11 +52,11 @@
 }
 
 .mp-card-accent.blue {
-    background: #1a3462;
+    background: var(--color-primary-navy);
 }
 
 .mp-card-accent.gold {
-    background: linear-gradient(90deg, #c9a96e, #a88a53);
+    background: linear-gradient(90deg, var(--color-accent-gold), #a88a53);
 }
 
 .mp-card-body {
@@ -87,11 +87,11 @@
 }
 
 .mp-avatar.blue-border {
-    border-color: #1a3462;
+    border-color: var(--color-primary-navy);
 }
 
 .mp-avatar.gold-border {
-    border-color: #c9a96e;
+    border-color: var(--color-accent-gold);
 }
 
 .mp-avatar img {
@@ -122,7 +122,7 @@
 
 .mp-role-badge.blue {
     background: #eff4fb;
-    color: #1a3462;
+    color: var(--color-primary-navy);
 }
 
 .mp-role-badge.gold {
@@ -134,12 +134,12 @@
     font-family: 'Darker Grotesque', sans-serif;
     font-size: 1.1rem;
     font-weight: 800;
-    color: #1a2744;
+    color: var(--color-text-main);
 }
 
 .mp-prof-bio {
     font-size: .72rem;
-    color: #8fa3c8;
+    color: var(--color-text-muted);
     margin-top: .15rem;
 }
 
@@ -157,11 +157,11 @@
 
 .mp-avg-rating {
     font-weight: 700;
-    color: #1a2744;
+    color: var(--color-text-main);
 }
 
 .mp-review-count {
-    color: #8fa3c8;
+    color: var(--color-text-muted);
 }
 
 .mp-no-reviews {
@@ -194,13 +194,13 @@
 }
 
 .mp-btn-book.blue {
-    background: #1a3462;
+    background: var(--color-primary-navy);
     color: #fff;
 }
 
 .mp-btn-book.gold {
-    background: linear-gradient(135deg, #c9a96e, #a88a53);
-    color: #1a2744;
+    background: linear-gradient(135deg, var(--color-accent-gold), #a88a53);
+    color: var(--color-text-main);
 }
 
 .mp-btn-book:hover {
@@ -229,7 +229,7 @@
 .mp-my-review-label {
     font-size: .72rem;
     font-weight: 700;
-    color: #8fa3c8;
+    color: var(--color-text-muted);
     text-transform: uppercase;
     letter-spacing: .06em;
     margin-bottom: .35rem;
@@ -242,7 +242,7 @@
 }
 
 .mp-star-filled {
-    color: #c9a96e;
+    color: var(--color-accent-gold);
     font-size: 1rem;
 }
 
@@ -262,7 +262,7 @@
     padding: .65rem;
     border-radius: 10px;
     background: #f2f6fc;
-    border: 1px dashed #c9a96e;
+    border: 1px dashed var(--color-accent-gold);
     color: #a88a53;
     font-weight: 600;
     font-size: .84rem;
@@ -301,7 +301,7 @@
 
 .mp-star-pick.active,
 .mp-star-pick:hover {
-    color: #c9a96e;
+    color: var(--color-accent-gold);
     transform: scale(1.15);
 }
 
@@ -312,7 +312,7 @@
     border-radius: 8px;
     font-family: 'DM Sans', sans-serif;
     font-size: .88rem;
-    color: #1a2744;
+    color: var(--color-text-main);
     resize: vertical;
     outline: none;
     transition: border-color .2s;
@@ -320,7 +320,7 @@
 }
 
 .mp-review-textarea:focus {
-    border-color: #c9a96e;
+    border-color: var(--color-accent-gold);
     box-shadow: 0 0 0 3px rgba(201, 169, 110, .1);
 }
 
@@ -338,8 +338,8 @@
     width: 100%;
     border-radius: 10px;
     border: none;
-    background: linear-gradient(135deg, #c9a96e, #a88a53);
-    color: #1a2744;
+    background: linear-gradient(135deg, var(--color-accent-gold), #a88a53);
+    color: var(--color-text-main);
     font-weight: 700;
     font-size: .9rem;
     font-family: 'DM Sans', sans-serif;
@@ -357,7 +357,7 @@
     align-items: center;
     gap: .4rem;
     font-size: .76rem;
-    color: #8fa3c8;
+    color: var(--color-text-muted);
     font-style: italic;
     padding: .55rem;
     border-radius: 8px;
@@ -396,13 +396,13 @@
     font-family: 'Darker Grotesque', sans-serif;
     font-size: 1.25rem;
     font-weight: 800;
-    color: #1a2744;
+    color: var(--color-text-main);
     margin-bottom: .5rem;
 }
 
 .mp-empty-text {
     font-size: .82rem;
-    color: #8fa3c8;
+    color: var(--color-text-muted);
     max-width: 280px;
     margin: 0 auto;
 }
@@ -438,7 +438,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 1.1rem 1.4rem;
-    background: #1a3462;
+    background: var(--color-primary-navy);
     border-radius: 16px 16px 0 0;
     flex-shrink: 0;
 }
@@ -494,7 +494,7 @@
 
 .mp-modal-author {
     font-weight: 700;
-    color: #1a2744;
+    color: var(--color-text-main);
     font-size: .88rem;
 }
 
@@ -517,7 +517,7 @@
 
 .mp-modal-empty {
     text-align: center;
-    color: #8fa3c8;
+    color: var(--color-text-muted);
     padding: 2rem 0;
     font-style: italic;
     font-size: .88rem;

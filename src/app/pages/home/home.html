@@ -54,7 +54,7 @@
          HERO SECTION
          ═══════════════════════════════════════════════════════ -->
     <main class="hero-section">
-        <video autoplay loop muted playsinline class="hero-video">
+        <video #heroVideo autoplay loop [muted]="true" playsinline preload="auto" class="hero-video">
             <source src="assets/videos/video_home_page.mp4" type="video/mp4">
         </video>
         <div class="hero-overlay"></div>
@@ -173,26 +173,27 @@
         </div>
 
         <div class="experience-carousel" data-reveal>
+            <!-- Stories-style progress bars (mobile only) -->
+            <div class="carousel-stories-bar">
+                <div
+                    *ngFor="let video of carouselVideos; let i = index"
+                    class="stories-segment"
+                    [class.completed]="i < currentCarouselVideoIndex"
+                    [class.active]="i === currentCarouselVideoIndex"
+                    (click)="selectCarouselVideo(i)">
+                    <div class="stories-segment-fill" [style.width.%]="i < currentCarouselVideoIndex ? 100 : (i === currentCarouselVideoIndex ? videoProgress : 0)"></div>
+                </div>
+            </div>
+
             <!-- Video fullscreen 16:9 -->
             <div class="carousel-video-wrapper">
-                <!-- Stories-style progress bars (mobile only) -->
-                <div class="carousel-stories-bar">
-                    <div
-                        *ngFor="let video of carouselVideos; let i = index"
-                        class="stories-segment"
-                        [class.completed]="i < currentCarouselVideoIndex"
-                        [class.active]="i === currentCarouselVideoIndex"
-                        (click)="selectCarouselVideo(i)">
-                        <div class="stories-segment-fill" [style.width.%]="i < currentCarouselVideoIndex ? 100 : (i === currentCarouselVideoIndex ? videoProgress : 0)"></div>
-                    </div>
-                </div>
 
                 <video
                     #carouselVideo
                     class="experience-video"
                     muted
                     playsinline
-                    preload="metadata"
+                    preload="none"
                     (ended)="onCarouselVideoEnded()"
                     (timeupdate)="onVideoTimeUpdate()"
                     [attr.aria-label]="'Demo sezione ' + carouselVideos[currentCarouselVideoIndex].title"

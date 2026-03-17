@@ -6,11 +6,11 @@
     <div class="flex-shrink-0 px-5 pt-5 pb-3 border-b border-[#ccd8ed]/50">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="font-['Darker_Grotesque'] text-[1.5rem] font-black text-[#1a2744] leading-none">Chat</h3>
-          <p class="text-[0.75rem] text-[#8fa3c8] mt-1">{{ chatConversations.length }} conversazioni</p>
+          <h3 class="font-['Darker_Grotesque'] text-[1.5rem] font-black text-[var(--color-text-main)] leading-none">Chat</h3>
+          <p class="text-[0.75rem] text-[var(--color-text-muted)] mt-1">{{ chatConversations.length }} conversazioni</p>
         </div>
         <button *ngIf="isAdmin"
-          class="w-9 h-9 rounded-full bg-[#1a3462] text-white flex items-center justify-center hover:bg-[#112344] transition-all active:scale-[0.93] shadow-md"
+          class="w-9 h-9 rounded-full bg-[var(--color-primary-navy)] text-white flex items-center justify-center hover:bg-[var(--color-primary-navy-dark)] transition-all active:scale-[0.93] shadow-md"
           title="Nuova conversazione" (click)="showUserPicker = true">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -20,13 +20,13 @@
     </div>
     <div class="flex-1 overflow-y-auto">
       <div class="flex justify-center py-12" *ngIf="chatLoading && chatView === 'list'">
-        <div class="loading-spinner w-8 h-8 rounded-full border-2 border-[#c9a96e]/20 border-t-[#c9a96e]"></div>
+        <div class="loading-spinner w-8 h-8 rounded-full border-2 border-[var(--color-accent-gold)]/20 border-t-[var(--color-accent-gold)]"></div>
       </div>
       <div class="flex flex-col" *ngIf="!chatLoading || chatView === 'conversation'">
         <div class="text-center py-16 px-6" *ngIf="chatConversations.length === 0">
           <div class="text-[3rem] mb-4 opacity-40">💬</div>
-          <h3 class="font-['Darker_Grotesque'] text-[1.3rem] font-black text-[#1a2744] mb-2">Nessuna conversazione</h3>
-          <p class="text-[0.82rem] text-[#8fa3c8] max-w-[260px] mx-auto">Non ci sono ancora conversazioni attive. Le
+          <h3 class="font-['Darker_Grotesque'] text-[1.3rem] font-black text-[var(--color-text-main)] mb-2">Nessuna conversazione</h3>
+          <p class="text-[0.82rem] text-[var(--color-text-muted)] max-w-[260px] mx-auto">Non ci sono ancora conversazioni attive. Le
             chat appariranno qui quando avrai {{ isProfessional ? 'clienti assegnati' : 'professionisti assegnati' }}.
           </p>
         </div>
@@ -36,37 +36,37 @@
           [class.chat-conv-active]="activeConversation?.otherUserId === conv.otherUserId">
           <div class="relative flex-shrink-0">
             <div class="w-[50px] h-[50px] rounded-full overflow-hidden border-2 flex items-center justify-center"
-              [class.border-[#c9a96e]]="conv.unreadCount > 0" [class.border-[#ccd8ed]]="conv.unreadCount === 0"
+              [class.border-[var(--color-accent-gold)]]="conv.unreadCount > 0" [class.border-[#ccd8ed]]="conv.unreadCount === 0"
               [class.bg-gradient-to-br]="!conv.otherUserProfilePicture"
-              [class.from-[#1a3462]]="!conv.otherUserProfilePicture"
+              [class.from-[var(--color-primary-navy)]]="!conv.otherUserProfilePicture"
               [class.to-[#2d5fa8]]="!conv.otherUserProfilePicture">
               <img *ngIf="conv.otherUserProfilePicture" [src]="conv.otherUserProfilePicture"
                 class="w-full h-full object-cover" alt="">
-              <span *ngIf="!conv.otherUserProfilePicture" class="text-[#e8c97a] text-[0.85rem] font-bold">{{
+              <span *ngIf="!conv.otherUserProfilePicture" class="text-[var(--color-accent-gold-light)] text-[0.85rem] font-bold">{{
                 getConversationInitials(conv) }}</span>
             </div>
             <!-- Pallino notifica non letti con counter -->
             <span *ngIf="conv.unreadCount > 0"
-              class="absolute -top-1 -right-1 min-w-[19px] h-[19px] px-[4px] rounded-full bg-[#c9a96e] text-[#1a2744] text-[0.58rem] font-black flex items-center justify-center border-2 border-white shadow-sm">
+              class="absolute -top-1 -right-1 min-w-[19px] h-[19px] px-[4px] rounded-full bg-[var(--color-accent-gold)] text-[var(--color-text-main)] text-[0.58rem] font-black flex items-center justify-center border-2 border-white shadow-sm">
               {{ conv.unreadCount > 9 ? '9+' : conv.unreadCount }}
             </span>
           </div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between gap-2">
               <div class="flex items-center gap-1.5 min-w-0">
-                <span class="text-[0.92rem] font-bold text-[#1a2744] truncate"
+                <span class="text-[0.92rem] font-bold text-[var(--color-text-main)] truncate"
                   [class.font-black]="conv.unreadCount > 0">{{ conv.otherUserName }}</span>
                 <span
-                  class="flex-shrink-0 min-w-[18px] h-[18px] px-[4px] rounded-full bg-[#c9a96e] text-[#1a2744] text-[0.6rem] font-black flex items-center justify-center"
+                  class="flex-shrink-0 min-w-[18px] h-[18px] px-[4px] rounded-full bg-[var(--color-accent-gold)] text-[var(--color-text-main)] text-[0.6rem] font-black flex items-center justify-center"
                   *ngIf="conv.unreadCount > 0">{{ conv.unreadCount > 9 ? '9+' : conv.unreadCount }}</span>
               </div>
-              <span class="text-[0.65rem] flex-shrink-0" [class.text-[#c9a96e]]="conv.unreadCount > 0"
-                [class.font-bold]="conv.unreadCount > 0" [class.text-[#8fa3c8]]="conv.unreadCount === 0">{{
+              <span class="text-[0.65rem] flex-shrink-0" [class.text-[var(--color-accent-gold)]]="conv.unreadCount > 0"
+                [class.font-bold]="conv.unreadCount > 0" [class.text-[var(--color-text-muted)]]="conv.unreadCount === 0">{{
                 formatConvTime(conv.lastMessageTime) }}</span>
             </div>
             <div class="flex items-center justify-between gap-2 mt-[3px]">
-              <p class="text-[0.78rem] truncate" [class.text-[#1a2744]]="conv.unreadCount > 0"
-                [class.font-medium]="conv.unreadCount > 0" [class.text-[#8fa3c8]]="conv.unreadCount === 0">{{
+              <p class="text-[0.78rem] truncate" [class.text-[var(--color-text-main)]]="conv.unreadCount > 0"
+                [class.font-medium]="conv.unreadCount > 0" [class.text-[var(--color-text-muted)]]="conv.unreadCount === 0">{{
                 conv.lastMessage || getRoleLabel(conv.otherUserRole) }}</p>
             </div>
           </div>
@@ -82,57 +82,66 @@
       <div class="text-center">
         <div
           class="w-20 h-20 mx-auto mb-5 rounded-full bg-white border border-[#ccd8ed] flex items-center justify-center shadow-sm">
-          <svg class="w-9 h-9 text-[#c9a96e]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.2">
+          <svg class="w-9 h-9 text-[var(--color-accent-gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.2">
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
         </div>
-        <h3 class="font-['Darker_Grotesque'] text-[1.6rem] font-black text-[#1a2744] mb-2">Le tue conversazioni</h3>
-        <p class="text-[0.88rem] text-[#8fa3c8] max-w-[300px]">Seleziona una conversazione dalla lista per iniziare a
+        <h3 class="font-['Darker_Grotesque'] text-[1.6rem] font-black text-[var(--color-text-main)] mb-2">Le tue conversazioni</h3>
+        <p class="text-[0.88rem] text-[var(--color-text-muted)] max-w-[300px]">Seleziona una conversazione dalla lista per iniziare a
           chattare.</p>
       </div>
     </div>
     <ng-container *ngIf="activeConversation">
       <div class="flex-shrink-0 flex items-center gap-3 px-4 py-3 bg-white border-b border-[#ccd8ed] shadow-sm z-10">
         <button
-          class="sm:hidden w-8 h-8 rounded-full flex items-center justify-center text-[#8fa3c8] transition-all active:bg-[#f2f6fc] flex-shrink-0"
+          class="sm:hidden w-8 h-8 rounded-full flex items-center justify-center text-[var(--color-text-muted)] transition-all active:bg-[#f2f6fc] flex-shrink-0"
           (click)="backToConversations()">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path>
           </svg>
         </button>
         <div
-          class="w-10 h-10 rounded-full overflow-hidden border-[1.5px] border-[#c9a96e] flex items-center justify-center flex-shrink-0"
+          class="w-10 h-10 rounded-full overflow-hidden border-[1.5px] border-[var(--color-accent-gold)] flex items-center justify-center flex-shrink-0"
           [class.bg-gradient-to-br]="!activeConversation.otherUserProfilePicture"
-          [class.from-[#1a3462]]="!activeConversation.otherUserProfilePicture"
+          [class.from-[var(--color-primary-navy)]]="!activeConversation.otherUserProfilePicture"
           [class.to-[#2d5fa8]]="!activeConversation.otherUserProfilePicture">
           <img *ngIf="activeConversation.otherUserProfilePicture" [src]="activeConversation.otherUserProfilePicture"
             class="w-full h-full object-cover" alt="">
-          <span *ngIf="!activeConversation.otherUserProfilePicture" class="text-[#e8c97a] text-[0.72rem] font-bold">{{
+          <span *ngIf="!activeConversation.otherUserProfilePicture" class="text-[var(--color-accent-gold-light)] text-[0.72rem] font-bold">{{
             getConversationInitials(activeConversation) }}</span>
         </div>
         <div class="flex-1 min-w-0">
-          <div class="text-[0.92rem] font-bold text-[#1a2744] truncate">{{ activeConversation.otherUserName }}</div>
-          <div class="text-[0.65rem] text-[#8fa3c8]">{{ getRoleLabel(activeConversation.otherUserRole) }}</div>
+          <div class="text-[0.92rem] font-bold text-[var(--color-text-main)] truncate">{{ activeConversation.otherUserName }}</div>
+          <div class="text-[0.65rem] text-[var(--color-text-muted)]">{{ getRoleLabel(activeConversation.otherUserRole) }}</div>
         </div>
       </div>
       <div class="chat-messages-area flex-1 overflow-y-auto px-4 sm:px-8 py-4 flex flex-col gap-[6px]"
         #messagesContainer>
-        <div class="flex justify-center py-8" *ngIf="chatLoading">
-          <div class="loading-spinner w-7 h-7 rounded-full border-2 border-[#c9a96e]/20 border-t-[#c9a96e]"></div>
+        <!-- Skeleton Loader -->
+        <div class="flex flex-col gap-4 py-4 w-full" *ngIf="chatLoading">
+          <div class="flex justify-start w-full px-2 sm:px-0">
+            <div class="w-[60%] sm:w-[45%] h-[42px] rounded-2xl bg-[#ccd8ed]/40 animate-pulse"></div>
+          </div>
+          <div class="flex justify-end w-full px-2 sm:px-0 mt-2">
+            <div class="w-[50%] sm:w-[35%] h-[42px] rounded-2xl bg-[var(--color-accent-gold)]/20 animate-pulse"></div>
+          </div>
+          <div class="flex justify-start w-full px-2 sm:px-0 mt-2">
+            <div class="w-[40%] sm:w-[30%] h-[42px] rounded-2xl bg-[#ccd8ed]/40 animate-pulse"></div>
+          </div>
         </div>
         <div class="flex-1 flex flex-col items-center justify-center py-8"
           *ngIf="!chatLoading && chatMessages.length === 0">
           <div
             class="w-16 h-16 rounded-full bg-[#f2f6fc] border border-[#ccd8ed] flex items-center justify-center mb-3">
-            <svg class="w-7 h-7 text-[#c9a96e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            <svg class="w-7 h-7 text-[var(--color-accent-gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"
               stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
               </path>
             </svg>
           </div>
-          <p class="text-[0.82rem] text-[#8fa3c8] text-center max-w-[220px]">Nessun messaggio ancora. Inizia la
+          <p class="text-[0.82rem] text-[var(--color-text-muted)] text-center max-w-[220px]">Nessun messaggio ancora. Inizia la
             conversazione!</p>
         </div>
         <ng-container *ngIf="!chatLoading">
@@ -140,7 +149,7 @@
             class="flex flex-col sm:max-w-[700px] sm:mx-auto sm:w-full">
             <div class="flex justify-center my-3"
               *ngIf="i === 0 || getMessageDateHeader(msg.createdAt) !== getMessageDateHeader(chatMessages[i-1].createdAt)">
-              <span class="px-3 py-1 rounded-full bg-[#1a3462]/8 text-[0.62rem] text-[#8fa3c8] font-semibold">{{
+              <span class="px-3 py-1 rounded-full bg-[var(--color-primary-navy)]/8 text-[0.62rem] text-[var(--color-text-muted)] font-semibold">{{
                 getMessageDateHeader(msg.createdAt) }}</span>
             </div>
             <div class="flex mb-[2px]" [class.justify-end]="isMyMessage(msg)" [class.justify-start]="!isMyMessage(msg)">
@@ -167,7 +176,7 @@
         <div class="flex-1 relative sm:max-w-[700px] sm:mx-auto sm:w-full flex items-end gap-2">
           <div class="flex-1">
             <textarea
-              class="chat-input w-full resize-none rounded-2xl border border-[#ccd8ed] bg-[#f2f6fc] px-4 py-2.5 text-[0.88rem] text-[#1a2744] placeholder-[#8fa3c8] focus:outline-none focus:border-[#c9a96e]/60 focus:bg-white transition-all leading-[1.4] max-h-[120px]"
+              class="chat-input w-full resize-none rounded-2xl border border-[#ccd8ed] bg-[#f2f6fc] px-4 py-2.5 text-[0.88rem] text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-gold)]/60 focus:bg-white transition-all leading-[1.4] max-h-[120px]"
               style="font-size: 16px;" rows="1" placeholder="Scrivi un messaggio..." [(ngModel)]="chatInput"
               (keydown)="onChatKeydown($event)" (input)="autoGrow($event)"></textarea>
           </div>
@@ -185,11 +194,11 @@
   </div>
 
   <!-- Modale selezione utente (solo Admin) -->
-  <div class="fixed inset-0 bg-[#1a2744]/40 backdrop-blur-[4px] z-[200] flex items-center justify-center p-4"
+  <div class="fixed inset-0 bg-[var(--color-text-main)]/40 backdrop-blur-[4px] z-[200] flex items-center justify-center p-4"
     *ngIf="showUserPicker" (click)="showUserPicker = false">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm max-h-[70vh] flex flex-col overflow-hidden"
       (click)="$event.stopPropagation()">
-      <div class="px-5 py-4 bg-[#1a3462] flex items-center justify-between flex-shrink-0">
+      <div class="px-5 py-4 bg-[var(--color-primary-navy)] flex items-center justify-between flex-shrink-0">
         <h3 class="font-['Darker_Grotesque'] text-[1.2rem] font-black text-white">Nuova conversazione</h3>
         <button
           class="w-7 h-7 bg-white/10 border border-white/20 rounded-lg text-white/60 text-[0.75rem] flex items-center justify-center"
@@ -197,24 +206,24 @@
       </div>
       <div class="px-4 py-3 border-b border-[#ccd8ed]/50 flex-shrink-0">
         <input type="text" [(ngModel)]="userPickerSearch" placeholder="Cerca utente..."
-          class="w-full px-3 py-2 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] text-[#1a2744] placeholder-[#8fa3c8] focus:outline-none focus:border-[#c9a96e]">
+          class="w-full px-3 py-2 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-gold)]">
       </div>
       <div class="flex-1 overflow-y-auto">
         <button
           class="flex items-center gap-3 px-5 py-3 w-full text-left border-b border-[#ccd8ed]/30 hover:bg-[#f7f9fc] transition-all"
           *ngFor="let user of filteredPickerUsers" (click)="startConversationWith(user)">
           <div
-            class="w-10 h-10 rounded-full bg-[#1a3462] flex items-center justify-center border-2 border-[#c9a96e]/30 flex-shrink-0">
-            <span class="text-[#e8c97a] text-[0.65rem] font-bold">{{ user.firstName?.charAt(0) }}{{
+            class="w-10 h-10 rounded-full bg-[var(--color-primary-navy)] flex items-center justify-center border-2 border-[var(--color-accent-gold)]/30 flex-shrink-0">
+            <span class="text-[var(--color-accent-gold-light)] text-[0.65rem] font-bold">{{ user.firstName?.charAt(0) }}{{
               user.lastName?.charAt(0) }}</span>
           </div>
           <div class="flex-1 min-w-0">
-            <div class="text-[0.85rem] font-bold text-[#1a2744] truncate">{{ user.firstName }} {{ user.lastName }}</div>
-            <div class="text-[0.65rem] text-[#8fa3c8]">{{ getRoleLabel(user.role) }}</div>
+            <div class="text-[0.85rem] font-bold text-[var(--color-text-main)] truncate">{{ user.firstName }} {{ user.lastName }}</div>
+            <div class="text-[0.65rem] text-[var(--color-text-muted)]">{{ getRoleLabel(user.role) }}</div>
           </div>
         </button>
         <div class="text-center py-8" *ngIf="filteredPickerUsers.length === 0">
-          <p class="text-[0.82rem] text-[#8fa3c8]">Nessun utente trovato</p>
+          <p class="text-[0.82rem] text-[var(--color-text-muted)]">Nessun utente trovato</p>
         </div>
       </div>
     </div>

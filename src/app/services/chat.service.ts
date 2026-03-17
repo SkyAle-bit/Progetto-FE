@@ -108,6 +108,8 @@ export class ChatService {
    * 3) Avvia polling globale come fallback
    */
   init(userId: number): void {
+    this.destroy(); // CLEANUP prevent duplicate listeners and memory leaks
+    
     // Connetti WebSocket
     this.socketService.connect(userId);
 

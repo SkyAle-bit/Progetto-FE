@@ -1,35 +1,35 @@
 <div class="px-4 py-5 sm:max-w-[900px] sm:mx-auto sm:py-8 sm:px-8">
-  <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[#1a2744] mb-1">Prenota una Call</h3>
-  <p class="text-[0.78rem] sm:text-[0.85rem] text-[#8fa3c8] mb-5 sm:mb-8">Scegli il professionista e prenota il tuo appuntamento</p>
+  <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[var(--color-text-main)] mb-1">Prenota una Call</h3>
+  <p class="text-[0.78rem] sm:text-[0.85rem] text-[var(--color-text-muted)] mb-5 sm:mb-8">Scegli il professionista e prenota il tuo appuntamento</p>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-5" *ngIf="professionals.length > 0">
-    <div class="bg-white rounded-2xl border border-[#ccd8ed] shadow-sm hover:border-[#c9a96e]/50 hover:shadow-lg transition-all overflow-hidden" *ngFor="let p of professionals">
+    <div class="bg-white rounded-2xl border border-[#ccd8ed] shadow-sm hover:border-[var(--color-accent-gold)]/50 hover:shadow-lg transition-all overflow-hidden" *ngFor="let p of professionals">
       <!-- Header colorato -->
-      <div class="h-3 w-full" [ngClass]="p.role === 'PERSONAL_TRAINER' ? 'bg-[#1a3462]' : 'bg-[#c9a96e]'"></div>
+      <div class="h-3 w-full" [ngClass]="p.role === 'PERSONAL_TRAINER' ? 'bg-[var(--color-primary-navy)]' : 'bg-[var(--color-accent-gold)]'"></div>
       <div class="p-6 flex flex-col items-center text-center gap-4">
         <!-- Avatar -->
         <div class="w-24 h-24 rounded-full overflow-hidden border-[3px] flex items-center justify-center flex-shrink-0"
-          [ngClass]="p.role === 'PERSONAL_TRAINER' ? 'border-[#1a3462] bg-gradient-to-br from-[#1a3462] to-[#2d5fa8]' : 'border-[#c9a96e] bg-gradient-to-br from-[#c9a96e] to-[#a88a53]'">
+          [ngClass]="p.role === 'PERSONAL_TRAINER' ? 'border-[var(--color-primary-navy)] bg-gradient-to-br from-[var(--color-primary-navy)] to-[#2d5fa8]' : 'border-[var(--color-accent-gold)] bg-gradient-to-br from-[var(--color-accent-gold)] to-[#a88a53]'">
           <img *ngIf="p.profilePicture" [src]="p.profilePicture" class="w-full h-full object-cover" alt="">
           <span *ngIf="!p.profilePicture" class="text-white text-[2rem]">{{ p.role === 'PERSONAL_TRAINER' ? '💪' : '🥗' }}</span>
         </div>
         <!-- Info -->
         <div>
           <div class="text-[0.65rem] uppercase tracking-[0.12em] font-bold mb-1 px-3 py-0.5 rounded-full inline-block"
-            [ngClass]="p.role === 'PERSONAL_TRAINER' ? 'bg-blue-50 text-[#1a3462]' : 'bg-amber-50 text-[#a88a53]'">
+            [ngClass]="p.role === 'PERSONAL_TRAINER' ? 'bg-blue-50 text-[var(--color-primary-navy)]' : 'bg-amber-50 text-[#a88a53]'">
             {{ p.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}
           </div>
-          <div class="text-[1.25rem] font-black text-[#1a2744] font-['Darker_Grotesque'] mt-1">{{ p.fullName }}</div>
-          <div class="text-[0.75rem] text-[#8fa3c8] mt-0.5" *ngIf="p.professionalBio">{{ p.professionalBio }}</div>
+          <div class="text-[1.25rem] font-black text-[var(--color-text-main)] font-['Darker_Grotesque'] mt-1">{{ p.fullName }}</div>
+          <div class="text-[0.75rem] text-[var(--color-text-muted)] mt-0.5" *ngIf="p.professionalBio">{{ p.professionalBio }}</div>
         </div>
         <!-- Rating -->
         <div class="flex items-center gap-1" *ngIf="p.averageRating">
           <span class="text-[0.82rem]">⭐</span>
-          <span class="text-[0.82rem] font-bold text-[#1a2744]">{{ p.averageRating | number:'1.1-1' }}</span>
+          <span class="text-[0.82rem] font-bold text-[var(--color-text-main)]">{{ p.averageRating | number:'1.1-1' }}</span>
         </div>
         <!-- Bottone prenota -->
         <button class="w-full py-3.5 rounded-xl text-[0.88rem] font-bold transition-all active:scale-[0.97] shadow-[0_4px_16px_rgba(0,0,0,0.1)]"
-          [ngClass]="p.role === 'PERSONAL_TRAINER' ? 'bg-[#1a3462] text-white' : 'bg-[#c9a96e] text-[#1a2744]'"
+          [ngClass]="p.role === 'PERSONAL_TRAINER' ? 'bg-[var(--color-primary-navy)] text-white' : 'bg-[var(--color-accent-gold)] text-[var(--color-text-main)]'"
           (click)="bookProfessional.emit(p)">
           📅 Prenota Appuntamento
         </button>
@@ -39,8 +39,8 @@
 
   <div class="text-center py-16" *ngIf="professionals.length === 0">
     <div class="text-[3rem] mb-3 opacity-35">📞</div>
-    <h4 class="font-['Darker_Grotesque'] text-[1.3rem] font-black text-[#1a2744] mb-2">Nessun professionista assegnato</h4>
-    <p class="text-[0.82rem] text-[#8fa3c8] max-w-[280px] mx-auto">I tuoi professionisti appariranno qui quando ti saranno assegnati.</p>
+    <h4 class="font-['Darker_Grotesque'] text-[1.3rem] font-black text-[var(--color-text-main)] mb-2">Nessun professionista assegnato</h4>
+    <p class="text-[0.82rem] text-[var(--color-text-muted)] max-w-[280px] mx-auto">I tuoi professionisti appariranno qui quando ti saranno assegnati.</p>
   </div>
 </div>
 

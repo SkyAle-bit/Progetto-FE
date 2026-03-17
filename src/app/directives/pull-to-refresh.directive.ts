@@ -63,7 +63,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
     this.renderer.setStyle(this.spinner, 'width', '20px');
     this.renderer.setStyle(this.spinner, 'height', '20px');
     this.renderer.setStyle(this.spinner, 'border', '2.5px solid #ccd8ed');
-    this.renderer.setStyle(this.spinner, 'borderTop', '2.5px solid #c9a96e');
+    this.renderer.setStyle(this.spinner, 'borderTop', '2.5px solid var(--color-accent-gold)');
     this.renderer.setStyle(this.spinner, 'borderRadius', '50%');
     this.renderer.setStyle(this.spinner, 'display', 'none');
 
@@ -71,7 +71,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
     this.arrow = this.renderer.createElement('div');
     this.renderer.setProperty(this.arrow, 'innerHTML', '↓');
     this.renderer.setStyle(this.arrow, 'fontSize', '16px');
-    this.renderer.setStyle(this.arrow, 'color', '#8fa3c8');
+    this.renderer.setStyle(this.arrow, 'color', 'var(--color-text-muted)');
     this.renderer.setStyle(this.arrow, 'transition', 'transform 0.2s ease');
     this.renderer.setStyle(this.arrow, 'fontWeight', '700');
 
@@ -79,7 +79,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
     this.text = this.renderer.createElement('span');
     this.renderer.setProperty(this.text, 'textContent', 'Tira per aggiornare');
     this.renderer.setStyle(this.text, 'fontSize', '0.72rem');
-    this.renderer.setStyle(this.text, 'color', '#8fa3c8');
+    this.renderer.setStyle(this.text, 'color', 'var(--color-text-muted)');
     this.renderer.setStyle(this.text, 'fontWeight', '600');
 
     this.renderer.appendChild(this.indicator, this.spinner);
@@ -131,12 +131,12 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
       if (this.arrow) {
         const rotate = pull >= this.threshold ? 180 : 0;
         this.renderer.setStyle(this.arrow, 'transform', `rotate(${rotate}deg)`);
-        this.renderer.setStyle(this.arrow, 'color', pull >= this.threshold ? '#c9a96e' : '#8fa3c8');
+        this.renderer.setStyle(this.arrow, 'color', pull >= this.threshold ? 'var(--color-accent-gold)' : 'var(--color-text-muted)');
       }
       if (this.text) {
         this.renderer.setProperty(this.text, 'textContent',
           pull >= this.threshold ? 'Rilascia per aggiornare' : 'Tira per aggiornare');
-        this.renderer.setStyle(this.text, 'color', pull >= this.threshold ? '#c9a96e' : '#8fa3c8');
+        this.renderer.setStyle(this.text, 'color', pull >= this.threshold ? 'var(--color-accent-gold)' : 'var(--color-text-muted)');
       }
     });
 
@@ -171,7 +171,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
     }
     if (this.text) {
       this.renderer.setProperty(this.text, 'textContent', 'Aggiornamento...');
-      this.renderer.setStyle(this.text, 'color', '#c9a96e');
+      this.renderer.setStyle(this.text, 'color', 'var(--color-accent-gold)');
     }
     if (this.indicator) {
       this.renderer.setStyle(this.indicator, 'height', '44px');
@@ -203,11 +203,11 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
     if (this.arrow) {
       this.renderer.setStyle(this.arrow, 'display', 'block');
       this.renderer.setStyle(this.arrow, 'transform', 'rotate(0deg)');
-      this.renderer.setStyle(this.arrow, 'color', '#8fa3c8');
+      this.renderer.setStyle(this.arrow, 'color', 'var(--color-text-muted)');
     }
     if (this.text) {
       this.renderer.setProperty(this.text, 'textContent', 'Tira per aggiornare');
-      this.renderer.setStyle(this.text, 'color', '#8fa3c8');
+      this.renderer.setStyle(this.text, 'color', 'var(--color-text-muted)');
     }
   }
 }

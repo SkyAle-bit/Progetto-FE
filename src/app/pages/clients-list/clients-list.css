@@ -37,5 +37,5 @@
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #c9a96e;
+  background: var(--color-accent-gold);
 }

@@ -3,32 +3,32 @@
   <!-- Saluto -->
   <div class="text-center">
     <div class="relative inline-block mb-3">
-      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[#6b21a8] to-[#9333ea] border-[3px] border-[#c9a96e] text-white flex items-center justify-center text-[1.8rem] font-black font-['Darker_Grotesque'] shadow-lg">{{ getInitials() }}</div>
+      <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[#6b21a8] to-[#9333ea] border-[3px] border-[var(--color-accent-gold)] text-white flex items-center justify-center text-[1.8rem] font-black font-['Darker_Grotesque'] shadow-lg">{{ getInitials() }}</div>
     </div>
-    <h2 class="font-['Darker_Grotesque'] text-[1.6rem] font-black text-[#1a2744] leading-tight">Pannello Admin</h2>
-    <p class="text-[0.82rem] text-[#8fa3c8] mt-1">Supervisione globale della piattaforma Kore</p>
+    <h2 class="font-['Darker_Grotesque'] text-[1.6rem] font-black text-[var(--color-text-main)] leading-tight">Pannello Admin</h2>
+    <p class="text-[0.82rem] text-[var(--color-text-muted)] mt-1">Supervisione globale della piattaforma Kore</p>
   </div>
 
   <!-- KPI Cards -->
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
     <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
-      <div class="text-[1.8rem] font-black text-[#1a3462] leading-none">{{ totalUsers }}</div>
-      <div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1.5 font-semibold">Utenti totali</div>
+      <div class="text-[1.8rem] font-black text-[var(--color-primary-navy)] leading-none">{{ totalUsers }}</div>
+      <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Utenti totali</div>
       <div class="mt-2 text-[1.2rem]">👥</div>
     </div>
     <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
-      <div class="text-[1.8rem] font-black text-[#1a3462] leading-none">{{ totalClients }}</div>
-      <div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1.5 font-semibold">Clienti</div>
+      <div class="text-[1.8rem] font-black text-[var(--color-primary-navy)] leading-none">{{ totalClients }}</div>
+      <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Clienti</div>
       <div class="mt-2 text-[1.2rem]">🧑</div>
     </div>
     <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
       <div class="text-[1.8rem] font-black text-emerald-600 leading-none">{{ activeSubscriptions }}</div>
-      <div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1.5 font-semibold">Abbonamenti attivi</div>
+      <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Abbonamenti attivi</div>
       <div class="mt-2 text-[1.2rem]">👑</div>
     </div>
     <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
-      <div class="text-[1.8rem] font-black text-[#c9a96e] leading-none">{{ totalProfessionals }}</div>
-      <div class="text-[0.6rem] text-[#8fa3c8] uppercase tracking-[0.10em] mt-1.5 font-semibold">Professionisti</div>
+      <div class="text-[1.8rem] font-black text-[var(--color-accent-gold)] leading-none">{{ totalProfessionals }}</div>
+      <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Professionisti</div>
       <div class="mt-2 text-[1.2rem]">🏆</div>
     </div>
   </div>
@@ -37,10 +37,10 @@
   <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm">
     <div class="flex items-center gap-2 mb-4">
       <span class="text-[1.1rem]">⚡</span>
-      <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Azioni rapide</span>
+      <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Azioni rapide</span>
     </div>
     <div class="grid grid-cols-2 gap-3">
-      <button class="flex items-center gap-3 p-4 bg-gradient-to-r from-[#1a3462] to-[#2d5fa8] text-white rounded-xl transition-all active:scale-[0.97] hover:shadow-lg"
+      <button class="flex items-center gap-3 p-4 bg-gradient-to-r from-[var(--color-primary-navy)] to-[#2d5fa8] text-white rounded-xl transition-all active:scale-[0.97] hover:shadow-lg"
         (click)="setTabEvent.emit('admin-users')">
         <div class="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center text-[1.2rem] flex-shrink-0">👥</div>
         <div class="text-left">
@@ -48,28 +48,28 @@
           <div class="text-[0.65rem] text-white/60">Crea, cerca, elimina</div>
         </div>
       </button>
-      <button class="flex items-center gap-3 p-4 bg-gradient-to-r from-[#c9a96e] to-[#a88a53] text-[#1a2744] rounded-xl transition-all active:scale-[0.97] hover:shadow-lg"
+      <button class="flex items-center gap-3 p-4 bg-gradient-to-r from-[var(--color-accent-gold)] to-[#a88a53] text-[var(--color-text-main)] rounded-xl transition-all active:scale-[0.97] hover:shadow-lg"
         (click)="setTabEvent.emit('admin-plans')">
         <div class="w-10 h-10 rounded-lg bg-white/25 flex items-center justify-center text-[1.2rem] flex-shrink-0">📋</div>
         <div class="text-left">
           <div class="text-[0.82rem] font-bold">Gestisci Piani</div>
-          <div class="text-[0.65rem] text-[#1a2744]/60">Crea, visualizza, elimina</div>
+          <div class="text-[0.65rem] text-[var(--color-text-main)]/60">Crea, visualizza, elimina</div>
         </div>
       </button>
-      <button class="flex items-center gap-3 p-4 bg-white border border-[#ccd8ed] text-[#1a2744] rounded-xl transition-all active:scale-[0.97] hover:border-[#c9a96e]/50 hover:shadow-md"
+      <button class="flex items-center gap-3 p-4 bg-white border border-[#ccd8ed] text-[var(--color-text-main)] rounded-xl transition-all active:scale-[0.97] hover:border-[var(--color-accent-gold)]/50 hover:shadow-md"
         (click)="setTabEvent.emit('chat')">
         <div class="w-10 h-10 rounded-lg bg-[#f2f6fc] flex items-center justify-center text-[1.2rem] flex-shrink-0">💬</div>
         <div class="text-left">
           <div class="text-[0.82rem] font-bold">Chat</div>
-          <div class="text-[0.65rem] text-[#8fa3c8]">Messaggi e supporto</div>
+          <div class="text-[0.65rem] text-[var(--color-text-muted)]">Messaggi e supporto</div>
         </div>
       </button>
-      <button class="flex items-center gap-3 p-4 bg-white border border-[#ccd8ed] text-[#1a2744] rounded-xl transition-all active:scale-[0.97] hover:border-[#c9a96e]/50 hover:shadow-md"
+      <button class="flex items-center gap-3 p-4 bg-white border border-[#ccd8ed] text-[var(--color-text-main)] rounded-xl transition-all active:scale-[0.97] hover:border-[var(--color-accent-gold)]/50 hover:shadow-md"
         (click)="setTabEvent.emit('admin-users')">
         <div class="w-10 h-10 rounded-lg bg-[#f2f6fc] flex items-center justify-center text-[1.2rem] flex-shrink-0">➕</div>
         <div class="text-left">
           <div class="text-[0.82rem] font-bold">Nuovo Utente</div>
-          <div class="text-[0.65rem] text-[#8fa3c8]">Qualunque ruolo</div>
+          <div class="text-[0.65rem] text-[var(--color-text-muted)]">Qualunque ruolo</div>
         </div>
       </button>
     </div>
@@ -79,19 +79,19 @@
   <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm">
     <div class="flex items-center gap-2 mb-4">
       <span class="text-[1.1rem]">📋</span>
-      <span class="text-[0.72rem] text-[#8fa3c8] uppercase tracking-[0.10em] font-semibold">Piani attivi</span>
+      <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Piani attivi</span>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" *ngIf="allPlans.length > 0">
       <div class="p-4 bg-gradient-to-br from-[#f2f6fc] to-white rounded-xl border border-[#ccd8ed]/60"
         *ngFor="let plan of allPlans">
-        <div class="text-[0.88rem] font-bold text-[#1a2744] mb-2">{{ plan.name }}</div>
+        <div class="text-[0.88rem] font-bold text-[var(--color-text-main)] mb-2">{{ plan.name }}</div>
         <div class="flex items-baseline gap-1 mb-2">
-          <span class="text-[1.2rem] font-black text-[#c9a96e]">€{{ plan.monthlyInstallmentPrice }}</span>
-          <span class="text-[0.65rem] text-[#8fa3c8]">/mese</span>
+          <span class="text-[1.2rem] font-black text-[var(--color-accent-gold)]">€{{ plan.monthlyInstallmentPrice }}</span>
+          <span class="text-[0.65rem] text-[var(--color-text-muted)]">/mese</span>
         </div>
         <div class="flex gap-2">
-          <span class="text-[0.6rem] font-semibold px-2 py-0.5 rounded-full bg-[#1a3462]/10 text-[#1a3462]">💪 {{ plan.monthlyCreditsPT }} PT</span>
-          <span class="text-[0.6rem] font-semibold px-2 py-0.5 rounded-full bg-[#c9a96e]/15 text-[#a88a53]">🥗 {{ plan.monthlyCreditsNutri }} Nutri</span>
+          <span class="text-[0.6rem] font-semibold px-2 py-0.5 rounded-full bg-[var(--color-primary-navy)]/10 text-[var(--color-primary-navy)]">💪 {{ plan.monthlyCreditsPT }} PT</span>
+          <span class="text-[0.6rem] font-semibold px-2 py-0.5 rounded-full bg-[var(--color-accent-gold)]/15 text-[#a88a53]">🥗 {{ plan.monthlyCreditsNutri }} Nutri</span>
         </div>
       </div>
     </div>
