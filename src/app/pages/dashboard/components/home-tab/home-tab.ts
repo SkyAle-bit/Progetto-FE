@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./home-tab.css']
 })
 export class HomeTabComponent {
+  @Input() isLoading: boolean = true;
+  @Input() dashboardData: any = null;
   @Input() currentUser: any;
   @Input() profile: any;
   @Input() subscription: any;

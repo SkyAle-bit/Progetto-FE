@@ -75,13 +75,13 @@ export class ToastComponent implements OnInit, OnDestroy {
     return type === 'success' ? 'bg-white border-emerald-200'
       : type === 'error' ? 'bg-white border-red-200'
       : type === 'warning' ? 'bg-white border-amber-200'
-      : 'bg-white border-[#ccd8ed]';
+      : 'bg-white border-[var(--color-border-subtle)]';
   }
   getIconBg(type: string) {
     return type === 'success' ? 'bg-emerald-50'
       : type === 'error' ? 'bg-red-50'
       : type === 'warning' ? 'bg-amber-50'
-      : 'bg-[#f2f6fc]';
+      : 'bg-[var(--color-bg-subtle)]';
   }
   getIcon(type: string) {
     return type === 'success' ? '✓'

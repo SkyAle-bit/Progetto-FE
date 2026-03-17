@@ -36,13 +36,13 @@
    ══════════════════════════════════════════════════════════════════════════ */
 .nav-btn:hover {
   background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(201, 169, 110, 0.50);
+  border-color: rgba(var(--color-accent-gold-rgb), 0.50);
   color: var(--color-accent-gold-light);
 }
 
 .today-btn:hover {
-  background: rgba(201, 169, 110, 0.26);
-  box-shadow: 0 0 12px rgba(201, 169, 110, 0.20);
+  background: rgba(var(--color-accent-gold-rgb), 0.26);
+  box-shadow: 0 0 12px rgba(var(--color-accent-gold-rgb), 0.20);
 }
 
 /* ── Toggle vista Agenda (solo mobile) ─────────────────────────────────────── */
@@ -53,15 +53,15 @@
 
 .view-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(201, 169, 110, 0.40);
+  border-color: rgba(var(--color-accent-gold-rgb), 0.40);
   color: var(--color-accent-gold-light);
 }
 
 .view-toggle-btn.active {
-  background: rgba(201, 169, 110, 0.18);
-  border-color: rgba(201, 169, 110, 0.55);
+  background: rgba(var(--color-accent-gold-rgb), 0.18);
+  border-color: rgba(var(--color-accent-gold-rgb), 0.55);
   color: var(--color-accent-gold-light);
-  box-shadow: 0 0 10px rgba(201, 169, 110, 0.18);
+  box-shadow: 0 0 10px rgba(var(--color-accent-gold-rgb), 0.18);
 }
 
 /* ── Agenda toggle button (solo mobile) — stile identico al view-toggle-btn — */
@@ -73,15 +73,15 @@
 
 .agenda-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(201, 169, 110, 0.40);
+  border-color: rgba(var(--color-accent-gold-rgb), 0.40);
   color: var(--color-accent-gold-light);
 }
 
 .agenda-toggle-btn.active {
-  background: rgba(201, 169, 110, 0.18);
-  border-color: rgba(201, 169, 110, 0.55);
+  background: rgba(var(--color-accent-gold-rgb), 0.18);
+  border-color: rgba(var(--color-accent-gold-rgb), 0.55);
   color: var(--color-accent-gold-light);
-  box-shadow: 0 0 10px rgba(201, 169, 110, 0.18);
+  box-shadow: 0 0 10px rgba(var(--color-accent-gold-rgb), 0.18);
 }
 
 /* ── Agenda view: booking row hover ────────────────────────────────────── */
@@ -92,32 +92,32 @@
 
 .agenda-booking-row:active {
   transform: scale(0.99);
-  box-shadow: 0 1px 4px rgba(26, 52, 98, 0.08);
+  box-shadow: 0 1px 4px rgba(var(--color-primary-navy-rgb), 0.08);
 }
 
 /* Badge data "oggi" — highlight champagne */
 .today-badge {
   border-color: var(--color-accent-gold) !important;
-  background: rgba(201, 169, 110, 0.08);
+  background: rgba(var(--color-accent-gold-rgb), 0.08);
 }
 
 /* ── Topbar credit badge hover ──────────────────────────────────────────── */
 .topbar-credit-badge:hover {
-  background: rgba(201, 169, 110, 0.25);
+  background: rgba(var(--color-accent-gold-rgb), 0.25);
   transform: translateY(-1px);
 }
 
 /* ── Book button topbar ─────────────────────────────────────────────────── */
 .btn-book-topbar {
   background: linear-gradient(135deg, var(--color-accent-gold) 0%, #a88a53 100%);
-  box-shadow: 0 4px 12px rgba(201, 169, 110, 0.25);
+  box-shadow: 0 4px 12px rgba(var(--color-accent-gold-rgb), 0.25);
   font-family: 'Outfit', sans-serif;
   letter-spacing: 0.02em;
 }
 
 .btn-book-topbar:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(201, 169, 110, 0.4);
+  box-shadow: 0 6px 16px rgba(var(--color-accent-gold-rgb), 0.4);
   background: linear-gradient(135deg, #d4b57a 0%, #b3955d 100%);
 }
 
@@ -139,7 +139,7 @@
 .profile-btn:hover,
 .profile-btn.active {
   border-color: var(--color-accent-gold);
-  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.18), 0 2px 14px rgba(201, 169, 110, 0.22);
+  box-shadow: 0 0 0 3px rgba(var(--color-accent-gold-rgb), 0.18), 0 2px 14px rgba(var(--color-accent-gold-rgb), 0.22);
 }
 
 
@@ -162,13 +162,13 @@
   justify-content: flex-end;
   padding: 0.25rem 0.6rem 0 0;
   font-size: 0.62rem;
-  color: #ccd8ed;
+  color: var(--color-border-subtle);
   font-weight: 500;
   letter-spacing: 0.04em;
 }
 
 .time-slot-label.full-hour {
-  border-top: 1px solid #ccd8ed;
+  border-top: 1px solid var(--color-border-subtle);
   color: var(--color-text-muted);
 }
 
@@ -187,7 +187,7 @@
 }
 
 .hour-cell.full-hour {
-  border-top: 1px solid #ccd8ed;
+  border-top: 1px solid var(--color-border-subtle);
 }
 
 .hour-cell.half-hour {
@@ -261,11 +261,11 @@
   background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-gold-light));
   color: var(--color-primary-navy);
   font-weight: 700;
-  box-shadow: 0 2px 12px rgba(201, 169, 110, 0.40);
+  box-shadow: 0 2px 12px rgba(var(--color-accent-gold-rgb), 0.40);
 }
 
 .day-col.today-col {
-  background: rgba(201, 169, 110, 0.04);
+  background: rgba(var(--color-accent-gold-rgb), 0.04);
 }
 
 /* ── Booking cards ──────────────────────────────────────────────────────── */
@@ -284,11 +284,11 @@
 .booking-card:hover {
   opacity: 0.85;
   transform: translateX(2px);
-  box-shadow: 0 2px 8px rgba(26, 52, 98, 0.12);
+  box-shadow: 0 2px 8px rgba(var(--color-primary-navy-rgb), 0.12);
 }
 
 .booking-pt {
-  background: rgba(26, 52, 98, 0.10);
+  background: rgba(var(--color-primary-navy-rgb), 0.10);
   border-color: var(--color-primary-navy);
   color: var(--color-primary-navy);
 }
@@ -301,7 +301,7 @@
 
 .booking-cancelled {
   background: rgba(143, 163, 200, 0.08);
-  border-color: #ccd8ed;
+  border-color: var(--color-border-subtle);
   color: var(--color-text-muted);
   opacity: 0.60;
 }
@@ -348,14 +348,14 @@
 .panel-avatar-ring {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid rgba(201, 169, 110, 0.28);
+  border: 1px solid rgba(var(--color-accent-gold-rgb), 0.28);
   animation: pulse 3s ease infinite;
 }
 
 /* Panel body scrollbar sottile */
 .panel-body {
   scrollbar-width: thin;
-  scrollbar-color: #ccd8ed transparent;
+  scrollbar-color: var(--color-border-subtle) transparent;
 }
 
 /* Detail row hover */
@@ -366,13 +366,13 @@
 
 /* Subscription card */
 .subscription-card {
-  background: rgba(201, 169, 110, 0.07);
-  border: 1px solid rgba(201, 169, 110, 0.28);
+  background: rgba(var(--color-accent-gold-rgb), 0.07);
+  border: 1px solid rgba(var(--color-accent-gold-rgb), 0.28);
 }
 
 .subscription-card.inactive {
-  background: #f2f6fc;
-  border-color: #ccd8ed;
+  background: var(--color-bg-subtle);
+  border-color: var(--color-border-subtle);
 }
 
 .sub-dot.active {
@@ -390,8 +390,8 @@
 .btn-availability {
   width: 100%;
   padding: 0.75rem 1rem;
-  background: rgba(26, 52, 98, 0.07);
-  border: 1px solid rgba(26, 52, 98, 0.20);
+  background: rgba(var(--color-primary-navy-rgb), 0.07);
+  border: 1px solid rgba(var(--color-primary-navy-rgb), 0.20);
   border-radius: 10px;
   color: var(--color-primary-navy);
   font-size: 0.84rem;
@@ -406,9 +406,9 @@
 }
 
 .btn-availability:hover {
-  background: rgba(26, 52, 98, 0.13);
-  border-color: rgba(26, 52, 98, 0.35);
-  box-shadow: 0 2px 10px rgba(26, 52, 98, 0.10);
+  background: rgba(var(--color-primary-navy-rgb), 0.13);
+  border-color: rgba(var(--color-primary-navy-rgb), 0.35);
+  box-shadow: 0 2px 10px rgba(var(--color-primary-navy-rgb), 0.10);
 }
 
 .btn-availability-arrow {
@@ -474,7 +474,7 @@
 }
 
 .avail-time-label.full-hour {
-  border-top: 1px solid #ccd8ed;
+  border-top: 1px solid var(--color-border-subtle);
   color: var(--color-text-muted);
 }
 
@@ -491,7 +491,7 @@
 }
 
 .avail-slot.full-hour {
-  border-top: 1px solid #ccd8ed;
+  border-top: 1px solid var(--color-border-subtle);
 }
 
 .avail-slot.half-hour {
@@ -499,7 +499,7 @@
 }
 
 .avail-slot:hover:not(.selected):not(.existing):not(.locked) {
-  background: rgba(26, 52, 98, 0.07);
+  background: rgba(var(--color-primary-navy-rgb), 0.07);
 }
 
 .avail-slot.existing:hover:not(.locked) {
@@ -508,8 +508,8 @@
 }
 
 .avail-slot.selected {
-  background: rgba(26, 52, 98, 0.15);
-  border-top-color: rgba(26, 52, 98, 0.20) !important;
+  background: rgba(var(--color-primary-navy-rgb), 0.15);
+  border-top-color: rgba(var(--color-primary-navy-rgb), 0.20) !important;
   box-shadow: inset 3px 0 0 var(--color-accent-gold);
 }
 
@@ -517,13 +517,13 @@
   content: '';
   position: absolute;
   inset: 1px;
-  background: rgba(201, 169, 110, 0.10);
+  background: rgba(var(--color-accent-gold-rgb), 0.10);
   border-radius: 2px;
 }
 
 .avail-slot.existing {
-  background: rgba(26, 52, 98, 0.08);
-  border-top-color: rgba(26, 52, 98, 0.15) !important;
+  background: rgba(var(--color-primary-navy-rgb), 0.08);
+  border-top-color: rgba(var(--color-primary-navy-rgb), 0.15) !important;
   box-shadow: inset 3px 0 0 #cfbc97;
   cursor: pointer;
 }
@@ -532,7 +532,7 @@
   content: '';
   position: absolute;
   inset: 1px;
-  background: rgba(201, 169, 110, 0.04);
+  background: rgba(var(--color-accent-gold-rgb), 0.04);
   border-radius: 2px;
 }
 
@@ -573,7 +573,7 @@
   margin-top: 0.1rem;
   padding: 0.1rem 0.38rem;
   background: transparent;
-  border: 1px solid rgba(26, 52, 98, 0.18);
+  border: 1px solid rgba(var(--color-primary-navy-rgb), 0.18);
   border-radius: 4px;
   color: var(--color-text-muted);
   font-size: 0.55rem;
@@ -587,7 +587,7 @@
 }
 
 .btn-copy-day:hover:not(:disabled) {
-  background: rgba(201, 169, 110, 0.10);
+  background: rgba(var(--color-accent-gold-rgb), 0.10);
   border-color: var(--color-accent-gold);
   color: var(--color-accent-gold);
 }
@@ -628,14 +628,14 @@
   white-space: nowrap;
   letter-spacing: 0.03em;
   line-height: 1.5;
-  box-shadow: 0 1px 6px rgba(201, 169, 110, 0.35);
+  box-shadow: 0 1px 6px rgba(var(--color-accent-gold-rgb), 0.35);
   animation: pasteButtonIn 0.25s cubic-bezier(0.16, 1, 0.3, 1), pastePulse 2s ease 0.3s infinite;
   transition: transform 0.15s, box-shadow 0.15s;
 }
 
 .btn-paste-day:hover {
   transform: translateY(-1px) scale(1.05);
-  box-shadow: 0 3px 14px rgba(201, 169, 110, 0.55);
+  box-shadow: 0 3px 14px rgba(var(--color-accent-gold-rgb), 0.55);
   animation: none;
 }
 
@@ -666,7 +666,7 @@
 
 /* Paste target column */
 .avail-day-col.is-paste-target {
-  background: rgba(201, 169, 110, 0.035);
+  background: rgba(var(--color-accent-gold-rgb), 0.035);
   position: relative;
 }
 
@@ -674,8 +674,8 @@
   content: '';
   position: absolute;
   inset: 0;
-  border-left: 1px solid rgba(201, 169, 110, 0.20);
-  border-right: 1px solid rgba(201, 169, 110, 0.20);
+  border-left: 1px solid rgba(var(--color-accent-gold-rgb), 0.20);
+  border-right: 1px solid rgba(var(--color-accent-gold-rgb), 0.20);
   pointer-events: none;
   z-index: 1;
   animation: targetGlow 1.8s ease infinite;
@@ -700,7 +700,7 @@
 .btn-avail-cancel {
   padding: 0.55rem 1.1rem;
   background: transparent;
-  border: 1px solid #ccd8ed;
+  border: 1px solid var(--color-border-subtle);
   border-radius: 8px;
   color: var(--color-text-muted);
   font-size: 0.82rem;
@@ -727,11 +727,11 @@
   cursor: pointer;
   transition: all 0.2s;
   letter-spacing: 0.02em;
-  box-shadow: 0 2px 10px rgba(201, 169, 110, 0.30);
+  box-shadow: 0 2px 10px rgba(var(--color-accent-gold-rgb), 0.30);
 }
 
 .btn-avail-confirm:hover:not(:disabled) {
-  box-shadow: 0 4px 16px rgba(201, 169, 110, 0.45);
+  box-shadow: 0 4px 16px rgba(var(--color-accent-gold-rgb), 0.45);
   transform: translateY(-1px);
 }
 
@@ -748,8 +748,8 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.35rem 0.9rem;
-  background: rgba(201, 169, 110, 0.15);
-  border: 1px solid rgba(201, 169, 110, 0.42);
+  background: rgba(var(--color-accent-gold-rgb), 0.15);
+  border: 1px solid rgba(var(--color-accent-gold-rgb), 0.42);
   border-radius: 7px;
   color: var(--color-accent-gold-light);
   font-size: 0.78rem;
@@ -762,8 +762,8 @@
 }
 
 .btn-avail-topbar:hover {
-  background: rgba(201, 169, 110, 0.26);
-  box-shadow: 0 0 12px rgba(201, 169, 110, 0.22);
+  background: rgba(var(--color-accent-gold-rgb), 0.26);
+  box-shadow: 0 0 12px rgba(var(--color-accent-gold-rgb), 0.22);
 }
 
 /* ── Booking modal buttons ──────────────────────────────────────────────── */
@@ -779,13 +779,13 @@
   cursor: pointer;
   transition: all 0.2s;
   letter-spacing: 0.02em;
-  box-shadow: 0 2px 6px rgba(201, 169, 110, 0.25);
+  box-shadow: 0 2px 6px rgba(var(--color-accent-gold-rgb), 0.25);
   margin-left: auto;
 }
 
 .btn-book-sm:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(201, 169, 110, 0.40);
+  box-shadow: 0 4px 12px rgba(var(--color-accent-gold-rgb), 0.40);
 }
 
 .btn-book-confirm {
@@ -799,11 +799,11 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 10px rgba(201, 169, 110, 0.30);
+  box-shadow: 0 2px 10px rgba(var(--color-accent-gold-rgb), 0.30);
 }
 
 .btn-book-confirm:hover:not(:disabled) {
-  box-shadow: 0 4px 16px rgba(201, 169, 110, 0.45);
+  box-shadow: 0 4px 16px rgba(var(--color-accent-gold-rgb), 0.45);
   transform: translateY(-1px);
 }
 
@@ -816,7 +816,7 @@
 .booking-day-card:hover {
   border-color: var(--color-accent-gold);
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(201, 169, 110, 0.15);
+  box-shadow: 0 4px 10px rgba(var(--color-accent-gold-rgb), 0.15);
 }
 
 .booking-day-card.selected {
@@ -849,14 +849,14 @@
 .booking-time-pill:hover {
   border-color: var(--color-accent-gold);
   color: var(--color-accent-gold);
-  background: rgba(201, 169, 110, 0.05);
+  background: rgba(var(--color-accent-gold-rgb), 0.05);
 }
 
 .booking-time-pill.selected {
   background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-gold-light));
   border-color: var(--color-accent-gold);
   color: var(--color-text-main);
-  box-shadow: 0 4px 12px rgba(201, 169, 110, 0.35);
+  box-shadow: 0 4px 12px rgba(var(--color-accent-gold-rgb), 0.35);
   transform: scale(1.05);
 }
 
@@ -868,7 +868,7 @@
 
 /* Global popup */
 .global-popup {
-  box-shadow: 0 24px 80px rgba(26, 52, 98, 0.25);
+  box-shadow: 0 24px 80px rgba(var(--color-primary-navy-rgb), 0.25);
 }
 
 
@@ -967,11 +967,11 @@
 
   0%,
   100% {
-    box-shadow: 0 1px 6px rgba(201, 169, 110, 0.35);
+    box-shadow: 0 1px 6px rgba(var(--color-accent-gold-rgb), 0.35);
   }
 
   50% {
-    box-shadow: 0 2px 14px rgba(201, 169, 110, 0.60);
+    box-shadow: 0 2px 14px rgba(var(--color-accent-gold-rgb), 0.60);
   }
 }
 
@@ -979,11 +979,11 @@
 
   0%,
   100% {
-    border-color: rgba(201, 169, 110, 0.15);
+    border-color: rgba(var(--color-accent-gold-rgb), 0.15);
   }
 
   50% {
-    border-color: rgba(201, 169, 110, 0.40);
+    border-color: rgba(var(--color-accent-gold-rgb), 0.40);
   }
 }
 
@@ -1134,7 +1134,7 @@
 }
 
 .bottom-nav-item:active:not(.active) {
-  background: rgba(26, 52, 98, 0.04);
+  background: rgba(var(--color-primary-navy-rgb), 0.04);
 }
 
 /* ── Tab Home scroll area ─────────────────────────────────────────────── */
@@ -1177,8 +1177,8 @@
 
 .desktop-nav-item.active {
   color: var(--color-accent-gold-light);
-  background: rgba(201, 169, 110, 0.12);
-  border-color: rgba(201, 169, 110, 0.25);
+  background: rgba(var(--color-accent-gold-rgb), 0.12);
+  border-color: rgba(var(--color-accent-gold-rgb), 0.25);
 }
 
 .desktop-nav-item.active svg {
@@ -1198,8 +1198,8 @@
 .chat-messages-area {
   background-color: #e8edf5;
   background-image:
-    radial-gradient(circle at 20% 50%, rgba(201, 169, 110, 0.04) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(26, 52, 98, 0.04) 0%, transparent 50%);
+    radial-gradient(circle at 20% 50%, rgba(var(--color-accent-gold-rgb), 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(var(--color-primary-navy-rgb), 0.04) 0%, transparent 50%);
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
 }
@@ -1209,7 +1209,7 @@
   background: linear-gradient(135deg, var(--color-primary-navy), #1f3d6e);
   color: #fff;
   border-bottom-right-radius: 6px !important;
-  box-shadow: 0 1px 3px rgba(26, 52, 98, 0.15);
+  box-shadow: 0 1px 3px rgba(var(--color-primary-navy-rgb), 0.15);
 }
 
 /* Bolla messaggio — altro (sinistra) */
@@ -1217,7 +1217,7 @@
   background: #fff;
   color: var(--color-text-main);
   border-bottom-left-radius: 6px !important;
-  box-shadow: 0 1px 3px rgba(26, 52, 98, 0.08);
+  box-shadow: 0 1px 3px rgba(var(--color-primary-navy-rgb), 0.08);
 }
 
 /* Input textarea */
@@ -1234,14 +1234,14 @@
 
 /* Send button */
 .chat-send-btn {
-  background: #ccd8ed;
+  background: var(--color-border-subtle);
   color: var(--color-text-muted);
 }
 
 .chat-send-btn.active {
   background: linear-gradient(135deg, var(--color-accent-gold), #a88a53);
   color: var(--color-text-main);
-  box-shadow: 0 2px 10px rgba(201, 169, 110, 0.35);
+  box-shadow: 0 2px 10px rgba(var(--color-accent-gold-rgb), 0.35);
 }
 
 .chat-send-btn.active:active {
@@ -1267,14 +1267,14 @@
 /* Chat sidebar desktop */
 @media (min-width: 640px) {
   .chat-sidebar {
-    border-right: 1px solid #ccd8ed;
+    border-right: 1px solid var(--color-border-subtle);
   }
 }
 
 /* Chat main area desktop — sfondo pattern */
 @media (min-width: 640px) {
   .chat-main {
-    background-color: #f2f6fc;
+    background-color: var(--color-bg-subtle);
   }
 }
 
@@ -1288,7 +1288,7 @@
 }
 
 .chat-messages-area::-webkit-scrollbar-thumb {
-  background: rgba(26, 52, 98, 0.12);
+  background: rgba(var(--color-primary-navy-rgb), 0.12);
   border-radius: 2px;
 }
 

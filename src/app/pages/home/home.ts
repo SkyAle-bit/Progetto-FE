@@ -19,9 +19,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     isAnnual: boolean = false;
     isMobileMenuOpen: boolean = false;
     isNavScrolled: boolean = false;
+    showBackToTop: boolean = false;
 
     @ViewChild('carouselVideo') carouselVideoRef?: ElementRef<HTMLVideoElement>;
     @ViewChild('heroVideo') heroVideoRef?: ElementRef<HTMLVideoElement>;
+    @ViewChild('progressBar') progressBarRef?: ElementRef<HTMLDivElement>;
 
     carouselVideos = [
         { key: 'dashboard', title: 'Dashboard', src: 'assets/videos/carosello/dashboard.mp4', mobileSrc: 'assets/videos/carosello_mobile/dashboard.mp4' },
@@ -245,6 +247,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.scrollListener = () => {
             const scrollTop = container.scrollTop;
+            const scrollHeight = container.scrollHeight - container.clientHeight;
+            const scrollPercentage = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+
+            if (this.progressBarRef) {
+                this.progressBarRef.nativeElement.style.width = scrollPercentage + '%';
+            }
+
+            // Update angular bindings inside NgZone
+            this.zone.run(() => {
+                this.isNavScrolled = scrollTop > 10;
+                this.showBackToTop = scrollTop > 500;
+            });
 
             // Sticky navbar effect
             if (header) {
@@ -263,6 +277,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         };
 
         container.addEventListener('scroll', this.scrollListener, { passive: true });
+    }
+
+    scrollToTop(): void {
+        const container = this.el.nativeElement.querySelector('.home-page');
+        if (container) {
+            container.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     }
 
     goToRegister(planId: number): void {

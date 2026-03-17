@@ -10,7 +10,7 @@
   <p class="text-[0.78rem] sm:text-[0.85rem] text-[var(--color-text-muted)] mb-4 sm:mb-6">{{ allPlans.length }} piani configurati</p>
 
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" *ngIf="allPlans.length > 0">
-    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm hover:border-[var(--color-accent-gold)]/50 hover:shadow-md transition-all" *ngFor="let plan of allPlans">
+    <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-5 shadow-sm hover:border-[var(--color-accent-gold)]/50 hover:shadow-md transition-all" *ngFor="let plan of allPlans">
       <div class="flex items-center justify-between mb-3">
         <div class="text-[1rem] font-bold text-[var(--color-text-main)]">{{ plan.name }}</div>
         <span class="text-[0.6rem] font-bold px-2 py-0.5 rounded-full bg-[var(--color-accent-gold)]/15 text-[#a88a53]">{{ getDurationLabel(plan.duration) }}</span>
@@ -30,7 +30,7 @@
           <div class="text-[0.58rem] text-[var(--color-text-muted)] uppercase tracking-[0.06em] font-semibold mt-0.5">🥗 Crediti Nutri/mese</div>
         </div>
       </div>
-      <div class="flex items-center justify-between pt-3 border-t border-[#ccd8ed]/60">
+      <div class="flex items-center justify-between pt-3 border-t border-[var(--color-border-subtle)]/60">
         <span class="text-[0.72rem] text-[var(--color-text-muted)]">👑 {{ getActiveSubsForPlan(plan.name) }} abbonati attivi</span>
         <button *ngIf="canDeletePlan(plan)"
           class="text-[0.68rem] font-semibold px-2.5 py-1 rounded-lg bg-red-50 border border-red-200 text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all"
@@ -43,7 +43,7 @@
   </div>
   <div class="text-center py-12" *ngIf="allPlans.length === 0">
     <div class="text-[2.5rem] mb-3 opacity-35">📋</div>
-    <p class="text-[0.85rem] text-[#ccd8ed] italic">Nessun piano configurato</p>
+    <p class="text-[0.85rem] text-[var(--color-border-subtle)] italic">Nessun piano configurato</p>
   </div>
 
   <!-- Modale Crea Piano -->
@@ -56,11 +56,11 @@
       <div class="p-6 flex flex-col gap-4">
         <div>
           <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Nome Piano</label>
-          <input type="text" [(ngModel)]="newPlan.name" class="w-full px-3 py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="Es. Gold Annuale">
+          <input type="text" [(ngModel)]="newPlan.name" class="w-full px-3 py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="Es. Gold Annuale">
         </div>
         <div>
           <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Durata</label>
-          <select [(ngModel)]="newPlan.duration" (ngModelChange)="onDurationChange()" class="w-full px-3 py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]">
+          <select [(ngModel)]="newPlan.duration" (ngModelChange)="onDurationChange()" class="w-full px-3 py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]">
             <option value="SEMESTRALE">Semestrale (6 mesi)</option>
             <option value="ANNUALE">Annuale (12 mesi)</option>
           </select>
@@ -68,21 +68,21 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Prezzo totale (€)</label>
-            <input type="number" [(ngModel)]="newPlan.fullPrice" (ngModelChange)="onFullPriceChange()" class="w-full px-3 py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="0">
+            <input type="number" [(ngModel)]="newPlan.fullPrice" (ngModelChange)="onFullPriceChange()" class="w-full px-3 py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="0">
           </div>
           <div>
             <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Rata mensile (€)</label>
-            <input type="number" [(ngModel)]="newPlan.monthlyInstallmentPrice" (ngModelChange)="onMonthlyPriceChange()" class="w-full px-3 py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="0">
+            <input type="number" [(ngModel)]="newPlan.monthlyInstallmentPrice" (ngModelChange)="onMonthlyPriceChange()" class="w-full px-3 py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="0">
           </div>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Crediti PT/mese</label>
-            <input type="number" [(ngModel)]="newPlan.monthlyCreditsPT" class="w-full px-3 py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="0">
+            <input type="number" [(ngModel)]="newPlan.monthlyCreditsPT" class="w-full px-3 py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="0">
           </div>
           <div>
             <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Crediti Nutri/mese</label>
-            <input type="number" [(ngModel)]="newPlan.monthlyCreditsNutri" class="w-full px-3 py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="0">
+            <input type="number" [(ngModel)]="newPlan.monthlyCreditsNutri" class="w-full px-3 py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="0">
           </div>
         </div>
         <div class="text-[0.78rem] text-red-500 font-medium" *ngIf="createError">{{ createError }}</div>

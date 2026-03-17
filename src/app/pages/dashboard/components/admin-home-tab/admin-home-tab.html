@@ -11,22 +11,22 @@
 
   <!-- KPI Cards -->
   <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+    <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm text-center">
       <div class="text-[1.8rem] font-black text-[var(--color-primary-navy)] leading-none">{{ totalUsers }}</div>
       <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Utenti totali</div>
       <div class="mt-2 text-[1.2rem]">👥</div>
     </div>
-    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+    <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm text-center">
       <div class="text-[1.8rem] font-black text-[var(--color-primary-navy)] leading-none">{{ totalClients }}</div>
       <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Clienti</div>
       <div class="mt-2 text-[1.2rem]">🧑</div>
     </div>
-    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+    <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm text-center">
       <div class="text-[1.8rem] font-black text-emerald-600 leading-none">{{ activeSubscriptions }}</div>
       <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Abbonamenti attivi</div>
       <div class="mt-2 text-[1.2rem]">👑</div>
     </div>
-    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+    <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm text-center">
       <div class="text-[1.8rem] font-black text-[var(--color-accent-gold)] leading-none">{{ totalProfessionals }}</div>
       <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Professionisti</div>
       <div class="mt-2 text-[1.2rem]">🏆</div>
@@ -34,7 +34,7 @@
   </div>
 
   <!-- Azioni rapide -->
-  <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm">
+  <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-5 shadow-sm">
     <div class="flex items-center gap-2 mb-4">
       <span class="text-[1.1rem]">⚡</span>
       <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Azioni rapide</span>
@@ -56,17 +56,17 @@
           <div class="text-[0.65rem] text-[var(--color-text-main)]/60">Crea, visualizza, elimina</div>
         </div>
       </button>
-      <button class="flex items-center gap-3 p-4 bg-white border border-[#ccd8ed] text-[var(--color-text-main)] rounded-xl transition-all active:scale-[0.97] hover:border-[var(--color-accent-gold)]/50 hover:shadow-md"
+      <button class="flex items-center gap-3 p-4 bg-white border border-[var(--color-border-subtle)] text-[var(--color-text-main)] rounded-xl transition-all active:scale-[0.97] hover:border-[var(--color-accent-gold)]/50 hover:shadow-md"
         (click)="setTabEvent.emit('chat')">
-        <div class="w-10 h-10 rounded-lg bg-[#f2f6fc] flex items-center justify-center text-[1.2rem] flex-shrink-0">💬</div>
+        <div class="w-10 h-10 rounded-lg bg-[var(--color-bg-subtle)] flex items-center justify-center text-[1.2rem] flex-shrink-0">💬</div>
         <div class="text-left">
           <div class="text-[0.82rem] font-bold">Chat</div>
           <div class="text-[0.65rem] text-[var(--color-text-muted)]">Messaggi e supporto</div>
         </div>
       </button>
-      <button class="flex items-center gap-3 p-4 bg-white border border-[#ccd8ed] text-[var(--color-text-main)] rounded-xl transition-all active:scale-[0.97] hover:border-[var(--color-accent-gold)]/50 hover:shadow-md"
+      <button class="flex items-center gap-3 p-4 bg-white border border-[var(--color-border-subtle)] text-[var(--color-text-main)] rounded-xl transition-all active:scale-[0.97] hover:border-[var(--color-accent-gold)]/50 hover:shadow-md"
         (click)="setTabEvent.emit('admin-users')">
-        <div class="w-10 h-10 rounded-lg bg-[#f2f6fc] flex items-center justify-center text-[1.2rem] flex-shrink-0">➕</div>
+        <div class="w-10 h-10 rounded-lg bg-[var(--color-bg-subtle)] flex items-center justify-center text-[1.2rem] flex-shrink-0">➕</div>
         <div class="text-left">
           <div class="text-[0.82rem] font-bold">Nuovo Utente</div>
           <div class="text-[0.65rem] text-[var(--color-text-muted)]">Qualunque ruolo</div>
@@ -76,13 +76,13 @@
   </div>
 
   <!-- Piani disponibili (preview) -->
-  <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm">
+  <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm">
     <div class="flex items-center gap-2 mb-4">
       <span class="text-[1.1rem]">📋</span>
       <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Piani attivi</span>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" *ngIf="allPlans.length > 0">
-      <div class="p-4 bg-gradient-to-br from-[#f2f6fc] to-white rounded-xl border border-[#ccd8ed]/60"
+      <div class="p-4 bg-gradient-to-br from-[var(--color-bg-subtle)] to-white rounded-xl border border-[var(--color-border-subtle)]/60"
         *ngFor="let plan of allPlans">
         <div class="text-[0.88rem] font-bold text-[var(--color-text-main)] mb-2">{{ plan.name }}</div>
         <div class="flex items-baseline gap-1 mb-2">

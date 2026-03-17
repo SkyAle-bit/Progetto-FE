@@ -2,7 +2,7 @@
   <h3 class="font-['Darker_Grotesque'] text-[1.4rem] sm:text-[1.8rem] font-black text-[var(--color-text-main)] mb-1">I Miei Professionisti</h3>
   <p class="text-[0.78rem] sm:text-[0.85rem] text-[var(--color-text-muted)] mb-4 sm:mb-6">Prenota un appuntamento con i tuoi professionisti</p>
   <div class="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" *ngIf="professionals.length > 0">
-    <div class="bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm" *ngFor="let p of professionals">
+    <div class="bg-white border border-[var(--color-border-subtle)] rounded-2xl p-4 shadow-sm" *ngFor="let p of professionals">
       <div class="flex items-center gap-3 mb-3">
         <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-primary-navy)] to-[#2d5fa8] flex items-center justify-center border-2 border-[var(--color-accent-gold)]/50 flex-shrink-0 text-[1.2rem]">{{ p.role === 'PERSONAL_TRAINER' ? '💪' : '🥗' }}</div>
         <div class="flex-1 min-w-0">
@@ -15,6 +15,6 @@
   </div>
   <div class="text-center py-12" *ngIf="professionals.length === 0">
     <div class="text-[2.5rem] mb-3 opacity-35">💪</div>
-    <p class="text-[0.85rem] text-[#ccd8ed] italic">Nessun professionista assegnato</p>
+    <p class="text-[0.85rem] text-[var(--color-border-subtle)] italic">Nessun professionista assegnato</p>
   </div>
 </div>

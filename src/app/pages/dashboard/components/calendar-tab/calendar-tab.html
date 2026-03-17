@@ -23,11 +23,11 @@
     </div>
   </div>
   <div class="calendar-grid-scroll flex-1 overflow-y-scroll overflow-x-hidden pb-[calc(env(safe-area-inset-bottom)+4rem)] sm:pb-[env(safe-area-inset-bottom)]" [class.hidden]="agendaView">
-    <div class="calendar-grid min-h-full bg-[#f2f6fc] grid grid-cols-[44px_repeat(3,1fr)] sm:grid-cols-[48px_repeat(3,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]">
-      <div class="time-col border-r border-[#ccd8ed] sticky left-0 bg-white z-[5] shadow-[2px_0_8px_rgba(26,52,98,0.05)]">
+    <div class="calendar-grid min-h-full bg-[var(--color-bg-subtle)] grid grid-cols-[44px_repeat(3,1fr)] sm:grid-cols-[48px_repeat(3,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]">
+      <div class="time-col border-r border-[var(--color-border-subtle)] sticky left-0 bg-white z-[5] shadow-[2px_0_8px_rgba(26,52,98,0.05)]">
         <div class="time-slot-label" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)" [class.half-hour]="!isFullHour(slot)">{{ slot }}</div>
       </div>
-      <div class="day-col border-r border-[#ccd8ed]/60" *ngFor="let day of weekDays" [class.today-col]="isToday(day)">
+      <div class="day-col border-r border-[var(--color-border-subtle)]/60" *ngFor="let day of weekDays" [class.today-col]="isToday(day)">
         <div class="hour-cell" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)" [class.half-hour]="!isFullHour(slot)">
           <div class="booking-card cursor-pointer" *ngFor="let b of getBookingsForSlot(day, slot)" [class]="'booking-card ' + getBookingClass(b)" (click)="openCallModalEvent.emit(b)">
             <div class="booking-time">{{ b.startTime }} – {{ b.endTime }}</div>
@@ -40,26 +40,26 @@
   </div>
   <div class="empty-state absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none" *ngIf="!isLoading && bookings.length === 0 && !agendaView">
     <div class="text-[2.5rem] mb-3 opacity-35">📅</div>
-    <p class="empty-title font-['Darker_Grotesque'] text-[1.05rem] font-extrabold italic text-[#ccd8ed] mb-1">Nessuna prenotazione</p>
+    <p class="empty-title font-['Darker_Grotesque'] text-[1.05rem] font-extrabold italic text-[var(--color-border-subtle)] mb-1">Nessuna prenotazione</p>
     <p class="text-[0.78rem] text-[#e0e8f5]" *ngIf="isClient">Non hai ancora prenotazioni con i tuoi professionisti.</p>
     <p class="text-[0.78rem] text-[#e0e8f5]" *ngIf="isProfessional">Nessun cliente ha ancora prenotato con te.</p>
   </div>
   <!-- AGENDA VIEW mobile -->
-  <div class="agenda-view sm:hidden flex-1 overflow-y-auto px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom)+4rem)] flex flex-col bg-[#f2f6fc]" *ngIf="agendaView">
+  <div class="agenda-view sm:hidden flex-1 overflow-y-auto px-4 pt-4 pb-[calc(1rem+env(safe-area-inset-bottom)+4rem)] flex flex-col bg-[var(--color-bg-subtle)]" *ngIf="agendaView">
     <div class="flex justify-center py-12" *ngIf="isLoading"><div class="loading-spinner w-8 h-8 rounded-full border-2 border-[var(--color-accent-gold)]/20 border-t-[var(--color-accent-gold)]"></div></div>
     <ng-container *ngIf="!isLoading">
       <ng-container *ngFor="let day of getAgendaDays()">
         <div class="agenda-day-block mb-5 last:mb-0">
           <div class="flex items-center gap-3 mb-2">
-            <div class="agenda-date-badge flex-shrink-0 w-11 bg-white border border-[#ccd8ed] rounded-[10px] py-[5px] text-center shadow-sm" [class.today-badge]="isToday(day)">
+            <div class="agenda-date-badge flex-shrink-0 w-11 bg-white border border-[var(--color-border-subtle)] rounded-[10px] py-[5px] text-center shadow-sm" [class.today-badge]="isToday(day)">
               <div class="text-[1.1rem] font-black leading-none" [style.color]="isToday(day) ? 'var(--color-accent-gold)' : 'var(--color-text-main)'">{{ getDayNumber(day) }}</div>
               <div class="text-[0.58rem] font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">{{ getMonthShort(day) }}</div>
             </div>
-            <div class="flex-1 h-px bg-[#ccd8ed]/55"></div>
+            <div class="flex-1 h-px bg-[var(--color-border-subtle)]/55"></div>
             <span class="text-[0.68rem] font-semibold text-[var(--color-accent-gold)] uppercase tracking-wide flex-shrink-0" *ngIf="isToday(day)">Oggi</span>
           </div>
           <div class="ml-[52px] flex flex-col gap-[6px]">
-            <div class="agenda-booking-row flex items-center gap-3 px-4 py-[10px] bg-white border border-[#ccd8ed] rounded-xl shadow-sm cursor-pointer" *ngFor="let b of getBookingsForAgendaDay(day)" [class.opacity-50]="b.status === 'CANCELLED'" (click)="openCallModalEvent.emit(b)">
+            <div class="agenda-booking-row flex items-center gap-3 px-4 py-[10px] bg-white border border-[var(--color-border-subtle)] rounded-xl shadow-sm cursor-pointer" *ngFor="let b of getBookingsForAgendaDay(day)" [class.opacity-50]="b.status === 'CANCELLED'" (click)="openCallModalEvent.emit(b)">
               <div class="w-[7px] h-[7px] rounded-full flex-shrink-0" [style.backgroundColor]="b.status === 'CANCELLED' ? 'var(--color-text-muted)' : b.professionalRole === 'NUTRITIONIST' ? '#2d5fa8' : 'var(--color-primary-navy)'"></div>
               <div class="flex-1 min-w-0">
                 <div class="text-[0.875rem] font-semibold text-[var(--color-text-main)] truncate">{{ getBookingLabel(b) }}</div>
@@ -67,7 +67,7 @@
               </div>
               <span class="text-[0.7rem] font-bold flex-shrink-0" [style.color]="b.status === 'CONFIRMED' ? '#10b981' : b.status === 'PENDING' ? '#f59e0b' : 'var(--color-text-muted)'">{{ b.status === 'CONFIRMED' ? '●' : b.status === 'PENDING' ? '○' : '✕' }}</span>
             </div>
-            <p class="text-[0.76rem] text-[#ccd8ed] italic py-[2px]" *ngIf="getBookingsForAgendaDay(day).length === 0">Nessuna prenotazione</p>
+            <p class="text-[0.76rem] text-[var(--color-border-subtle)] italic py-[2px]" *ngIf="getBookingsForAgendaDay(day).length === 0">Nessuna prenotazione</p>
           </div>
         </div>
       </ng-container>

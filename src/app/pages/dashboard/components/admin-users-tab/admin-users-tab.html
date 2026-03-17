@@ -21,20 +21,20 @@
         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
       </svg>
       <input type="text" [(ngModel)]="searchQuery" placeholder="Cerca per nome o email..."
-        class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#ccd8ed] text-[0.82rem] text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-gold)] transition-all">
+        class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[var(--color-border-subtle)] text-[0.82rem] text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-gold)] transition-all">
     </div>
     <div class="flex gap-2 overflow-x-auto pb-1">
       <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
-        [ngClass]="roleFilter === 'ALL' ? 'bg-[var(--color-primary-navy)] text-white border-[var(--color-primary-navy)]' : 'bg-white text-[var(--color-text-muted)] border-[#ccd8ed]'"
+        [ngClass]="roleFilter === 'ALL' ? 'bg-[var(--color-primary-navy)] text-white border-[var(--color-primary-navy)]' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
         (click)="roleFilter = 'ALL'">Tutti</button>
       <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
-        [ngClass]="roleFilter === 'CLIENT' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-[var(--color-text-muted)] border-[#ccd8ed]'"
+        [ngClass]="roleFilter === 'CLIENT' ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
         (click)="roleFilter = 'CLIENT'">🧑 Clienti</button>
       <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
-        [ngClass]="roleFilter === 'PERSONAL_TRAINER' ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-[var(--color-text-muted)] border-[#ccd8ed]'"
+        [ngClass]="roleFilter === 'PERSONAL_TRAINER' ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
         (click)="roleFilter = 'PERSONAL_TRAINER'">💪 PT</button>
       <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
-        [ngClass]="roleFilter === 'NUTRITIONIST' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-[var(--color-text-muted)] border-[#ccd8ed]'"
+        [ngClass]="roleFilter === 'NUTRITIONIST' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
         (click)="roleFilter = 'NUTRITIONIST'">🥗 Nutri</button>
     </div>
   </div>
@@ -42,7 +42,7 @@
   <!-- Lista utenti -->
   <div class="flex flex-col gap-2.5" *ngIf="filteredUsers.length > 0">
     <div
-      class="flex items-center gap-3 bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm hover:border-[var(--color-accent-gold)]/40 transition-all"
+      class="flex items-center gap-3 bg-white border border-[var(--color-border-subtle)] rounded-2xl p-4 shadow-sm hover:border-[var(--color-accent-gold)]/40 transition-all"
       *ngFor="let user of filteredUsers">
       <div
         class="w-11 h-11 rounded-full bg-[var(--color-primary-navy)] flex items-center justify-center overflow-hidden border-2 border-[var(--color-accent-gold)]/40 flex-shrink-0">
@@ -69,7 +69,7 @@
   </div>
   <div class="text-center py-12" *ngIf="filteredUsers.length === 0">
     <div class="text-[2.5rem] mb-3 opacity-35">🔍</div>
-    <p class="text-[0.85rem] text-[#ccd8ed] italic">Nessun utente trovato</p>
+    <p class="text-[0.85rem] text-[var(--color-border-subtle)] italic">Nessun utente trovato</p>
   </div>
 
   <!-- Modale Crea Utente (Wizard) — Responsive -->
@@ -106,14 +106,14 @@
               <label
                 class="text-[0.62rem] sm:text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Nome</label>
               <input type="text" [(ngModel)]="newUser.firstName"
-                class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]"
+                class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.82rem] sm:text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]"
                 placeholder="Mario">
             </div>
             <div>
               <label
                 class="text-[0.62rem] sm:text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Cognome</label>
               <input type="text" [(ngModel)]="newUser.lastName"
-                class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]"
+                class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.82rem] sm:text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]"
                 placeholder="Rossi">
             </div>
           </div>
@@ -121,7 +121,7 @@
             <label
               class="text-[0.62rem] sm:text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Email</label>
             <input type="email" [(ngModel)]="newUser.email"
-              class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]"
+              class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.82rem] sm:text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]"
               placeholder="mario&#64;example.com">
           </div>
           <div>
@@ -129,7 +129,7 @@
               class="text-[0.62rem] sm:text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Password</label>
             <div class="relative">
               <input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="newUser.password"
-                class="w-full pl-3 pr-10 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]"
+                class="w-full pl-3 pr-10 py-2 sm:py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.82rem] sm:text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]"
                 placeholder="••••••••">
               <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-primary-navy)] transition-colors" (click)="showPassword = !showPassword" aria-label="Mostra o nascondi password">
                 <svg *ngIf="!showPassword" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -146,7 +146,7 @@
             <label
               class="text-[0.62rem] sm:text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Ruolo</label>
             <select [(ngModel)]="newUser.role"
-              class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] sm:text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]">
+              class="w-full px-3 py-2 sm:py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.82rem] sm:text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]">
               <option value="CLIENT">🧑 Cliente</option>
               <option value="PERSONAL_TRAINER">💪 Personal Trainer</option>
               <option value="NUTRITIONIST">🥗 Nutrizionista</option>
@@ -170,7 +170,7 @@
       <div class="flex-1 overflow-y-auto overscroll-contain" *ngIf="currentStep === 2">
         <div class="p-5 sm:p-6 flex flex-col gap-4 sm:gap-5">
           <!-- Mini riepilogo utente -->
-          <div class="flex items-center gap-3 bg-[#f2f6fc] rounded-xl p-3 border border-[#ccd8ed]/60">
+          <div class="flex items-center gap-3 bg-[var(--color-bg-subtle)] rounded-xl p-3 border border-[var(--color-border-subtle)]/60">
             <div
               class="w-10 h-10 rounded-full bg-[var(--color-accent-gold)]/15 flex items-center justify-center text-[1.1rem] flex-shrink-0">
               🧑</div>
@@ -190,10 +190,10 @@
               <button
                 class="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl border transition-all text-left w-full"
                 *ngFor="let plan of allPlans"
-                [ngClass]="newUser.planId === plan.id ? 'border-[var(--color-accent-gold)] bg-[var(--color-accent-gold)]/5' : 'border-[#ccd8ed] bg-white'"
+                [ngClass]="newUser.planId === plan.id ? 'border-[var(--color-accent-gold)] bg-[var(--color-accent-gold)]/5' : 'border-[var(--color-border-subtle)] bg-white'"
                 (click)="newUser.planId = plan.id">
                 <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
-                  [ngClass]="newUser.planId === plan.id ? 'border-[var(--color-accent-gold)] bg-[var(--color-accent-gold)]' : 'border-[#ccd8ed]'">
+                  [ngClass]="newUser.planId === plan.id ? 'border-[var(--color-accent-gold)] bg-[var(--color-accent-gold)]' : 'border-[var(--color-border-subtle)]'">
                   <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white" *ngIf="newUser.planId === plan.id"></div>
                 </div>
                 <div class="flex-1 min-w-0">
@@ -214,10 +214,10 @@
               <button
                 class="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl border transition-all text-left w-full"
                 *ngFor="let pt of availablePTs"
-                [ngClass]="newUser.assignedPTId === pt.id ? 'border-emerald-400 bg-emerald-50/50' : 'border-[#ccd8ed] bg-white'"
+                [ngClass]="newUser.assignedPTId === pt.id ? 'border-emerald-400 bg-emerald-50/50' : 'border-[var(--color-border-subtle)] bg-white'"
                 (click)="newUser.assignedPTId = pt.id">
                 <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
-                  [ngClass]="newUser.assignedPTId === pt.id ? 'border-emerald-500 bg-emerald-500' : 'border-[#ccd8ed]'">
+                  [ngClass]="newUser.assignedPTId === pt.id ? 'border-emerald-500 bg-emerald-500' : 'border-[var(--color-border-subtle)]'">
                   <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white" *ngIf="newUser.assignedPTId === pt.id">
                   </div>
                 </div>
@@ -239,10 +239,10 @@
               <button
                 class="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-xl border transition-all text-left w-full"
                 *ngFor="let nutri of availableNutritionists"
-                [ngClass]="newUser.assignedNutritionistId === nutri.id ? 'border-amber-400 bg-amber-50/50' : 'border-[#ccd8ed] bg-white'"
+                [ngClass]="newUser.assignedNutritionistId === nutri.id ? 'border-amber-400 bg-amber-50/50' : 'border-[var(--color-border-subtle)] bg-white'"
                 (click)="newUser.assignedNutritionistId = nutri.id">
                 <div class="w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
-                  [ngClass]="newUser.assignedNutritionistId === nutri.id ? 'border-amber-500 bg-amber-500' : 'border-[#ccd8ed]'">
+                  [ngClass]="newUser.assignedNutritionistId === nutri.id ? 'border-amber-500 bg-amber-500' : 'border-[var(--color-border-subtle)]'">
                   <div class="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white"
                     *ngIf="newUser.assignedNutritionistId === nutri.id"></div>
                 </div>
@@ -256,7 +256,7 @@
           </div>
 
           <!-- Riepilogo selezioni -->
-          <div class="bg-[#f2f6fc] rounded-xl p-3 border border-[#ccd8ed]/60">
+          <div class="bg-[var(--color-bg-subtle)] rounded-xl p-3 border border-[var(--color-border-subtle)]/60">
             <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1.5">Riepilogo</div>
             <div class="flex flex-col gap-1">
               <div class="flex items-center justify-between"><span
@@ -283,7 +283,7 @@
       <!-- Footer Step 2 -->
       <div class="px-5 sm:px-6 pb-5 sm:pb-6 pt-2 flex-shrink-0 flex gap-2.5 sm:gap-3" *ngIf="currentStep === 2">
         <button
-          class="flex-1 py-2.5 sm:py-3 rounded-xl bg-white border border-[#ccd8ed] text-[var(--color-text-main)] text-[0.8rem] sm:text-[0.85rem] font-semibold hover:bg-[#f2f6fc] transition-all active:scale-[0.97]"
+          class="flex-1 py-2.5 sm:py-3 rounded-xl bg-white border border-[var(--color-border-subtle)] text-[var(--color-text-main)] text-[0.8rem] sm:text-[0.85rem] font-semibold hover:bg-[var(--color-bg-subtle)] transition-all active:scale-[0.97]"
           (click)="prevStep()">
           ← Indietro
         </button>

@@ -17,8 +17,8 @@
 .chat-messages-area {
   background-color: #e8edf5;
   background-image:
-    radial-gradient(circle at 20% 50%, rgba(201, 169, 110, 0.04) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(26, 52, 98, 0.04) 0%, transparent 50%);
+    radial-gradient(circle at 20% 50%, rgba(var(--color-accent-gold-rgb), 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(var(--color-primary-navy-rgb), 0.04) 0%, transparent 50%);
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
 }
@@ -28,7 +28,7 @@
   background: linear-gradient(135deg, var(--color-primary-navy), #1f3d6e);
   color: #fff;
   border-bottom-right-radius: 6px !important;
-  box-shadow: 0 1px 3px rgba(26, 52, 98, 0.15);
+  box-shadow: 0 1px 3px rgba(var(--color-primary-navy-rgb), 0.15);
 }
 
 /* Bolla messaggio — altro (sinistra) */
@@ -36,7 +36,7 @@
   background: #fff;
   color: var(--color-text-main);
   border-bottom-left-radius: 6px !important;
-  box-shadow: 0 1px 3px rgba(26, 52, 98, 0.08);
+  box-shadow: 0 1px 3px rgba(var(--color-primary-navy-rgb), 0.08);
 }
 
 /* Input textarea */
@@ -53,14 +53,14 @@
 
 /* Send button */
 .chat-send-btn {
-  background: #ccd8ed;
+  background: var(--color-border-subtle);
   color: var(--color-text-muted);
 }
 
 .chat-send-btn.active {
   background: linear-gradient(135deg, var(--color-accent-gold), #a88a53);
   color: var(--color-text-main);
-  box-shadow: 0 2px 10px rgba(201, 169, 110, 0.35);
+  box-shadow: 0 2px 10px rgba(var(--color-accent-gold-rgb), 0.35);
 }
 
 .chat-send-btn.active:active {
@@ -86,14 +86,14 @@
 /* Chat sidebar desktop */
 @media (min-width: 640px) {
   .chat-sidebar {
-    border-right: 1px solid #ccd8ed;
+    border-right: 1px solid var(--color-border-subtle);
   }
 }
 
 /* Chat main area desktop — sfondo pattern */
 @media (min-width: 640px) {
   .chat-main {
-    background-color: #f2f6fc;
+    background-color: var(--color-bg-subtle);
   }
 }
 
@@ -107,7 +107,7 @@
 }
 
 .chat-messages-area::-webkit-scrollbar-thumb {
-  background: rgba(26, 52, 98, 0.12);
+  background: rgba(var(--color-primary-navy-rgb), 0.12);
   border-radius: 2px;
 }
 

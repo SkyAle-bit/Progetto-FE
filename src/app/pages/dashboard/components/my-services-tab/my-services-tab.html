@@ -9,12 +9,12 @@
     <button *ngFor="let tab of ['scheda', 'dieta', 'polizza']"
       class="flex flex-col items-center justify-center gap-1 sm:gap-2 p-3 sm:p-5 rounded-xl sm:rounded-2xl transition-all border-2" [ngClass]="activeTab === tab 
         ? 'border-[var(--color-primary-navy)] bg-[var(--color-primary-navy)]/5 shadow-sm transform scale-[1.02]' 
-        : 'border-[#ccd8ed] bg-white text-[var(--color-text-muted)] hover:border-[var(--color-accent-gold)]/50 hover:bg-[#f2f6fc] hover:-translate-y-1'"
+        : 'border-[var(--color-border-subtle)] bg-white text-[var(--color-text-muted)] hover:border-[var(--color-accent-gold)]/50 hover:bg-[var(--color-bg-subtle)] hover:-translate-y-1'"
       (click)="switchTab(tab)">
 
       <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center text-[1.1rem] sm:text-[1.5rem] sm:mb-1 transition-all" [ngClass]="activeTab === tab 
           ? (tab === 'scheda' ? 'bg-blue-100' : tab === 'dieta' ? 'bg-amber-100' : 'bg-indigo-100')
-          : 'bg-[#f2f6fc] hover:scale-110'">
+          : 'bg-[var(--color-bg-subtle)] hover:scale-110'">
         {{ getTabIcon(tab) }}
       </div>
 
@@ -41,7 +41,7 @@
       <span class="text-[0.65rem] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-[var(--color-primary-navy)]">{{ docs.length }}</span>
     </div>
     <div
-      class="bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm hover:border-[var(--color-accent-gold)]/40 transition-all flex flex-col gap-0"
+      class="bg-white border border-[var(--color-border-subtle)] rounded-2xl p-4 shadow-sm hover:border-[var(--color-accent-gold)]/40 transition-all flex flex-col gap-0"
       *ngFor="let doc of docs; let i = index" [ngClass]="i === 0 ? 'ring-2 ring-[var(--color-accent-gold)]/30' : ''">
       <div class="flex items-center gap-3">
         <div class="w-12 h-12 rounded-xl flex items-center justify-center text-[1.2rem] flex-shrink-0"
@@ -57,7 +57,7 @@
           <div class="text-[0.72rem] text-[var(--color-text-muted)] mt-0.5">Caricato il {{ formatDate(doc.uploadDate) }}</div>
         </div>
         <button
-          class="w-10 h-10 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] flex items-center justify-center text-[var(--color-text-main)] hover:bg-[#1a2742] hover:text-white hover:border-[var(--color-primary-navy)] transition-all flex-shrink-0"
+          class="w-10 h-10 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] flex items-center justify-center text-[var(--color-text-main)] hover:bg-[#1a2742] hover:text-white hover:border-[var(--color-primary-navy)] transition-all flex-shrink-0"
           title="Visualizza PDF" (click)="viewPdf(doc)">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

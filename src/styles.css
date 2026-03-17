@@ -6,12 +6,14 @@
 :root {
   /* Brand Colors - Navy */
   --color-primary-navy: #1a3462;
+  --color-primary-navy-rgb: 26, 52, 98;
   --color-primary-navy-dark: #112344;
   --color-primary-navy-darker: #0d1b3e;
   --color-primary-navy-darkest: #080e1c;
 
   /* Brand Colors - Gold */
   --color-accent-gold: #c9a96e;
+  --color-accent-gold-rgb: 201, 169, 110;
   --color-accent-gold-light: #e8c97a;
   --color-accent-gold-dark: #b5955a;
 
@@ -40,6 +42,40 @@
   /* Shadows */
   --shadow-sm: 0 4px 12px rgba(26, 52, 98, 0.05);
   --shadow-md: 0 10px 30px rgba(26, 52, 98, 0.08);
+}
+
+/* Animations */
+@keyframes shimmer {
+  0% { background-position: -468px 0; }
+  100% { background-position: 468px 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.skeleton-loader {
+  background: #f6f7f8;
+  background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background-repeat: no-repeat;
+  background-size: 800px 104px;
+  display: inline-block;
+  position: relative;
+  animation: shimmer 1.5s linear infinite forwards;
 }
 
 /* Global overrides */

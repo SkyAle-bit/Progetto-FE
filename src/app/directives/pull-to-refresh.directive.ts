@@ -62,7 +62,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
     this.spinner = this.renderer.createElement('div');
     this.renderer.setStyle(this.spinner, 'width', '20px');
     this.renderer.setStyle(this.spinner, 'height', '20px');
-    this.renderer.setStyle(this.spinner, 'border', '2.5px solid #ccd8ed');
+    this.renderer.setStyle(this.spinner, 'border', '2.5px solid var(--color-border-subtle)');
     this.renderer.setStyle(this.spinner, 'borderTop', '2.5px solid var(--color-accent-gold)');
     this.renderer.setStyle(this.spinner, 'borderRadius', '50%');
     this.renderer.setStyle(this.spinner, 'display', 'none');

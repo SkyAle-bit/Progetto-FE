@@ -56,7 +56,7 @@
   width: 50%;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #fbfcfe;
+  background: var(--color-bg-page);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1060,7 +1060,7 @@
 }
 
 .reviews-modal {
-  background: #fbfcfe;
+  background: var(--color-bg-page);
   border: 1px solid #dde3ee;
   border-radius: 18px;
   width: 100%;

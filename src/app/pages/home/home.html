@@ -1,4 +1,9 @@
 <div class="home-page">
+    <!-- Reading Progress Bar -->
+    <div class="reading-progress-container">
+        <div class="reading-progress-bar" #progressBar></div>
+    </div>
+
     <!-- Sfondo animato -->
     <div class="bg-shapes">
         <div class="shape shape-1"></div>
@@ -74,13 +79,21 @@
             </p>
 
             <div class="hero-cta">
-                <a routerLink="/register" class="btn-primary btn-large btn-shimmer" aria-label="Inizia il tuo percorso con Kore">
+                <a routerLink="/register" class="btn-primary btn-large btn-glow" aria-label="Inizia il tuo percorso con Kore">
                     Inizia il tuo percorso <span class="btn-arrow">→</span>
                 </a>
                 <a href="#features" class="btn-ghost btn-large" aria-label="Scopri i servizi di Kore">
                     Scopri di più
                 </a>
             </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="scroll-indicator" [class.hidden]="isNavScrolled">
+            <span class="mouse">
+                <span class="wheel"></span>
+            </span>
+            <span class="scroll-text">Scorri</span>
         </div>
     </main>
 
@@ -549,4 +562,11 @@
             </p>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" [class.visible]="showBackToTop" (click)="scrollToTop()" aria-label="Torna in cima">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path>
+        </svg>
+    </button>
 </div>

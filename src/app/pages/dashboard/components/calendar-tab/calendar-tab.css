@@ -5,13 +5,13 @@
 /* ── Nav buttons ────────────────────────────────────────────────────────── */
 .nav-btn:hover {
   background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(201, 169, 110, 0.50);
+  border-color: rgba(var(--color-accent-gold-rgb), 0.50);
   color: var(--color-accent-gold-light);
 }
 
 .today-btn:hover {
-  background: rgba(201, 169, 110, 0.26);
-  box-shadow: 0 0 12px rgba(201, 169, 110, 0.20);
+  background: rgba(var(--color-accent-gold-rgb), 0.26);
+  box-shadow: 0 0 12px rgba(var(--color-accent-gold-rgb), 0.20);
 }
 
 /* ── Toggle vista Agenda (solo mobile) ─────────────────────────────────── */
@@ -23,15 +23,15 @@
 
 .agenda-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(201, 169, 110, 0.40);
+  border-color: rgba(var(--color-accent-gold-rgb), 0.40);
   color: var(--color-accent-gold-light);
 }
 
 .agenda-toggle-btn.active {
-  background: rgba(201, 169, 110, 0.18);
-  border-color: rgba(201, 169, 110, 0.55);
+  background: rgba(var(--color-accent-gold-rgb), 0.18);
+  border-color: rgba(var(--color-accent-gold-rgb), 0.55);
   color: var(--color-accent-gold-light);
-  box-shadow: 0 0 10px rgba(201, 169, 110, 0.18);
+  box-shadow: 0 0 10px rgba(var(--color-accent-gold-rgb), 0.18);
 }
 
 /* ── Agenda view: booking row hover ────────────────────────────────────── */
@@ -42,13 +42,13 @@
 
 .agenda-booking-row:active {
   transform: scale(0.99);
-  box-shadow: 0 1px 4px rgba(26, 52, 98, 0.08);
+  box-shadow: 0 1px 4px rgba(var(--color-primary-navy-rgb), 0.08);
 }
 
 /* Badge data "oggi" — highlight champagne */
 .today-badge {
   border-color: var(--color-accent-gold) !important;
-  background: rgba(201, 169, 110, 0.08);
+  background: rgba(var(--color-accent-gold-rgb), 0.08);
 }
 
 /* ── Scrollbar nascosta ─────────────────────────────────────────────────── */
@@ -68,13 +68,13 @@
   justify-content: flex-end;
   padding: 0.25rem 0.6rem 0 0;
   font-size: 0.62rem;
-  color: #ccd8ed;
+  color: var(--color-border-subtle);
   font-weight: 500;
   letter-spacing: 0.04em;
 }
 
 .time-slot-label.full-hour {
-  border-top: 1px solid #ccd8ed;
+  border-top: 1px solid var(--color-border-subtle);
   color: var(--color-text-muted);
 }
 
@@ -93,7 +93,7 @@
 }
 
 .hour-cell.full-hour {
-  border-top: 1px solid #ccd8ed;
+  border-top: 1px solid var(--color-border-subtle);
 }
 
 .hour-cell.half-hour {
@@ -161,11 +161,11 @@
   background: linear-gradient(135deg, var(--color-accent-gold), var(--color-accent-gold-light));
   color: var(--color-primary-navy);
   font-weight: 700;
-  box-shadow: 0 2px 12px rgba(201, 169, 110, 0.40);
+  box-shadow: 0 2px 12px rgba(var(--color-accent-gold-rgb), 0.40);
 }
 
 .day-col.today-col {
-  background: rgba(201, 169, 110, 0.04);
+  background: rgba(var(--color-accent-gold-rgb), 0.04);
 }
 
 /* ── Booking cards ──────────────────────────────────────────────────────── */
@@ -184,11 +184,11 @@
 .booking-card:hover {
   opacity: 0.85;
   transform: translateX(2px);
-  box-shadow: 0 2px 8px rgba(26, 52, 98, 0.12);
+  box-shadow: 0 2px 8px rgba(var(--color-primary-navy-rgb), 0.12);
 }
 
 .booking-pt {
-  background: rgba(26, 52, 98, 0.10);
+  background: rgba(var(--color-primary-navy-rgb), 0.10);
   border-color: var(--color-primary-navy);
   color: var(--color-primary-navy);
 }
@@ -201,7 +201,7 @@
 
 .booking-cancelled {
   background: rgba(143, 163, 200, 0.08);
-  border-color: #ccd8ed;
+  border-color: var(--color-border-subtle);
   color: var(--color-text-muted);
   opacity: 0.60;
 }

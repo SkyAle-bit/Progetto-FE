@@ -13,12 +13,12 @@
 
   <!-- KPI -->
   <div class="grid grid-cols-2 gap-3" *ngIf="!selectedClient">
-    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+    <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm text-center">
       <div class="text-[1.8rem] font-black text-[#6366f1] leading-none">{{ activePolicies }}</div>
       <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Polizze attive</div>
       <div class="mt-2 text-[1.2rem]">🛡️</div>
     </div>
-    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-4 shadow-sm text-center">
+    <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm text-center">
       <div class="text-[1.8rem] font-black text-red-500 leading-none">{{ expiredPolicies }}</div>
       <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Polizze scadute</div>
       <div class="mt-2 text-[1.2rem]">⚠️</div>
@@ -32,13 +32,13 @@
       <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
     </svg>
     <input type="text" [(ngModel)]="searchQuery" placeholder="Cerca cliente..."
-      class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[#ccd8ed] text-[0.82rem] text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-gold)] transition-all">
+      class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[var(--color-border-subtle)] text-[0.82rem] text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-gold)] transition-all">
   </div>
 
   <!-- Lista clienti con polizza -->
   <div class="flex flex-col gap-2.5" *ngIf="!selectedClient && filteredClients.length > 0">
     <div
-      class="flex items-center gap-3 bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm cursor-pointer hover:border-[#6366f1]/40 hover:shadow-md transition-all active:scale-[0.98]"
+      class="flex items-center gap-3 bg-white border border-[var(--color-border-subtle)] rounded-2xl p-4 shadow-sm cursor-pointer hover:border-[#6366f1]/40 hover:shadow-md transition-all active:scale-[0.98]"
       *ngFor="let sub of filteredClients" (click)="openClientDocs(sub)">
       <div
         class="w-11 h-11 rounded-full bg-[var(--color-primary-navy)] flex items-center justify-center border-2 border-[var(--color-accent-gold)]/40 flex-shrink-0">
@@ -63,14 +63,14 @@
   </div>
   <div class="text-center py-12" *ngIf="!selectedClient && filteredClients.length === 0">
     <div class="text-[2.5rem] mb-3 opacity-35">🛡️</div>
-    <p class="text-[0.85rem] text-[#ccd8ed] italic">Nessun cliente trovato</p>
+    <p class="text-[0.85rem] text-[var(--color-border-subtle)] italic">Nessun cliente trovato</p>
   </div>
 
   <!-- Dettaglio cliente polizza -->
   <ng-container *ngIf="selectedClient">
     <div class="flex items-center gap-3 mb-4">
       <button
-        class="w-8 h-8 rounded-lg bg-[#f2f6fc] border border-[#ccd8ed] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] transition-all"
+        class="w-8 h-8 rounded-lg bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] transition-all"
         (click)="closeClientDocs()">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -80,7 +80,7 @@
         {{ selectedClient.user.lastName }}</h3>
     </div>
 
-    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm mb-5">
+    <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-5 shadow-sm mb-5">
       <div class="grid grid-cols-2 gap-4">
         <div>
           <div class="text-[0.62rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-0.5">Piano</div>
@@ -143,7 +143,7 @@
       <div class="w-6 h-6 border-2 border-[#6366f1] border-t-transparent rounded-full animate-spin"></div>
     </div>
     <div class="flex flex-col gap-2.5" *ngIf="!docsLoading && clientDocs.length > 0">
-      <div class="flex items-center gap-3 bg-white rounded-xl border border-[#ccd8ed] p-4 shadow-sm"
+      <div class="flex items-center gap-3 bg-white rounded-xl border border-[var(--color-border-subtle)] p-4 shadow-sm"
         *ngFor="let doc of clientDocs">
         <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-[1.1rem] flex-shrink-0">📋
         </div>
@@ -153,7 +153,7 @@
         </div>
         <div class="flex items-center gap-1.5 flex-shrink-0">
           <button
-            class="w-8 h-8 rounded-lg bg-[#f2f6fc] border border-[#ccd8ed] flex items-center justify-center text-[var(--color-primary-navy)] hover:bg-[var(--color-primary-navy)] hover:text-white transition-all"
+            class="w-8 h-8 rounded-lg bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] flex items-center justify-center text-[var(--color-primary-navy)] hover:bg-[var(--color-primary-navy)] hover:text-white transition-all"
             (click)="viewPdf(doc)">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -172,7 +172,7 @@
         </div>
       </div>
     </div>
-    <div class="text-center py-8 bg-white rounded-2xl border border-[#ccd8ed] border-dashed"
+    <div class="text-center py-8 bg-white rounded-2xl border border-[var(--color-border-subtle)] border-dashed"
       *ngIf="!docsLoading && clientDocs.length === 0">
       <div class="text-[2rem] mb-2 opacity-40">📄</div>
       <p class="text-[0.82rem] text-[var(--color-text-muted)]">Nessun documento assicurativo</p>

@@ -1,7 +1,7 @@
 <div class="px-4 py-5 sm:max-w-[900px] sm:mx-auto sm:py-8 sm:px-8">
   <div class="flex items-center gap-3 mb-1" *ngIf="selectedClient">
     <button
-      class="w-8 h-8 rounded-lg bg-[#f2f6fc] border border-[#ccd8ed] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] transition-all flex-shrink-0"
+      class="w-8 h-8 rounded-lg bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-text-main)] transition-all flex-shrink-0"
       (click)="closeClientDetail()">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -18,7 +18,7 @@
   <ng-container *ngIf="!selectedClient">
     <div class="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4" *ngIf="myClients.length > 0">
       <div
-        class="flex items-center gap-3 bg-white border border-[#ccd8ed] rounded-2xl p-4 shadow-sm cursor-pointer hover:border-[var(--color-accent-gold)]/50 hover:shadow-md transition-all active:scale-[0.98]"
+        class="flex items-center gap-3 bg-white border border-[var(--color-border-subtle)] rounded-2xl p-4 shadow-sm cursor-pointer hover:border-[var(--color-accent-gold)]/50 hover:shadow-md transition-all active:scale-[0.98]"
         *ngFor="let client of myClients" (click)="openClientDetail(client)">
         <div
           class="w-12 h-12 rounded-full bg-[var(--color-primary-navy)] flex items-center justify-center overflow-hidden border-2 border-[var(--color-accent-gold)]/50 flex-shrink-0">
@@ -32,7 +32,7 @@
             }}</span>
           <span class="text-[0.72rem] text-[var(--color-text-muted)] truncate mt-[2px]">{{ client.email }}</span>
         </div>
-        <div class="w-8 h-8 rounded-full bg-[#f2f6fc] flex items-center justify-center text-[var(--color-accent-gold)] flex-shrink-0">
+        <div class="w-8 h-8 rounded-full bg-[var(--color-bg-subtle)] flex items-center justify-center text-[var(--color-accent-gold)] flex-shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
           </svg>
@@ -41,12 +41,12 @@
     </div>
     <div class="text-center py-12" *ngIf="myClients.length === 0">
       <div class="text-[2.5rem] mb-3 opacity-35">👥</div>
-      <p class="text-[0.85rem] text-[#ccd8ed] italic">Nessun cliente assegnato</p>
+      <p class="text-[0.85rem] text-[var(--color-border-subtle)] italic">Nessun cliente assegnato</p>
     </div>
   </ng-container>
 
   <ng-container *ngIf="selectedClient">
-    <div class="bg-white rounded-2xl border border-[#ccd8ed] p-5 shadow-sm mb-5 mt-3">
+    <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-5 shadow-sm mb-5 mt-3">
       <div class="flex items-center gap-4">
         <div
           class="w-14 h-14 rounded-full bg-[var(--color-primary-navy)] flex items-center justify-center overflow-hidden border-[3px] border-[var(--color-accent-gold)]/50 flex-shrink-0">
@@ -72,10 +72,10 @@
         class="relative rounded-2xl border-2 border-dashed p-6 text-center transition-all duration-200 mb-3 hidden sm:block"
         [ngClass]="isDragOver
           ? 'border-[var(--color-accent-gold)] bg-[var(--color-accent-gold)]/10 scale-[1.01]'
-          : 'border-[#ccd8ed] bg-[#f2f6fc]/50 hover:border-[var(--color-accent-gold)]/40'" [class.pointer-events-none]="isUploading">
+          : 'border-[var(--color-border-subtle)] bg-[var(--color-bg-subtle)]/50 hover:border-[var(--color-accent-gold)]/40'" [class.pointer-events-none]="isUploading">
         <div class="flex flex-col items-center gap-2">
           <div class="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200"
-            [ngClass]="isDragOver ? 'bg-[var(--color-accent-gold)]/20 scale-110' : 'bg-[#ccd8ed]/30'">
+            [ngClass]="isDragOver ? 'bg-[var(--color-accent-gold)]/20 scale-110' : 'bg-[var(--color-border-subtle)]/30'">
             <svg class="w-6 h-6 transition-all" [ngClass]="isDragOver ? 'text-[var(--color-accent-gold)]' : 'text-[var(--color-text-muted)]'" fill="none"
               stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -114,24 +114,24 @@
         </label>
       </div>
     </div>
-    <div class="flex items-center justify-center gap-2 py-3 mb-4 bg-[#f2f6fc] rounded-xl border border-[#ccd8ed]"
+    <div class="flex items-center justify-center gap-2 py-3 mb-4 bg-[var(--color-bg-subtle)] rounded-xl border border-[var(--color-border-subtle)]"
       *ngIf="isUploading">
       <div class="w-4 h-4 border-2 border-[var(--color-accent-gold)] border-t-transparent rounded-full animate-spin"></div>
       <span class="text-[0.82rem] text-[var(--color-text-muted)] font-medium">Caricamento in corso...</span>
     </div>
     <div class="flex gap-2 mb-4">
       <button class="px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold transition-all border"
-        [ngClass]="docFilterType === 'ALL' ? 'bg-[var(--color-primary-navy)] text-white border-[var(--color-primary-navy)]' : 'bg-white text-[var(--color-text-muted)] border-[#ccd8ed] hover:border-[var(--color-primary-navy)]/30'"
+        [ngClass]="docFilterType === 'ALL' ? 'bg-[var(--color-primary-navy)] text-white border-[var(--color-primary-navy)]' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)] hover:border-[var(--color-primary-navy)]/30'"
         (click)="onDocFilterChange('ALL')">Tutti</button>
       <button class="px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold transition-all border"
-        [ngClass]="docFilterType === 'WORKOUT_PLAN' ? 'bg-[var(--color-primary-navy)] text-white border-[var(--color-primary-navy)]' : 'bg-white text-[var(--color-text-muted)] border-[#ccd8ed] hover:border-[var(--color-primary-navy)]/30'"
+        [ngClass]="docFilterType === 'WORKOUT_PLAN' ? 'bg-[var(--color-primary-navy)] text-white border-[var(--color-primary-navy)]' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)] hover:border-[var(--color-primary-navy)]/30'"
         (click)="onDocFilterChange('WORKOUT_PLAN')">💪 Schede</button>
       <button class="px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold transition-all border"
-        [ngClass]="docFilterType === 'DIET_PLAN' ? 'bg-[var(--color-accent-gold)] text-[var(--color-text-main)] border-[var(--color-accent-gold)]' : 'bg-white text-[var(--color-text-muted)] border-[#ccd8ed] hover:border-[var(--color-accent-gold)]/30'"
+        [ngClass]="docFilterType === 'DIET_PLAN' ? 'bg-[var(--color-accent-gold)] text-[var(--color-text-main)] border-[var(--color-accent-gold)]' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)] hover:border-[var(--color-accent-gold)]/30'"
         (click)="onDocFilterChange('DIET_PLAN')">🥗 Diete</button>
     </div>
     <div class="flex flex-col gap-2.5" *ngIf="!clientDocsLoading && clientDocuments.length > 0">
-      <div class="bg-white rounded-xl border border-[#ccd8ed] p-4 shadow-sm hover:border-[var(--color-accent-gold)]/40 transition-all"
+      <div class="bg-white rounded-xl border border-[var(--color-border-subtle)] p-4 shadow-sm hover:border-[var(--color-accent-gold)]/40 transition-all"
         *ngFor="let doc of clientDocuments">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-lg flex items-center justify-center text-[1.2rem] flex-shrink-0"
@@ -150,7 +150,7 @@
             <!-- Pulsante Appunti -->
             <button *ngIf="canEditNotes(doc)"
               class="w-8 h-8 rounded-lg border flex items-center justify-center transition-all"
-              [ngClass]="editingNotesDocId === doc.id ? 'bg-[var(--color-accent-gold)] text-[var(--color-text-main)] border-[var(--color-accent-gold)]' : doc.notes ? 'bg-amber-50 border-amber-300 text-amber-600' : 'bg-[#f2f6fc] border-[#ccd8ed] text-[var(--color-text-main)] hover:bg-[var(--color-text-main)] hover:text-white'"
+              [ngClass]="editingNotesDocId === doc.id ? 'bg-[var(--color-accent-gold)] text-[var(--color-text-main)] border-[var(--color-accent-gold)]' : doc.notes ? 'bg-amber-50 border-amber-300 text-amber-600' : 'bg-[var(--color-bg-subtle)] border-[var(--color-border-subtle)] text-[var(--color-text-main)] hover:bg-[var(--color-text-main)] hover:text-white'"
               title="Appunti" (click)="toggleNotesEdit(doc)">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -158,7 +158,7 @@
               </svg>
             </button>
             <button
-              class="w-8 h-8 rounded-lg bg-[#f2f6fc] border border-[#ccd8ed] flex items-center justify-center text-[var(--color-primary-navy)] hover:bg-[var(--color-primary-navy)] hover:text-white transition-all"
+              class="w-8 h-8 rounded-lg bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] flex items-center justify-center text-[var(--color-primary-navy)] hover:bg-[var(--color-primary-navy)] hover:text-white transition-all"
               title="Visualizza PDF" (click)="viewDocument(doc)">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -194,11 +194,11 @@
           <label class="text-[0.62rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold">✏️ Appunti per il
             cliente</label>
           <textarea [(ngModel)]="editingNotesText" rows="3"
-            class="w-full px-3 py-2.5 rounded-xl bg-[#f2f6fc] border border-[#ccd8ed] text-[0.82rem] text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-gold)] resize-none transition-all"
+            class="w-full px-3 py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.82rem] text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-gold)] resize-none transition-all"
             placeholder="Scrivi gli appunti per questo documento..."></textarea>
           <div class="flex gap-2 justify-end">
             <button
-              class="px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold border border-[#ccd8ed] text-[var(--color-text-muted)] bg-white hover:bg-[#f2f6fc] transition-all"
+              class="px-3 py-1.5 rounded-lg text-[0.75rem] font-semibold border border-[var(--color-border-subtle)] text-[var(--color-text-muted)] bg-white hover:bg-[var(--color-bg-subtle)] transition-all"
               (click)="toggleNotesEdit(doc)">Annulla</button>
             <button
               class="px-4 py-1.5 rounded-lg text-[0.75rem] font-bold bg-[var(--color-accent-gold)] text-[var(--color-text-main)] hover:bg-[#b8922a] transition-all active:scale-[0.97]"
@@ -212,11 +212,11 @@
     <div class="flex items-center justify-center py-10" *ngIf="clientDocsLoading">
       <div class="w-6 h-6 border-2 border-[var(--color-accent-gold)] border-t-transparent rounded-full animate-spin"></div>
     </div>
-    <div class="text-center py-10 bg-white rounded-2xl border border-[#ccd8ed] border-dashed"
+    <div class="text-center py-10 bg-white rounded-2xl border border-[var(--color-border-subtle)] border-dashed"
       *ngIf="!clientDocsLoading && clientDocuments.length === 0">
       <div class="text-[2rem] mb-2 opacity-40">📄</div>
       <p class="text-[0.85rem] text-[var(--color-text-muted)] font-medium">Nessun documento caricato</p>
-      <p class="text-[0.72rem] text-[#ccd8ed] mt-1">{{ canUploadWorkout() ? 'Carica una scheda usando il pulsante sopra'
+      <p class="text-[0.72rem] text-[var(--color-border-subtle)] mt-1">{{ canUploadWorkout() ? 'Carica una scheda usando il pulsante sopra'
         : 'Carica una dieta usando il pulsante sopra' }}</p>
     </div>
 
