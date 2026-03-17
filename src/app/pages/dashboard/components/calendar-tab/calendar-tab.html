@@ -1,8 +1,8 @@
 <!-- Mobile week nav -->
 <div class="sm:hidden flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2 bg-[#1a3462] border-b border-[#c9a96e]/18">
-  <button class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 border border-white/20 rounded-lg text-white/65 text-base cursor-pointer transition-all flex-shrink-0" (click)="prevWeek()">‹</button>
-  <span class="text-center text-[0.8rem] font-medium text-white/90 tracking-[0.01em] whitespace-nowrap min-w-[130px]">{{ getWeekLabel() }}</span>
-  <button class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 border border-white/20 rounded-lg text-white/65 text-base cursor-pointer transition-all flex-shrink-0" (click)="nextWeek()">›</button>
+  <button *ngIf="!agendaView" class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 border border-white/20 rounded-lg text-white/65 text-base cursor-pointer transition-all flex-shrink-0" (click)="prevWeek()">‹</button>
+  <span *ngIf="!agendaView" class="text-center text-[0.8rem] font-medium text-white/90 tracking-[0.01em] whitespace-nowrap min-w-[130px]">{{ getWeekLabel() }}</span>
+  <button *ngIf="!agendaView" class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 border border-white/20 rounded-lg text-white/65 text-base cursor-pointer transition-all flex-shrink-0" (click)="nextWeek()">›</button>
   <button class="today-btn px-2 py-1 bg-[#c9a96e]/15 border border-[#c9a96e]/45 rounded-[6px] text-[#e8c97a] text-[0.72rem] font-semibold uppercase tracking-[0.05em] cursor-pointer transition-all flex-shrink-0" (click)="goToToday()">Oggi</button>
   <button class="agenda-toggle-btn flex-shrink-0 flex items-center gap-1 px-2 py-1 border border-white/20 rounded-[6px] text-[0.7rem] font-semibold tracking-[0.03em] cursor-pointer transition-all" [class.active]="agendaView" (click)="toggleAgendaView()"><span>☰</span></button>
 </div>
