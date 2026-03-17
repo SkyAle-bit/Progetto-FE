@@ -27,6 +27,10 @@ export class InsuranceHomeTabComponent {
   isUploading: boolean = false;
   isDragOver: boolean = false;
 
+  get isMobile(): boolean {
+    return window.innerWidth < 640;
+  }
+
   // PDF viewer
   pdfOpen: boolean = false;
   pdfUrl: SafeResourceUrl | null = null;
@@ -72,8 +76,14 @@ export class InsuranceHomeTabComponent {
       next: (blob) => {
         if (this.blobUrl) URL.revokeObjectURL(this.blobUrl);
         this.blobUrl = URL.createObjectURL(blob);
-        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.blobUrl);
-        this.pdfLoading = false; this.cdr.detectChanges();
+        // Su mobile, apri direttamente in un nuovo tab
+        if (this.isMobile) {
+          window.open(this.blobUrl, '_blank');
+          this.pdfOpen = false; this.pdfLoading = false; this.cdr.detectChanges();
+        } else {
+          this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.blobUrl + '#view=FitH&zoom=page-width');
+          this.pdfLoading = false; this.cdr.detectChanges();
+        }
       },
       error: () => { this.pdfOpen = false; this.pdfLoading = false; this.cdr.detectChanges(); }
     });
