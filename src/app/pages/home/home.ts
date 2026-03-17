@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, ElementRef, NgZone, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef, ElementRef, NgZone, ViewChild, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -23,18 +23,34 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('carouselVideo') carouselVideoRef?: ElementRef<HTMLVideoElement>;
 
     carouselVideos = [
-        { key: 'dashboard', title: 'Dashboard', src: 'assets/videos/carosello/dashboard.mp4' },
-        { key: 'calendario', title: 'Calendario', src: 'assets/videos/carosello/calendario.mp4' },
-        { key: 'prenotazione', title: 'Prenotazione', src: 'assets/videos/carosello/prenotazione.mp4' },
-        { key: 'chat', title: 'Chat', src: 'assets/videos/carosello/chat.mp4' },
-        { key: 'scheda', title: 'Scheda', src: 'assets/videos/carosello/scheda.mp4' }
+        { key: 'dashboard', title: 'Dashboard', src: 'assets/videos/carosello/dashboard.mp4', mobileSrc: 'assets/videos/carosello_mobile/dashboard.mp4' },
+        { key: 'calendario', title: 'Calendario', src: 'assets/videos/carosello/calendario.mp4', mobileSrc: 'assets/videos/carosello_mobile/calendario.mp4' },
+        { key: 'prenotazione', title: 'Prenotazione', src: 'assets/videos/carosello/prenotazione.mp4', mobileSrc: 'assets/videos/carosello_mobile/prenotazione.mp4' },
+        { key: 'chat', title: 'Chat', src: 'assets/videos/carosello/chat.mp4', mobileSrc: 'assets/videos/carosello_mobile/chat.mp4' },
+        { key: 'scheda', title: 'Scheda', src: 'assets/videos/carosello/scheda.mp4', mobileSrc: 'assets/videos/carosello_mobile/scheda.mp4' }
     ];
     currentCarouselVideoIndex: number = 0;
     videoProgress: number = 0;
     isCarouselPlaying: boolean = false;
+
+    getVideoSrc(video: any): string {
+        return window.innerWidth < 640 ? video.mobileSrc : video.src;
+    }
     private readonly maxCarouselAutoplayRetries = 6;
     private carouselSectionObserver!: IntersectionObserver;
     private hasCarouselStarted: boolean = false;
+    private lastIsMobile: boolean = window.innerWidth < 640;
+
+    @HostListener('window:resize')
+    onResize(): void {
+        const isMobileObj = window.innerWidth < 640;
+        if (this.lastIsMobile !== isMobileObj) {
+            this.lastIsMobile = isMobileObj;
+            if (this.hasCarouselStarted) {
+                this.playCurrentCarouselVideo();
+            }
+        }
+    }
 
     // FAQ
     openFaqIndex: number = -1;

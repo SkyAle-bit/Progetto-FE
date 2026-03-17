@@ -195,8 +195,8 @@
                     preload="metadata"
                     (ended)="onCarouselVideoEnded()"
                     (timeupdate)="onVideoTimeUpdate()"
-                    [attr.aria-label]="'Demo sezione ' + carouselVideos[currentCarouselVideoIndex].title">
-                    <source [src]="carouselVideos[currentCarouselVideoIndex].src" type="video/mp4">
+                    [attr.aria-label]="'Demo sezione ' + carouselVideos[currentCarouselVideoIndex].title"
+                    [src]="getVideoSrc(carouselVideos[currentCarouselVideoIndex])">
                 </video>
 
                 <!-- Play overlay -->
@@ -211,25 +211,9 @@
                     </svg>
                 </button>
 
-                <!-- Navigation Arrows -->
-                <button
-                    type="button"
-                    class="carousel-nav-arrow prev"
-                    (click)="previousCarouselVideo()"
-                    aria-label="Video precedente">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M15 18l-6-6 6-6"/>
-                    </svg>
-                </button>
-                <button
-                    type="button"
-                    class="carousel-nav-arrow next"
-                    (click)="nextCarouselVideo()"
-                    aria-label="Video successivo">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 18l6-6-6-6"/>
-                    </svg>
-                </button>
+                <!-- Tap Navigation Zones -->
+                <div class="carousel-tap-zone prev-zone" (click)="previousCarouselVideo()" aria-label="Video precedente"></div>
+                <div class="carousel-tap-zone next-zone" (click)="nextCarouselVideo()" aria-label="Video successivo"></div>
             </div>
 
             <!-- Card strip (desktop) -->
