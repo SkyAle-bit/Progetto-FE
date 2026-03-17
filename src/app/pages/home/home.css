@@ -780,7 +780,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 
     /* ── Mobile carousel: Apple-style card + peek + dots ── */
     .experience-carousel-section { padding: 4.5rem 0; }
-    .experience-carousel { position: relative; padding: 0 1rem; overflow: visible; }
+    .experience-carousel { position: relative; padding: 0 1.2rem; overflow: visible; }
     .carousel-video-wrapper {
         border-radius: 22px;
         background: #f4f4f8;
@@ -929,7 +929,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
     .mobile-auth-buttons a { padding: 0.75rem 1.2rem; font-size: 0.9rem; }
 
     .experience-carousel-section { padding: 2.5rem 0; }
-    .experience-carousel { padding: 0 0.6rem; }
+    .experience-carousel { padding: 0 1rem; }
     .carousel-video-wrapper { border-radius: 18px; }
     .experience-video { border-radius: 18px; }
     .carousel-stories-bar { top: 8px; left: 8px; right: 8px; gap: 3px; }

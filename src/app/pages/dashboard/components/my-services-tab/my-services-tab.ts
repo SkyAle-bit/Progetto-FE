@@ -58,7 +58,7 @@ export class MyServicesTabComponent implements OnInit {
       next: (blob) => {
         if (this.blobUrl) URL.revokeObjectURL(this.blobUrl);
         this.blobUrl = URL.createObjectURL(blob);
-        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.blobUrl);
+        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.blobUrl + '#view=FitH');
         this.pdfLoading = false; this.cdr.detectChanges();
       },
       error: () => { this.pdfOpen = false; this.pdfLoading = false; this.cdr.detectChanges(); }
