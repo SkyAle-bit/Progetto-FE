@@ -42,6 +42,10 @@ export class ClientsTabComponent {
   pdfViewerLoading: boolean = false;
   private currentBlobUrl: string | null = null;
 
+  get isMobile(): boolean {
+    return window.innerWidth < 640;
+  }
+
   openClientDetail(client: any): void {
     this.selectedClient = client;
     this.clientDocuments = [];
@@ -178,9 +182,15 @@ export class ClientsTabComponent {
         // Revoca URL precedente se esiste
         if (this.currentBlobUrl) URL.revokeObjectURL(this.currentBlobUrl);
         this.currentBlobUrl = URL.createObjectURL(blob);
-        this.pdfViewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.currentBlobUrl);
-        this.pdfViewerLoading = false;
-        this.cdr.detectChanges();
+        // Su mobile, apri direttamente in un nuovo tab
+        if (this.isMobile) {
+          window.open(this.currentBlobUrl, '_blank');
+          this.pdfViewerOpen = false; this.pdfViewerLoading = false; this.cdr.detectChanges();
+        } else {
+          this.pdfViewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.currentBlobUrl + '#view=FitH&zoom=page-width');
+          this.pdfViewerLoading = false;
+          this.cdr.detectChanges();
+        }
       },
       error: () => {
         this.pdfViewerOpen = false;

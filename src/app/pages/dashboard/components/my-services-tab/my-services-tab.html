@@ -5,24 +5,24 @@
     assicurativa</p>
 
   <!-- Modern Selector Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+  <div class="grid grid-cols-3 gap-2 sm:gap-3 mb-8">
     <button *ngFor="let tab of ['scheda', 'dieta', 'polizza']"
-      class="flex flex-col items-center justify-center gap-2 p-5 rounded-2xl transition-all border-2" [ngClass]="activeTab === tab 
+      class="flex flex-col items-center justify-center gap-1 sm:gap-2 p-3 sm:p-5 rounded-xl sm:rounded-2xl transition-all border-2" [ngClass]="activeTab === tab 
         ? 'border-[#1a3462] bg-[#1a3462]/5 shadow-sm transform scale-[1.02]' 
         : 'border-[#ccd8ed] bg-white text-[#8fa3c8] hover:border-[#c9a96e]/50 hover:bg-[#f2f6fc] hover:-translate-y-1'"
       (click)="switchTab(tab)">
 
-      <div class="w-12 h-12 rounded-xl flex items-center justify-center text-[1.5rem] mb-1 transition-all" [ngClass]="activeTab === tab 
+      <div class="w-9 h-9 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center text-[1.1rem] sm:text-[1.5rem] sm:mb-1 transition-all" [ngClass]="activeTab === tab 
           ? (tab === 'scheda' ? 'bg-blue-100' : tab === 'dieta' ? 'bg-amber-100' : 'bg-indigo-100')
           : 'bg-[#f2f6fc] hover:scale-110'">
         {{ getTabIcon(tab) }}
       </div>
 
-      <div class="text-[0.95rem] font-bold" [ngClass]="activeTab === tab ? 'text-[#1a2744]' : 'text-[#8fa3c8]'">
+      <div class="text-[0.75rem] sm:text-[0.95rem] font-bold" [ngClass]="activeTab === tab ? 'text-[#1a2744]' : 'text-[#8fa3c8]'">
         {{ getTabLabel(tab) }}
       </div>
 
-      <div class="text-[0.7rem] text-center" [ngClass]="activeTab === tab ? 'text-[#1a2744]/70' : 'text-[#8fa3c8]/70'">
+      <div class="hidden sm:block text-[0.7rem] text-center" [ngClass]="activeTab === tab ? 'text-[#1a2744]/70' : 'text-[#8fa3c8]/70'">
         {{ tab === 'scheda' ? 'Il tuo piano di allenamento' : tab === 'dieta' ? 'Il tuo piano nutrizionale' : 'Le tue
         polizze' }}
       </div>
