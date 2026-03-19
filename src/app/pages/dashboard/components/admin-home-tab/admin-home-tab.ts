@@ -13,6 +13,7 @@ export class AdminHomeTabComponent {
   @Input() allUsers: any[] = [];
   @Input() allPlans: any[] = [];
   @Input() allSubscriptions: any[] = [];
+  @Input() isModerator: boolean = false;
   @Output() setTabEvent = new EventEmitter<string>();
 
   get totalUsers(): number { return this.allUsers.length; }

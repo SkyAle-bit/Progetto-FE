@@ -14,6 +14,19 @@ export interface AuthResponse {
   profilePicture?: string;
 }
 
+export type UserManagementMode = 'admin' | 'moderator';
+
+export interface ManagedUserPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password?: string;
+  role: string;
+  planId?: number;
+  assignedPTId?: number;
+  assignedNutritionistId?: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -150,6 +163,28 @@ export class AuthService {
 
   updateUser(userId: number, data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/api/admin/users/${userId}`, data);
+  }
+
+  private usersBaseByMode(mode: UserManagementMode): string {
+    return mode === 'moderator'
+      ? `${this.apiUrl}/api/moderator/users`
+      : `${this.apiUrl}/api/admin/users`;
+  }
+
+  getUsersByMode(mode: UserManagementMode): Observable<any[]> {
+    return this.http.get<any[]>(this.usersBaseByMode(mode));
+  }
+
+  createUserByMode(mode: UserManagementMode, data: ManagedUserPayload): Observable<any> {
+    return this.http.post(this.usersBaseByMode(mode), data);
+  }
+
+  updateUserByMode(mode: UserManagementMode, userId: number, data: Partial<ManagedUserPayload>): Observable<any> {
+    return this.http.put(`${this.usersBaseByMode(mode)}/${userId}`, data);
+  }
+
+  deleteUserByMode(mode: UserManagementMode, userId: number): Observable<any> {
+    return this.http.delete(`${this.usersBaseByMode(mode)}/${userId}`);
   }
 
   updateDocumentNotes(documentId: number, notes: string): Observable<any> {

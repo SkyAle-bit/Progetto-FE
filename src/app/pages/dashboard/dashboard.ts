@@ -298,7 +298,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       };
 
       this.authService.getUsersByMode('moderator').subscribe({
-        next: (users) => {
+        next: (users: any[]) => {
           this.allUsers = users ?? [];
           this.loadModeratorChatUsers(this.allUsers);
           checkDone();

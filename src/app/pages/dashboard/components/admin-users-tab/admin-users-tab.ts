@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, inject, ChangeDetectorRef } fro
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
+import { ManagedUserPayload } from '../../../../services/auth.service';
 import { ToastService } from '../../../../services/toast.service';
 
 @Component({
@@ -43,8 +44,9 @@ export class AdminUsersTabComponent {
 
   private readonly moderatorAllowedRoles = ['CLIENT', 'PERSONAL_TRAINER', 'NUTRITIONIST'];
 
-  private getErrorMessage(err: any, fallback: string): string {
-    return err?.error?.message || err?.error?.error || err?.message || fallback;
+  private getErrorMessage(err: unknown, fallback: string): string {
+    const e = err as { error?: { message?: string; error?: string }; message?: string };
+    return e?.error?.message || e?.error?.error || e?.message || fallback;
   }
 
   isAdminMode(): boolean {
@@ -154,7 +156,7 @@ export class AdminUsersTabComponent {
       return;
     }
 
-    const payload: any = {
+    const payload: ManagedUserPayload = {
       firstName: this.newUser.firstName,
       lastName: this.newUser.lastName,
       email: this.newUser.email,
@@ -175,7 +177,7 @@ export class AdminUsersTabComponent {
         this.toast.success('Utente Creato', `${this.newUser.firstName} ${this.newUser.lastName} e stato creato con successo.`);
         this.usersChanged.emit();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.creating = false;
         this.createError = this.getErrorMessage(err, 'Errore nella creazione');
         this.cdr.detectChanges();
@@ -187,7 +189,7 @@ export class AdminUsersTabComponent {
     if (!confirm(`Eliminare l'utente ${user.firstName} ${user.lastName}?`)) return;
     this.authService.deleteUserByMode(this.mode, user.id).subscribe({
       next: () => { this.toast.success('Eliminato', 'Utente eliminato con successo.'); this.usersChanged.emit(); },
-      error: (err) => { this.toast.error('Errore', this.getErrorMessage(err, 'Errore nell\'eliminazione')); }
+      error: (err: unknown) => { this.toast.error('Errore', this.getErrorMessage(err, 'Errore nell\'eliminazione')); }
     });
   }
 
@@ -224,7 +226,7 @@ export class AdminUsersTabComponent {
         this.toast.success('Utente Aggiornato', `${this.editUser.firstName} ${this.editUser.lastName} aggiornato con successo.`);
         this.usersChanged.emit();
       },
-      error: (err) => {
+      error: (err: unknown) => {
         this.editingUser = false;
         this.editError = this.getErrorMessage(err, 'Errore nell\'aggiornamento');
         this.cdr.detectChanges();
