@@ -13,9 +13,9 @@
   <p class="text-[0.78rem] sm:text-[0.85rem] text-[var(--color-text-muted)] mb-4 sm:mb-6">{{ filteredUsers.length }} utenti{{ roleFilter
     !== 'ALL' ? ' (' + getRoleLabel(roleFilter) + ')' : '' }}</p>
 
-  <!-- Ricerca + Filtro -->
-  <div class="flex flex-col sm:flex-row gap-3 mb-5">
-    <div class="flex-1 relative">
+  <!-- Ricerca -->
+  <div class="mb-3">
+    <div class="relative">
       <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--color-text-muted)]" fill="none" stroke="currentColor"
         viewBox="0 0 24 24" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -23,7 +23,10 @@
       <input type="text" [(ngModel)]="searchQuery" placeholder="Cerca per nome o email..."
         class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[var(--color-border-subtle)] text-[0.82rem] text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-gold)] transition-all">
     </div>
+  </div>
 
+  <!-- Filtri -->
+  <div class="mb-5">
     <!-- Filtri Desktop (nascosti su mobile) -->
     <div class="hidden sm:flex gap-2 overflow-x-auto pb-1">
       <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
