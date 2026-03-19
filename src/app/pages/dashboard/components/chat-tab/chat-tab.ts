@@ -24,6 +24,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   @Input() isClient: boolean = false;
   @Input() isInsurance: boolean = false;
   @Input() isAdmin: boolean = false;
+  @Input() isModerator: boolean = false;
   @Input() professionals: any[] = [];
   @Input() myClients: any[] = [];
   @Input() allUsers: any[] = [];
@@ -60,7 +61,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
   get filteredPickerUsers(): any[] {
     if (!this.allUsers?.length) return [];
-    let users = this.allUsers.filter(u => u.id !== this.currentUser?.id);
+    let users = this.allUsers.filter(u => u.id !== this.currentUser?.id && this.canStartConversationWith(u.role));
     // Escludi quelli già in conversazione o tra i contatti locali vuoti
     const existingIds = new Set(this.chatConversations.map(c => c.otherUserId));
     users = users.filter(u => !existingIds.has(u.id));
@@ -99,9 +100,37 @@ export class ChatTabComponent implements OnInit, OnDestroy {
       case 'PERSONAL_TRAINER': return 'Personal Trainer';
       case 'NUTRITIONIST': return 'Nutrizionista';
       case 'ADMIN': return 'Admin';
+      case 'MODERATOR': return 'Moderatore';
       case 'INSURANCE_MANAGER': return 'Assicurazione';
       default: return role;
     }
+  }
+
+  private canStartConversationWith(targetRole: string): boolean {
+    const myRole = this.currentUser?.role;
+    if (!myRole || !targetRole) return false;
+
+    if (myRole === 'ADMIN') {
+      return targetRole === 'MODERATOR' || targetRole === 'INSURANCE_MANAGER';
+    }
+
+    if (myRole === 'INSURANCE_MANAGER') {
+      return targetRole === 'ADMIN';
+    }
+
+    if (myRole === 'MODERATOR') {
+      return targetRole === 'CLIENT' || targetRole === 'PERSONAL_TRAINER' || targetRole === 'NUTRITIONIST' || targetRole === 'ADMIN';
+    }
+
+    if (myRole === 'CLIENT') {
+      return targetRole === 'PERSONAL_TRAINER' || targetRole === 'NUTRITIONIST' || targetRole === 'MODERATOR';
+    }
+
+    if (myRole === 'PERSONAL_TRAINER' || myRole === 'NUTRITIONIST') {
+      return targetRole === 'CLIENT' || targetRole === 'MODERATOR';
+    }
+
+    return false;
   }
 
   ngOnInit(): void {

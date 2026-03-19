@@ -7,7 +7,7 @@
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
       </svg>
-      Nuovo Utente
+      {{ isAdminMode() ? 'Nuovo Utente' : 'Nuovo Cliente/Professionista' }}
     </button>
   </div>
   <p class="text-[0.78rem] sm:text-[0.85rem] text-[var(--color-text-muted)] mb-4 sm:mb-6">{{ filteredUsers.length }} utenti{{ roleFilter
@@ -23,7 +23,7 @@
       <input type="text" [(ngModel)]="searchQuery" placeholder="Cerca per nome o email..."
         class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[var(--color-border-subtle)] text-[0.82rem] text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-gold)] transition-all">
     </div>
-    
+
     <!-- Filtri Desktop (nascosti su mobile) -->
     <div class="hidden sm:flex gap-2 overflow-x-auto pb-1">
       <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
@@ -38,10 +38,13 @@
       <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
         [ngClass]="roleFilter === 'NUTRITIONIST' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
         (click)="roleFilter = 'NUTRITIONIST'">🥗 Nutrizionisti</button>
-      <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
+      <button *ngIf="isAdminMode()" class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
+        [ngClass]="roleFilter === 'MODERATOR' ? 'bg-fuchsia-600 text-white border-fuchsia-600' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
+        (click)="roleFilter = 'MODERATOR'">🧭 Moderatori</button>
+      <button *ngIf="isAdminMode()" class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
         [ngClass]="roleFilter === 'INSURANCE_MANAGER' ? 'bg-indigo-500 text-white border-indigo-500' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
         (click)="roleFilter = 'INSURANCE_MANAGER'">📋 Assicuratori</button>
-      <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
+      <button *ngIf="isAdminMode()" class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
         [ngClass]="roleFilter === 'ADMIN' ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
         (click)="roleFilter = 'ADMIN'">🛡️ Amministratori</button>
     </div>
@@ -65,8 +68,9 @@
         <button class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-blue-500 bg-blue-50': roleFilter === 'CLIENT'}" (click)="roleFilter = 'CLIENT'; showFilterDropdown = false">🧑 Clienti</button>
         <button class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-emerald-500 bg-emerald-50': roleFilter === 'PERSONAL_TRAINER'}" (click)="roleFilter = 'PERSONAL_TRAINER'; showFilterDropdown = false">💪 Personal Trainer</button>
         <button class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-amber-500 bg-amber-50': roleFilter === 'NUTRITIONIST'}" (click)="roleFilter = 'NUTRITIONIST'; showFilterDropdown = false">🥗 Nutrizionisti</button>
-        <button class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-indigo-500 bg-indigo-50': roleFilter === 'INSURANCE_MANAGER'}" (click)="roleFilter = 'INSURANCE_MANAGER'; showFilterDropdown = false">📋 Assicuratori</button>
-        <button class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-purple-600 bg-purple-50': roleFilter === 'ADMIN'}" (click)="roleFilter = 'ADMIN'; showFilterDropdown = false">🛡️ Amministratori</button>
+        <button *ngIf="isAdminMode()" class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-fuchsia-700 bg-fuchsia-50': roleFilter === 'MODERATOR'}" (click)="roleFilter = 'MODERATOR'; showFilterDropdown = false">🧭 Moderatori</button>
+        <button *ngIf="isAdminMode()" class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-indigo-500 bg-indigo-50': roleFilter === 'INSURANCE_MANAGER'}" (click)="roleFilter = 'INSURANCE_MANAGER'; showFilterDropdown = false">📋 Assicuratori</button>
+        <button *ngIf="isAdminMode()" class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-purple-600 bg-purple-50': roleFilter === 'ADMIN'}" (click)="roleFilter = 'ADMIN'; showFilterDropdown = false">🛡️ Amministratori</button>
       </div>
     </div>
   </div>
@@ -190,8 +194,8 @@
               <option value="CLIENT">🧑 Cliente</option>
               <option value="PERSONAL_TRAINER">💪 Personal Trainer</option>
               <option value="NUTRITIONIST">🥗 Nutrizionista</option>
-              <option value="ADMIN">🛡️ Admin</option>
-              <option value="INSURANCE_MANAGER">📋 Assicurazione</option>
+              <option *ngIf="isAdminMode()" value="MODERATOR">🧭 Moderatore</option>
+              <option *ngIf="isAdminMode()" value="INSURANCE_MANAGER">📋 Assicurazione</option>
             </select>
           </div>
           <div class="text-[0.75rem] text-red-500 font-medium" *ngIf="createError">{{ createError }}</div>

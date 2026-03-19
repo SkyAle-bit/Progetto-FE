@@ -28,7 +28,7 @@
         Dashboard
       </button>
       <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap" *ngIf="!isInsuranceManager() && !isAdmin()"
+                       transition-all whitespace-nowrap" *ngIf="!isInsuranceManager() && !isAdmin() && !isModerator()"
         [class.active]="activeTab === 'calendar'" (click)="setTab('calendar')">
         <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor"
           viewBox="0 0 24 24" stroke-width="2">
@@ -83,7 +83,7 @@
       </button>
       <!-- ADMIN tabs -->
       <button class="desktop-nav-item px-3.5 py-[0.4rem] rounded-lg text-[0.82rem] font-semibold
-                       transition-all whitespace-nowrap" *ngIf="isAdmin()" [class.active]="activeTab === 'admin-users'"
+                       transition-all whitespace-nowrap" *ngIf="isAdmin() || isModerator()" [class.active]="activeTab === 'admin-users'"
         (click)="setTab('admin-users')">
         <svg class="w-[16px] h-[16px] mr-1.5 inline-block align-[-2px]" fill="none" stroke="currentColor"
           viewBox="0 0 24 24" stroke-width="2">
@@ -152,7 +152,7 @@
       </button>
 
       <!-- Profile button (clienti e professionisti) -->
-      <button *ngIf="!isAdmin() && !isInsuranceManager()" class="profile-btn w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full border-2 border-[var(--color-accent-gold)]/50
+      <button *ngIf="!isAdmin() && !isModerator() && !isInsuranceManager()" class="profile-btn w-9 h-9 sm:w-[38px] sm:h-[38px] rounded-full border-2 border-[var(--color-accent-gold)]/50
                      bg-[var(--color-accent-gold)]/12 cursor-pointer flex items-center justify-center
                      transition-all overflow-hidden p-0 flex-shrink-0" (click)="toggleProfile()"
         [class.active]="isProfileOpen">
@@ -163,7 +163,7 @@
       </button>
 
       <!-- Logout button (Admin e Insurance Manager) -->
-      <button *ngIf="isAdmin() || isInsuranceManager()" class="flex items-center gap-1.5 px-3 py-[0.35rem] rounded-lg border border-[var(--color-accent-gold)]/40
+      <button *ngIf="isAdmin() || isModerator() || isInsuranceManager()" class="flex items-center gap-1.5 px-3 py-[0.35rem] rounded-lg border border-[var(--color-accent-gold)]/40
                bg-[var(--color-accent-gold)]/10 text-[var(--color-accent-gold)] text-[0.78rem] font-semibold
                hover:bg-[var(--color-accent-gold)]/20 transition-all flex-shrink-0" (click)="logout()">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
@@ -196,9 +196,9 @@
          │  Visibile su mobile quando activeTab === 'home'      │
          │  Su desktop il calendario è sempre visibile          │
          └──────────────────────────────────────────────────────┘ -->
-    <div class="tab-home flex-1 overflow-y-auto" *ngIf="activeTab === 'home' && !isAdmin() && !isInsuranceManager()"
+    <div class="tab-home flex-1 overflow-y-auto" *ngIf="activeTab === 'home' && !isAdmin() && !isModerator() && !isInsuranceManager()"
       appPullToRefresh (refresh)="onPullRefresh()">
-      <app-home-tab *ngIf="activeTab === 'home' && !isAdmin() && !isInsuranceManager()" [currentUser]="currentUser" [profile]="profile"
+      <app-home-tab *ngIf="activeTab === 'home' && !isAdmin() && !isModerator() && !isInsuranceManager()" [currentUser]="currentUser" [profile]="profile"
         [subscription]="subscription" [bookings]="bookings" [myClients]="myClients" [professionals]="professionals"
         [isProfessional]="isProfessional()" [isClient]="isClient()" [weekBookingsCount]="countWeekBookings()"
         [proStats]="proStats" [activityFeed]="activityFeed" [isLoading]="isLoading" [dashboardData]="dashboardData" (openAvailabilityEvent)="openAvailability()"
@@ -209,7 +209,7 @@
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: CALENDARIO                                     │
          └──────────────────────────────────────────────────────┘ -->
-    <app-calendar-tab class="flex-1 flex flex-col overflow-hidden" *ngIf="activeTab === 'calendar'"
+    <app-calendar-tab class="flex-1 flex flex-col overflow-hidden" *ngIf="activeTab === 'calendar' && !isModerator()"
       [bookings]="bookings" [isProfessional]="isProfessional()" [isClient]="isClient()" [isLoading]="isLoading"
       (openCallModalEvent)="openCallModal($event)" (openAvailabilityEvent)="openAvailability()">
     </app-calendar-tab>
@@ -219,7 +219,7 @@
          └──────────────────────────────────────────────────────┘ -->
     <app-chat-tab class="flex-1 flex overflow-hidden" *ngIf="activeTab === 'chat'" [currentUser]="currentUser"
       [isProfessional]="isProfessional()" [isClient]="isClient()" [isInsurance]="isInsuranceManager()"
-      [isAdmin]="isAdmin()" [professionals]="professionals" [myClients]="myClients" [allUsers]="allUsers">
+      [isAdmin]="isAdmin()" [isModerator]="isModerator()" [professionals]="professionals" [myClients]="myClients" [allUsers]="chatUsers">
     </app-chat-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
@@ -248,16 +248,16 @@
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: ADMIN HOME (solo admin)                        │
          └──────────────────────────────────────────────────────┘ -->
-    <app-admin-home-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'home' && isAdmin()" appPullToRefresh
+    <app-admin-home-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'home' && (isAdmin() || isModerator())" appPullToRefresh
       (refresh)="onPullRefresh()" [currentUser]="currentUser" [allUsers]="allUsers" [allPlans]="allPlans"
-      [allSubscriptions]="allSubscriptions" (setTabEvent)="setTab($event)">
+      [allSubscriptions]="allSubscriptions" [isModerator]="isModerator()" (setTabEvent)="setTab($event)">
     </app-admin-home-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
          │  TAB: ADMIN UTENTI (solo admin)                      │
          └──────────────────────────────────────────────────────┘ -->
-    <app-admin-users-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'admin-users' && isAdmin()"
-      [allUsers]="allUsers" [allPlans]="allPlans" (usersChanged)="reloadAdminData()">
+    <app-admin-users-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'admin-users' && (isAdmin() || isModerator())"
+      [allUsers]="allUsers" [allPlans]="allPlans" [mode]="isModerator() ? 'moderator' : 'admin'" (usersChanged)="reloadAdminData()">
     </app-admin-users-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
@@ -305,7 +305,7 @@
 
     <!-- Tab: Calendario (non per insurance e admin) -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
-      *ngIf="!isInsuranceManager() && !isAdmin()" [class.active]="activeTab === 'calendar'"
+      *ngIf="!isInsuranceManager() && !isAdmin() && !isModerator()" [class.active]="activeTab === 'calendar'"
       (click)="setTab('calendar')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round"
@@ -366,7 +366,7 @@
 
     <!-- Tab: Utenti (admin) -->
     <button class="bottom-nav-item flex-1 flex flex-col items-center justify-center gap-[3px] py-2 transition-all"
-      *ngIf="isAdmin()" [class.active]="activeTab === 'admin-users'" (click)="setTab('admin-users')">
+      *ngIf="isAdmin() || isModerator()" [class.active]="activeTab === 'admin-users'" (click)="setTab('admin-users')">
       <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round"
           d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z">

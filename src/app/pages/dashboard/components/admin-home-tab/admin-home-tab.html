@@ -5,8 +5,8 @@
     <div class="relative inline-block mb-3">
       <div class="w-20 h-20 rounded-full bg-gradient-to-br from-[#6b21a8] to-[#9333ea] border-[3px] border-[var(--color-accent-gold)] text-white flex items-center justify-center text-[1.8rem] font-black font-['Darker_Grotesque'] shadow-lg">{{ getInitials() }}</div>
     </div>
-    <h2 class="font-['Darker_Grotesque'] text-[1.6rem] font-black text-[var(--color-text-main)] leading-tight">Pannello Admin</h2>
-    <p class="text-[0.82rem] text-[var(--color-text-muted)] mt-1">Supervisione globale della piattaforma Kore</p>
+    <h2 class="font-['Darker_Grotesque'] text-[1.6rem] font-black text-[var(--color-text-main)] leading-tight">{{ isModerator ? 'Pannello Moderatore' : 'Pannello Admin' }}</h2>
+    <p class="text-[0.82rem] text-[var(--color-text-muted)] mt-1">{{ isModerator ? 'Gestione utenti e supporto operativo' : 'Supervisione globale della piattaforma Kore' }}</p>
   </div>
 
   <!-- KPI Cards -->
@@ -48,7 +48,7 @@
           <div class="text-[0.65rem] text-white/60">Crea, cerca, elimina</div>
         </div>
       </button>
-      <button class="flex items-center gap-3 p-4 bg-gradient-to-r from-[var(--color-accent-gold)] to-[#a88a53] text-[var(--color-text-main)] rounded-xl transition-all active:scale-[0.97] hover:shadow-lg"
+      <button *ngIf="!isModerator" class="flex items-center gap-3 p-4 bg-gradient-to-r from-[var(--color-accent-gold)] to-[#a88a53] text-[var(--color-text-main)] rounded-xl transition-all active:scale-[0.97] hover:shadow-lg"
         (click)="setTabEvent.emit('admin-plans')">
         <div class="w-10 h-10 rounded-lg bg-white/25 flex items-center justify-center text-[1.2rem] flex-shrink-0">📋</div>
         <div class="text-left">
@@ -64,7 +64,7 @@
           <div class="text-[0.65rem] text-[var(--color-text-muted)]">Messaggi e supporto</div>
         </div>
       </button>
-      <button class="flex items-center gap-3 p-4 bg-white border border-[var(--color-border-subtle)] text-[var(--color-text-main)] rounded-xl transition-all active:scale-[0.97] hover:border-[var(--color-accent-gold)]/50 hover:shadow-md"
+      <button *ngIf="!isModerator" class="flex items-center gap-3 p-4 bg-white border border-[var(--color-border-subtle)] text-[var(--color-text-main)] rounded-xl transition-all active:scale-[0.97] hover:border-[var(--color-accent-gold)]/50 hover:shadow-md"
         (click)="setTabEvent.emit('admin-users')">
         <div class="w-10 h-10 rounded-lg bg-[var(--color-bg-subtle)] flex items-center justify-center text-[1.2rem] flex-shrink-0">➕</div>
         <div class="text-left">
@@ -76,7 +76,7 @@
   </div>
 
   <!-- Piani disponibili (preview) -->
-  <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm">
+  <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm" *ngIf="!isModerator">
     <div class="flex items-center gap-2 mb-4">
       <span class="text-[1.1rem]">📋</span>
       <span class="text-[0.72rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] font-semibold">Piani attivi</span>

@@ -18,23 +18,12 @@ export class AdminUsersTabComponent {
 
   @Input() allUsers: any[] = [];
   @Input() allPlans: any[] = [];
+  @Input() mode: 'admin' | 'moderator' = 'admin';
   @Output() usersChanged = new EventEmitter<void>();
 
   searchQuery: string = '';
   roleFilter: string = 'ALL';
   showFilterDropdown: boolean = false;
-
-  getFilterLabelPlural(role: string): string {
-    switch (role) {
-      case 'ALL': return 'Tutti i ruoli';
-      case 'CLIENT': return 'Clienti';
-      case 'PERSONAL_TRAINER': return 'Personal Trainer';
-      case 'NUTRITIONIST': return 'Nutrizionisti';
-      case 'ADMIN': return 'Amministratori';
-      case 'INSURANCE_MANAGER': return 'Assicuratori';
-      default: return 'Tutti';
-    }
-  }
 
   // Modale creazione utente
   showCreateModal: boolean = false;
@@ -52,8 +41,46 @@ export class AdminUsersTabComponent {
   editingUser: boolean = false;
   showEditPassword: boolean = false;
 
+  private readonly moderatorAllowedRoles = ['CLIENT', 'PERSONAL_TRAINER', 'NUTRITIONIST'];
+
+  private getErrorMessage(err: any, fallback: string): string {
+    return err?.error?.message || err?.error?.error || err?.message || fallback;
+  }
+
+  isAdminMode(): boolean {
+    return this.mode === 'admin';
+  }
+
+  canFilterRole(role: string): boolean {
+    if (role === 'ALL') return true;
+    return this.isAdminMode() || this.moderatorAllowedRoles.includes(role);
+  }
+
+  get creatableRoles(): string[] {
+    return this.isAdminMode()
+      ? ['CLIENT', 'PERSONAL_TRAINER', 'NUTRITIONIST', 'MODERATOR', 'INSURANCE_MANAGER']
+      : this.moderatorAllowedRoles;
+  }
+
+  getFilterLabelPlural(role: string): string {
+    switch (role) {
+      case 'ALL': return 'Tutti i ruoli';
+      case 'CLIENT': return 'Clienti';
+      case 'PERSONAL_TRAINER': return 'Personal Trainer';
+      case 'NUTRITIONIST': return 'Nutrizionisti';
+      case 'ADMIN': return 'Amministratori';
+      case 'MODERATOR': return 'Moderatori';
+      case 'INSURANCE_MANAGER': return 'Assicuratori';
+      default: return 'Tutti';
+    }
+  }
+
+  // Filtra gli utenti in base alla query di ricerca e al filtro di ruolo
   get filteredUsers(): any[] {
     let users = this.allUsers;
+    if (!this.canFilterRole(this.roleFilter)) {
+      this.roleFilter = 'ALL';
+    }
     if (this.roleFilter !== 'ALL') {
       users = users.filter(u => u.role === this.roleFilter);
     }
@@ -121,6 +148,12 @@ export class AdminUsersTabComponent {
     this.creating = true;
     this.createError = '';
 
+    if (!this.isAdminMode() && !this.moderatorAllowedRoles.includes(this.newUser.role)) {
+      this.creating = false;
+      this.createError = 'Il moderatore puo creare solo clienti, personal trainer e nutrizionisti';
+      return;
+    }
+
     const payload: any = {
       firstName: this.newUser.firstName,
       lastName: this.newUser.lastName,
@@ -135,16 +168,16 @@ export class AdminUsersTabComponent {
       if (this.newUser.assignedNutritionistId) payload.assignedNutritionistId = this.newUser.assignedNutritionistId;
     }
 
-    this.authService.createUser(payload).subscribe({
+    this.authService.createUserByMode(this.mode, payload).subscribe({
       next: () => {
         this.creating = false;
         this.showCreateModal = false;
-        this.toast.success('Utente Creato', `${this.newUser.firstName} ${this.newUser.lastName} è stato creato con successo.`);
+        this.toast.success('Utente Creato', `${this.newUser.firstName} ${this.newUser.lastName} e stato creato con successo.`);
         this.usersChanged.emit();
       },
       error: (err) => {
         this.creating = false;
-        this.createError = err.error?.error || 'Errore nella creazione';
+        this.createError = this.getErrorMessage(err, 'Errore nella creazione');
         this.cdr.detectChanges();
       }
     });
@@ -152,9 +185,9 @@ export class AdminUsersTabComponent {
 
   deleteUser(user: any): void {
     if (!confirm(`Eliminare l'utente ${user.firstName} ${user.lastName}?`)) return;
-    this.authService.deleteUser(user.id).subscribe({
+    this.authService.deleteUserByMode(this.mode, user.id).subscribe({
       next: () => { this.toast.success('Eliminato', 'Utente eliminato con successo.'); this.usersChanged.emit(); },
-      error: (err) => { this.toast.error('Errore', err.error?.error || 'Errore nell\'eliminazione'); }
+      error: (err) => { this.toast.error('Errore', this.getErrorMessage(err, 'Errore nell\'eliminazione')); }
     });
   }
 
@@ -184,7 +217,7 @@ export class AdminUsersTabComponent {
     if (this.editPassword.trim()) {
       payload.password = this.editPassword;
     }
-    this.authService.updateUser(this.editUser.id, payload).subscribe({
+    this.authService.updateUserByMode(this.mode, this.editUser.id, payload).subscribe({
       next: () => {
         this.editingUser = false;
         this.showEditModal = false;
@@ -193,7 +226,7 @@ export class AdminUsersTabComponent {
       },
       error: (err) => {
         this.editingUser = false;
-        this.editError = err.error?.error || 'Errore nell\'aggiornamento';
+        this.editError = this.getErrorMessage(err, 'Errore nell\'aggiornamento');
         this.cdr.detectChanges();
       }
     });
@@ -205,6 +238,7 @@ export class AdminUsersTabComponent {
       case 'PERSONAL_TRAINER': return 'Personal Trainer';
       case 'NUTRITIONIST': return 'Nutrizionista';
       case 'ADMIN': return 'Admin';
+      case 'MODERATOR': return 'Moderatore';
       case 'INSURANCE_MANAGER': return 'Assicurazione';
       default: return role;
     }
@@ -216,6 +250,7 @@ export class AdminUsersTabComponent {
       case 'PERSONAL_TRAINER': return 'bg-emerald-50 text-emerald-600';
       case 'NUTRITIONIST': return 'bg-amber-50 text-amber-700';
       case 'ADMIN': return 'bg-purple-50 text-purple-600';
+      case 'MODERATOR': return 'bg-fuchsia-50 text-fuchsia-700';
       case 'INSURANCE_MANAGER': return 'bg-indigo-50 text-indigo-600';
       default: return 'bg-gray-50 text-gray-600';
     }
@@ -227,6 +262,7 @@ export class AdminUsersTabComponent {
       case 'PERSONAL_TRAINER': return '💪';
       case 'NUTRITIONIST': return '🥗';
       case 'ADMIN': return '🛡️';
+      case 'MODERATOR': return '🧭';
       case 'INSURANCE_MANAGER': return '📋';
       default: return '👤';
     }

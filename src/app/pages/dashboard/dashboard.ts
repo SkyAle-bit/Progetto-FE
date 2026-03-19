@@ -45,6 +45,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   // ── Admin / Insurance data ────────────────────────────────
   allUsers: any[] = [];
+  chatUsers: any[] = [];
   allPlans: any[] = [];
   allSubscriptions: any[] = [];
 
@@ -242,8 +243,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // ── Caricamento dati ─────────────────────────────────────
 
   loadDashboardData(): void {
-    // Admin e Insurance Manager caricano dati diversi
-    if (this.isAdmin() || this.isInsuranceManager()) {
+    // Admin, Moderatore e Insurance Manager caricano dati diversi
+    if (this.isAdmin() || this.isModerator() || this.isInsuranceManager()) {
       this.loadAdminInsuranceData();
       return;
     }
@@ -284,13 +285,59 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadAdminInsuranceData(): void {
+    if (this.isModerator()) {
+      let loaded = 0;
+      const total = 2;
+      const checkDone = () => {
+        loaded++;
+        if (loaded >= total) {
+          this.allSubscriptions = [];
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      };
+
+      this.authService.getUsersByMode('moderator').subscribe({
+        next: (users) => {
+          this.allUsers = users ?? [];
+          this.loadModeratorChatUsers(this.allUsers);
+          checkDone();
+        },
+        error: () => {
+          this.allUsers = [];
+          this.chatUsers = [];
+          checkDone();
+        }
+      });
+
+      this.authService.getPlans().subscribe({
+        next: (plans) => {
+          this.allPlans = Array.isArray(plans) ? plans : [];
+          checkDone();
+        },
+        error: () => {
+          this.allPlans = [];
+          checkDone();
+        }
+      });
+      return;
+    }
+
     let loaded = 0;
     const total = 3;
     const checkDone = () => { loaded++; if (loaded >= total) { this.isLoading = false; this.cdr.detectChanges(); } };
 
     this.authService.getAllUsers().subscribe({
-      next: (users) => { this.allUsers = users ?? []; checkDone(); },
-      error: () => { this.allUsers = []; checkDone(); }
+      next: (users) => {
+        this.allUsers = users ?? [];
+        this.chatUsers = [...this.allUsers];
+        checkDone();
+      },
+      error: () => {
+        this.allUsers = [];
+        this.chatUsers = [];
+        checkDone();
+      }
     });
     this.authService.getPlans().subscribe({
       next: (plans) => { this.allPlans = plans ?? []; checkDone(); },
@@ -299,6 +346,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.authService.getAllSubscriptions().subscribe({
       next: (subs) => { this.allSubscriptions = subs ?? []; checkDone(); },
       error: () => { this.allSubscriptions = []; checkDone(); }
+    });
+  }
+
+  private loadModeratorChatUsers(manageableUsers: any[]): void {
+    const baseUsers = Array.isArray(manageableUsers) ? [...manageableUsers] : [];
+    this.authService.getAdmin().subscribe({
+      next: (adminUser) => {
+        const merged = [...baseUsers, adminUser].filter((u, index, arr) =>
+          u && typeof u.id !== 'undefined' && arr.findIndex(x => x?.id === u.id) === index
+        );
+        this.chatUsers = merged;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.chatUsers = baseUsers;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -333,7 +397,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   // ── Pull-to-Refresh ─────────────────────────────────────
 
   onPullRefresh(): void {
-    if (this.isAdmin() || this.isInsuranceManager()) {
+    if (this.isAdmin() || this.isModerator() || this.isInsuranceManager()) {
       this.loadAdminInsuranceData();
     } else {
       this.loadDashboardData();
@@ -353,6 +417,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return r === 'PERSONAL_TRAINER' || r === 'NUTRITIONIST';
   }
   isAdmin(): boolean { return this.currentUser?.role === 'ADMIN'; }
+  isModerator(): boolean { return this.currentUser?.role === 'MODERATOR'; }
   isInsuranceManager(): boolean { return this.currentUser?.role === 'INSURANCE_MANAGER'; }
 
   setTab(tab: string): void {

@@ -9,7 +9,7 @@
           <h3 class="font-['Darker_Grotesque'] text-[1.5rem] font-black text-[var(--color-text-main)] leading-none">Chat</h3>
           <p class="text-[0.75rem] text-[var(--color-text-muted)] mt-1">{{ chatConversations.length }} conversazioni</p>
         </div>
-        <button *ngIf="isAdmin"
+        <button *ngIf="isAdmin || isModerator"
           class="w-9 h-9 rounded-full bg-[var(--color-primary-navy)] text-white flex items-center justify-center hover:bg-[var(--color-primary-navy-dark)] transition-all active:scale-[0.93] shadow-md"
           title="Nuova conversazione" (click)="showUserPicker = true">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -193,7 +193,7 @@
     </ng-container>
   </div>
 
-  <!-- Modale selezione utente (solo Admin) -->
+  <!-- Modale selezione utente (Admin e Moderatore) -->
   <div class="fixed inset-0 bg-[var(--color-text-main)]/40 backdrop-blur-[4px] z-[200] flex items-center justify-center p-4"
     *ngIf="showUserPicker" (click)="showUserPicker = false">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm max-h-[70vh] flex flex-col overflow-hidden"
