@@ -23,7 +23,9 @@
       <input type="text" [(ngModel)]="searchQuery" placeholder="Cerca per nome o email..."
         class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-[var(--color-border-subtle)] text-[0.82rem] text-[var(--color-text-main)] placeholder-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-accent-gold)] transition-all">
     </div>
-    <div class="flex gap-2 overflow-x-auto pb-1">
+    
+    <!-- Filtri Desktop (nascosti su mobile) -->
+    <div class="hidden sm:flex gap-2 overflow-x-auto pb-1">
       <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
         [ngClass]="roleFilter === 'ALL' ? 'bg-[var(--color-primary-navy)] text-white border-[var(--color-primary-navy)]' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
         (click)="roleFilter = 'ALL'">Tutti</button>
@@ -32,10 +34,40 @@
         (click)="roleFilter = 'CLIENT'">🧑 Clienti</button>
       <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
         [ngClass]="roleFilter === 'PERSONAL_TRAINER' ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
-        (click)="roleFilter = 'PERSONAL_TRAINER'">💪 PT</button>
+        (click)="roleFilter = 'PERSONAL_TRAINER'">💪 Personal Trainer</button>
       <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
         [ngClass]="roleFilter === 'NUTRITIONIST' ? 'bg-amber-500 text-white border-amber-500' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
-        (click)="roleFilter = 'NUTRITIONIST'">🥗 Nutri</button>
+        (click)="roleFilter = 'NUTRITIONIST'">🥗 Nutrizionisti</button>
+      <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
+        [ngClass]="roleFilter === 'INSURANCE_MANAGER' ? 'bg-indigo-500 text-white border-indigo-500' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
+        (click)="roleFilter = 'INSURANCE_MANAGER'">📋 Assicuratori</button>
+      <button class="px-3 py-2 rounded-lg text-[0.72rem] font-semibold border whitespace-nowrap transition-all"
+        [ngClass]="roleFilter === 'ADMIN' ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-[var(--color-text-muted)] border-[var(--color-border-subtle)]'"
+        (click)="roleFilter = 'ADMIN'">🛡️ Amministratori</button>
+    </div>
+
+    <!-- Filtri Mobile (Dropdown) -->
+    <div class="sm:hidden relative">
+      <button class="w-full flex items-center justify-between px-4 py-2.5 bg-white border border-[var(--color-border-subtle)] rounded-xl text-[0.82rem] text-[var(--color-text-main)] transition-all focus:outline-none focus:border-[var(--color-accent-gold)]"
+        (click)="showFilterDropdown = !showFilterDropdown">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-[var(--color-text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+          </svg>
+          <span class="font-semibold">{{ getFilterLabelPlural(roleFilter) }}</span>
+        </div>
+        <svg class="w-4 h-4 text-[var(--color-text-muted)] transition-transform duration-200" [class.rotate-180]="showFilterDropdown" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+
+      <!-- Dropdown Menu -->
+      <div *ngIf="showFilterDropdown" class="absolute z-10 mt-2 w-full bg-white border border-[var(--color-border-subtle)] rounded-xl shadow-lg py-1">
+        <button class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-[var(--color-primary-navy)] bg-[var(--color-bg-subtle)]': roleFilter === 'ALL'}" (click)="roleFilter = 'ALL'; showFilterDropdown = false">Tutti i ruoli</button>
+        <button class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-blue-500 bg-blue-50': roleFilter === 'CLIENT'}" (click)="roleFilter = 'CLIENT'; showFilterDropdown = false">🧑 Clienti</button>
+        <button class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-emerald-500 bg-emerald-50': roleFilter === 'PERSONAL_TRAINER'}" (click)="roleFilter = 'PERSONAL_TRAINER'; showFilterDropdown = false">💪 Personal Trainer</button>
+        <button class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-amber-500 bg-amber-50': roleFilter === 'NUTRITIONIST'}" (click)="roleFilter = 'NUTRITIONIST'; showFilterDropdown = false">🥗 Nutrizionisti</button>
+        <button class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-indigo-500 bg-indigo-50': roleFilter === 'INSURANCE_MANAGER'}" (click)="roleFilter = 'INSURANCE_MANAGER'; showFilterDropdown = false">📋 Assicuratori</button>
+        <button class="w-full text-left px-4 py-2.5 text-[0.82rem] hover:bg-[var(--color-bg-subtle)]" [ngClass]="{'font-bold text-purple-600 bg-purple-50': roleFilter === 'ADMIN'}" (click)="roleFilter = 'ADMIN'; showFilterDropdown = false">🛡️ Amministratori</button>
+      </div>
     </div>
   </div>
 
@@ -56,6 +88,14 @@
       <div class="flex items-center gap-2 flex-shrink-0">
         <span class="text-[0.6rem] font-bold px-2 py-0.5 rounded-full" [ngClass]="getRoleBadgeClass(user.role)">{{
           getRoleEmoji(user.role) }} {{ getRoleLabel(user.role) }}</span>
+        <button
+          class="w-7 h-7 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-500 hover:bg-blue-500 hover:text-white hover:border-blue-500 transition-all"
+          title="Modifica utente" (click)="openEditModal(user)">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+          </svg>
+        </button>
         <button
           class="w-7 h-7 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 transition-all"
           title="Elimina utente" (click)="deleteUser(user)">
@@ -291,6 +331,52 @@
           class="flex-1 py-2.5 sm:py-3 rounded-xl bg-[var(--color-primary-navy)] text-white text-[0.8rem] sm:text-[0.85rem] font-bold hover:bg-[var(--color-primary-navy-dark)] transition-all active:scale-[0.97]"
           [class.opacity-50]="creating" [disabled]="creating" (click)="createUser()">
           {{ creating ? 'Creazione...' : 'Crea Utente' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale Modifica Utente -->
+  <div class="fixed inset-0 bg-[var(--color-text-main)]/40 backdrop-blur-[4px] z-[200] flex items-center justify-center p-4" *ngIf="showEditModal" (click)="closeEditModal()">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" (click)="$event.stopPropagation()">
+      <div class="px-6 py-5 bg-[var(--color-primary-navy)] flex items-center justify-between">
+        <h3 class="font-['Darker_Grotesque'] text-[1.3rem] font-black text-white">Modifica Utente</h3>
+        <button class="w-7 h-7 bg-white/10 border border-white/20 rounded-lg text-white/60 text-[0.75rem] flex items-center justify-center" (click)="closeEditModal()">✕</button>
+      </div>
+      <div class="p-6 flex flex-col gap-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Nome</label>
+            <input type="text" [(ngModel)]="editUser.firstName" class="w-full px-3 py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="Nome">
+          </div>
+          <div>
+            <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Cognome</label>
+            <input type="text" [(ngModel)]="editUser.lastName" class="w-full px-3 py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="Cognome">
+          </div>
+        </div>
+        <div>
+          <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Email</label>
+          <input type="email" [(ngModel)]="editUser.email" class="w-full px-3 py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="email@example.com">
+        </div>
+        <div>
+          <label class="text-[0.65rem] text-[var(--color-text-muted)] uppercase tracking-[0.08em] font-semibold mb-1 block">Nuova Password <span class="text-[var(--color-text-muted)]/60 normal-case">(lascia vuoto per non cambiarla)</span></label>
+          <div class="relative">
+            <input [type]="showEditPassword ? 'text' : 'password'" [(ngModel)]="editPassword" class="w-full pl-3 pr-10 py-2.5 rounded-xl bg-[var(--color-bg-subtle)] border border-[var(--color-border-subtle)] text-[0.85rem] text-[var(--color-text-main)] focus:outline-none focus:border-[var(--color-accent-gold)]" placeholder="••••••••">
+            <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-primary-navy)] transition-colors" (click)="showEditPassword = !showEditPassword">
+              <svg *ngIf="!showEditPassword" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              <svg *ngIf="showEditPassword" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="text-[0.78rem] text-red-500 font-medium" *ngIf="editError">{{ editError }}</div>
+        <button class="w-full py-3 rounded-xl bg-[var(--color-primary-navy)] text-white text-[0.88rem] font-bold hover:bg-[var(--color-primary-navy-dark)] transition-all active:scale-[0.97]"
+          [class.opacity-50]="editingUser" [disabled]="editingUser" (click)="saveEditUser()">
+          {{ editingUser ? 'Salvataggio...' : 'Salva Modifiche' }}
         </button>
       </div>
     </div>

@@ -17,7 +17,7 @@ export class AdminHomeTabComponent {
 
   get totalUsers(): number { return this.allUsers.length; }
   get totalClients(): number { return this.allUsers.filter(u => u.role === 'CLIENT').length; }
-  get totalProfessionals(): number { return this.allUsers.filter(u => u.role === 'PERSONAL_TRAINER' || u.role === 'NUTRITIONIST').length; }
+  get totalProfessionals(): number { return this.allUsers.filter(u => u.role === 'PERSONAL_TRAINER' || u.role === 'NUTRITIONIST' || u.role === 'INSURANCE_MANAGER').length; }
   get activeSubscriptions(): number { return this.allSubscriptions.filter(s => s.active).length; }
   get estimatedRevenue(): number {
     return this.allSubscriptions.filter(s => s.active).reduce((sum, s) => sum + (s.monthlyPrice || 0), 0);

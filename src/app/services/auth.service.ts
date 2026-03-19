@@ -144,6 +144,14 @@ export class AuthService {
     return this.http.delete(`${this.apiUrl}/api/admin/plans/${planId}`);
   }
 
+  updatePlan(planId: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/api/admin/plans/${planId}`, data);
+  }
+
+  updateUser(userId: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/api/admin/users/${userId}`, data);
+  }
+
   updateDocumentNotes(documentId: number, notes: string): Observable<any> {
     return this.http.put(`${this.apiUrl}/api/documents/${documentId}/notes`, { notes });
   }

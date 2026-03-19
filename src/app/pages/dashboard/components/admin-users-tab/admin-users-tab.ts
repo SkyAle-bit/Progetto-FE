@@ -22,14 +22,35 @@ export class AdminUsersTabComponent {
 
   searchQuery: string = '';
   roleFilter: string = 'ALL';
+  showFilterDropdown: boolean = false;
+
+  getFilterLabelPlural(role: string): string {
+    switch (role) {
+      case 'ALL': return 'Tutti i ruoli';
+      case 'CLIENT': return 'Clienti';
+      case 'PERSONAL_TRAINER': return 'Personal Trainer';
+      case 'NUTRITIONIST': return 'Nutrizionisti';
+      case 'ADMIN': return 'Amministratori';
+      case 'INSURANCE_MANAGER': return 'Assicuratori';
+      default: return 'Tutti';
+    }
+  }
 
   // Modale creazione utente
   showCreateModal: boolean = false;
-  currentStep: number = 1; // step wizard: 1=dati base, 2=piano+professionisti (solo CLIENT)
+  currentStep: number = 1;
   newUser: any = { firstName: '', lastName: '', email: '', password: '', role: 'CLIENT', planId: null, assignedPTId: null, assignedNutritionistId: null };
   createError: string = '';
   creating: boolean = false;
   showPassword: boolean = false;
+
+  // Modale modifica utente
+  showEditModal: boolean = false;
+  editUser: any = {};
+  editPassword: string = '';
+  editError: string = '';
+  editingUser: boolean = false;
+  showEditPassword: boolean = false;
 
   get filteredUsers(): any[] {
     let users = this.allUsers;
@@ -134,6 +155,47 @@ export class AdminUsersTabComponent {
     this.authService.deleteUser(user.id).subscribe({
       next: () => { this.toast.success('Eliminato', 'Utente eliminato con successo.'); this.usersChanged.emit(); },
       error: (err) => { this.toast.error('Errore', err.error?.error || 'Errore nell\'eliminazione'); }
+    });
+  }
+
+  // ── Edit user ──
+  openEditModal(user: any): void {
+    this.editUser = { ...user };
+    this.editPassword = '';
+    this.editError = '';
+    this.showEditModal = true;
+    this.showEditPassword = false;
+  }
+
+  closeEditModal(): void { this.showEditModal = false; }
+
+  saveEditUser(): void {
+    if (!this.editUser.firstName || !this.editUser.lastName || !this.editUser.email) {
+      this.editError = 'Nome, cognome e email sono obbligatori';
+      return;
+    }
+    this.editingUser = true;
+    this.editError = '';
+    const payload: any = {
+      firstName: this.editUser.firstName,
+      lastName: this.editUser.lastName,
+      email: this.editUser.email,
+    };
+    if (this.editPassword.trim()) {
+      payload.password = this.editPassword;
+    }
+    this.authService.updateUser(this.editUser.id, payload).subscribe({
+      next: () => {
+        this.editingUser = false;
+        this.showEditModal = false;
+        this.toast.success('Utente Aggiornato', `${this.editUser.firstName} ${this.editUser.lastName} aggiornato con successo.`);
+        this.usersChanged.emit();
+      },
+      error: (err) => {
+        this.editingUser = false;
+        this.editError = err.error?.error || 'Errore nell\'aggiornamento';
+        this.cdr.detectChanges();
+      }
     });
   }
 
