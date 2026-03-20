@@ -257,7 +257,7 @@
          │  TAB: ADMIN UTENTI (solo admin)                      │
          └──────────────────────────────────────────────────────┘ -->
     <app-admin-users-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'admin-users' && (isAdmin() || isModerator())"
-      [allUsers]="allUsers" [allPlans]="allPlans" [mode]="isModerator() ? 'moderator' : 'admin'" (usersChanged)="reloadAdminData()">
+      [allUsers]="allUsers" [allPlans]="allPlans" [allSubscriptions]="allSubscriptions" [mode]="isModerator() ? 'moderator' : 'admin'" (usersChanged)="reloadAdminData()">
     </app-admin-users-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐

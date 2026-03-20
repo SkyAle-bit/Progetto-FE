@@ -10,7 +10,7 @@
   </div>
 
   <!-- KPI Cards -->
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+  <div class="grid gap-3" [ngClass]="isModerator ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-2 sm:grid-cols-4'">
     <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm text-center">
       <div class="text-[1.8rem] font-black text-[var(--color-primary-navy)] leading-none">{{ totalUsers }}</div>
       <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Utenti totali</div>
@@ -21,7 +21,7 @@
       <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Clienti</div>
       <div class="mt-2 text-[1.2rem]">🧑</div>
     </div>
-    <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm text-center">
+    <div class="bg-white rounded-2xl border border-[var(--color-border-subtle)] p-4 shadow-sm text-center" *ngIf="!isModerator">
       <div class="text-[1.8rem] font-black text-emerald-600 leading-none">{{ activeSubscriptions }}</div>
       <div class="text-[0.6rem] text-[var(--color-text-muted)] uppercase tracking-[0.10em] mt-1.5 font-semibold">Abbonamenti attivi</div>
       <div class="mt-2 text-[1.2rem]">👑</div>

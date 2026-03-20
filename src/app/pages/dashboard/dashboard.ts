@@ -287,11 +287,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private loadAdminInsuranceData(): void {
     if (this.isModerator()) {
       let loaded = 0;
-      const total = 2;
+      const total = 3;
       const checkDone = () => {
         loaded++;
         if (loaded >= total) {
-          this.allSubscriptions = [];
           this.isLoading = false;
           this.cdr.detectChanges();
         }
@@ -300,8 +299,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.authService.getUsersByMode('moderator').subscribe({
         next: (users: any[]) => {
           this.allUsers = users ?? [];
-          this.loadModeratorChatUsers(this.allUsers);
-          checkDone();
+          this.authService.getModeratorChatContacts().subscribe({
+            next: (contacts: any[]) => {
+              this.loadModeratorChatUsers([...this.allUsers, ...(contacts ?? [])]);
+              checkDone();
+            },
+            error: () => {
+              this.loadModeratorChatUsers(this.allUsers);
+              checkDone();
+            }
+          });
         },
         error: () => {
           this.allUsers = [];
@@ -320,6 +327,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           checkDone();
         }
       });
+
+      this.authService.getAllSubscriptionsByMode('moderator').subscribe({
+        next: (subs) => { this.allSubscriptions = subs ?? []; checkDone(); },
+        error: () => { this.allSubscriptions = []; checkDone(); }
+      });
+
       return;
     }
 

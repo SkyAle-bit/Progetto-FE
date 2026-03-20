@@ -141,6 +141,11 @@ export class AuthService {
     return this.http.get<any[]>(`${this.apiUrl}/api/admin/subscriptions`);
   }
 
+  getAllSubscriptionsByMode(mode: UserManagementMode): Observable<any[]> {
+    const url = `${this.usersBaseByMode(mode).replace('/users', '')}/subscriptions`;
+    return this.http.get<any[]>(url);
+  }
+
   createUser(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/admin/users`, data);
   }
@@ -175,6 +180,10 @@ export class AuthService {
     return this.http.get<any[]>(this.usersBaseByMode(mode));
   }
 
+  getModeratorChatContacts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/api/moderator/chat-contacts`);
+  }
+
   createUserByMode(mode: UserManagementMode, data: ManagedUserPayload): Observable<any> {
     return this.http.post(this.usersBaseByMode(mode), data);
   }
@@ -197,6 +206,11 @@ export class AuthService {
 
   getActivityFeed(userId: number, days: number = 14, limit: number = 15): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/api/activity/feed/${userId}?days=${days}&limit=${limit}`);
+  }
+
+  updateSubscriptionCredits(mode: UserManagementMode, subscriptionId: number, creditsPT: number, creditsNutri: number): Observable<any> {
+    const url = `${this.usersBaseByMode(mode).replace('/users', '')}/subscriptions/${subscriptionId}/credits`;
+    return this.http.put<any>(url, { creditsPT, creditsNutri });
   }
 
   getAdminStats(): Observable<any> {

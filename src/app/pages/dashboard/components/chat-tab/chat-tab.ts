@@ -307,10 +307,30 @@ export class ChatTabComponent implements OnInit, OnDestroy {
         convs.push({ otherUserId: a.id, otherUserName: `${a.firstName} ${a.lastName}`, otherUserRole: 'Admin', lastMessage: undefined, lastMessageTime: undefined, unreadCount: 0 });
       });
     }
-    // Admin: può chattare con Insurance Manager (e gli altri contatti se servono)
+    // Admin: può chattare con Insurance Manager e Moderatori (e gli altri contatti se servono)
     if (this.isAdmin && this.allUsers?.length > 0) {
-      this.allUsers.filter(u => u.role === 'INSURANCE_MANAGER').forEach((im: any) => {
-        convs.push({ otherUserId: im.id, otherUserName: `${im.firstName} ${im.lastName}`, otherUserRole: 'Assicurazione', lastMessage: undefined, lastMessageTime: undefined, unreadCount: 0 });
+      this.allUsers.filter(u => u.role === 'INSURANCE_MANAGER' || u.role === 'MODERATOR').forEach((u: any) => {
+        convs.push({
+          otherUserId: u.id,
+          otherUserName: `${u.firstName} ${u.lastName}`,
+          otherUserRole: this.getRoleLabel(u.role),
+          lastMessage: undefined,
+          lastMessageTime: undefined,
+          unreadCount: 0
+        });
+      });
+    }
+    // Moderatore: chatta con Admin e Insurance Manager
+    if (this.isModerator && this.allUsers?.length > 0) {
+      this.allUsers.filter(u => u.role === 'ADMIN' || u.role === 'INSURANCE_MANAGER').forEach((u: any) => {
+        convs.push({
+          otherUserId: u.id,
+          otherUserName: `${u.firstName} ${u.lastName}`,
+          otherUserRole: this.getRoleLabel(u.role),
+          lastMessage: undefined,
+          lastMessageTime: undefined,
+          unreadCount: 0
+        });
       });
     }
     return convs;

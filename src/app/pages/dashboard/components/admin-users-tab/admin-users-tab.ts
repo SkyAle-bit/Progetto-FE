@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../../../services/auth.service';
 import { ManagedUserPayload } from '../../../../services/auth.service';
 import { ToastService } from '../../../../services/toast.service';
@@ -8,7 +8,7 @@ import { ToastService } from '../../../../services/toast.service';
 @Component({
   selector: 'app-admin-users-tab',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './admin-users-tab.html',
   styleUrls: ['./admin-users-tab.css']
 })
@@ -16,9 +16,11 @@ export class AdminUsersTabComponent {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
   private toast = inject(ToastService);
+  private fb = inject(FormBuilder);
 
   @Input() allUsers: any[] = [];
   @Input() allPlans: any[] = [];
+  @Input() allSubscriptions: any[] = [];
   @Input() mode: 'admin' | 'moderator' = 'admin';
   @Output() usersChanged = new EventEmitter<void>();
 
@@ -41,6 +43,24 @@ export class AdminUsersTabComponent {
   editError: string = '';
   editingUser: boolean = false;
   showEditPassword: boolean = false;
+
+  // Modale cancellazione utente
+  showDeleteModal: boolean = false;
+  userToDelete: any = null;
+  deletingUser: boolean = false;
+
+  // Info Modal
+  showInfoModal: boolean = false;
+  selectedUserInfo: any = null;
+  selectedSubscription: any = null;
+
+  // Credits Modal
+  showCreditsModal: boolean = false;
+  updatingCredits: boolean = false;
+  creditsForm = this.fb.group({
+    creditsPT: [0, Validators.required],
+    creditsNutri: [0, Validators.required]
+  });
 
   private readonly moderatorAllowedRoles = ['CLIENT', 'PERSONAL_TRAINER', 'NUTRITIONIST'];
 
@@ -185,11 +205,95 @@ export class AdminUsersTabComponent {
     });
   }
 
-  deleteUser(user: any): void {
-    if (!confirm(`Eliminare l'utente ${user.firstName} ${user.lastName}?`)) return;
-    this.authService.deleteUserByMode(this.mode, user.id).subscribe({
-      next: () => { this.toast.success('Eliminato', 'Utente eliminato con successo.'); this.usersChanged.emit(); },
-      error: (err: unknown) => { this.toast.error('Errore', this.getErrorMessage(err, 'Errore nell\'eliminazione')); }
+  // ── Delete user ──
+  openDeleteModal(user: any): void {
+    this.userToDelete = user;
+    this.showDeleteModal = true;
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.userToDelete = null;
+    this.deletingUser = false;
+  }
+
+  confirmDeleteUser(): void {
+    if (!this.userToDelete) return;
+    this.deletingUser = true;
+
+    this.authService.deleteUserByMode(this.mode, this.userToDelete.id).subscribe({
+      next: () => {
+        this.deletingUser = false;
+        this.closeDeleteModal();
+        this.toast.success('Eliminato', 'Utente eliminato con successo.');
+        this.usersChanged.emit();
+      },
+      error: (err: unknown) => {
+        this.deletingUser = false;
+        this.closeDeleteModal();
+        this.toast.error('Errore', this.getErrorMessage(err, 'Errore nell\'eliminazione'));
+      }
+    });
+  }
+
+  // ── Info e Crediti Abbonamento ──
+  openInfoModal(user: any): void {
+    this.selectedUserInfo = user;
+    // Utilizziamo == invece di === per gestire eventuali mismatch tra stringa e numero (Long di Java)
+    this.selectedSubscription = (this.allSubscriptions || []).find(s => s.userId == user.id && s.active);
+    console.log('Opening Info Modal for user:', user.email, 'ID:', user.id);
+    console.log('Active subscriptions count:', (this.allSubscriptions || []).length);
+    console.log('Matched subscription:', this.selectedSubscription);
+    this.showInfoModal = true;
+  }
+
+  closeInfoModal(): void {
+    this.showInfoModal = false;
+    this.selectedUserInfo = null;
+    this.selectedSubscription = null;
+  }
+
+  openCreditsModal(user: any): void {
+    const sub = this.allSubscriptions.find(s => s.userId === user.id && s.active);
+    if (sub) {
+      this.selectedSubscription = sub;
+      this.creditsForm.patchValue({
+        creditsPT: sub.currentCreditsPT || 0,
+        creditsNutri: sub.currentCreditsNutri || 0
+      });
+      this.showCreditsModal = true;
+    } else {
+      this.toast.error('Ops', 'Questo utente non ha un abbonamento attivo.');
+    }
+  }
+
+  closeCreditsModal(): void {
+    this.showCreditsModal = false;
+    this.selectedSubscription = null;
+    this.creditsForm.reset();
+  }
+
+  saveCredits(): void {
+    if (this.creditsForm.invalid || !this.selectedSubscription) return;
+    this.updatingCredits = true;
+    
+    const pt = this.creditsForm.value.creditsPT || 0;
+    const nutri = this.creditsForm.value.creditsNutri || 0;
+
+    this.authService.updateSubscriptionCredits(this.mode, this.selectedSubscription.id, pt, nutri).subscribe({
+      next: (res: any) => {
+        this.updatingCredits = false;
+        this.closeCreditsModal();
+        this.toast.success('Fatto', 'Crediti aggiornati con successo.');
+        
+        this.selectedSubscription.currentCreditsPT = pt;
+        this.selectedSubscription.currentCreditsNutri = nutri;
+        this.usersChanged.emit(); 
+      },
+      error: (err: unknown) => {
+        this.updatingCredits = false;
+        this.toast.error('Errore', this.getErrorMessage(err, 'Errore nell\'aggiornamento crediti'));
+      }
     });
   }
 
