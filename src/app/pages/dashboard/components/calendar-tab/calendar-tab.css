@@ -4,14 +4,13 @@
 
 /* ── Nav buttons ────────────────────────────────────────────────────────── */
 .nav-btn:hover {
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(var(--color-accent-gold-rgb), 0.50);
+  background: rgba(255, 255, 255, 0.22);
   color: var(--color-accent-gold-light);
 }
 
 .today-btn:hover {
-  background: rgba(var(--color-accent-gold-rgb), 0.26);
-  box-shadow: 0 0 12px rgba(var(--color-accent-gold-rgb), 0.20);
+  filter: brightness(1.1);
+  box-shadow: 0 4px 15px rgba(var(--color-accent-gold-rgb), 0.3);
 }
 
 /* ── Toggle vista Agenda (solo mobile) ─────────────────────────────────── */
@@ -23,15 +22,12 @@
 
 .agenda-toggle-btn:hover {
   background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(var(--color-accent-gold-rgb), 0.40);
   color: var(--color-accent-gold-light);
 }
 
 .agenda-toggle-btn.active {
   background: rgba(var(--color-accent-gold-rgb), 0.18);
-  border-color: rgba(var(--color-accent-gold-rgb), 0.55);
   color: var(--color-accent-gold-light);
-  box-shadow: 0 0 10px rgba(var(--color-accent-gold-rgb), 0.18);
 }
 
 /* ── Agenda view: booking row hover ────────────────────────────────────── */
@@ -146,11 +142,12 @@
 
 /* ── Today highlight ────────────────────────────────────────────────────── */
 .day-name {
-  color: rgba(255, 255, 255, 0.42);
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 0.16em;
 }
 
 .day-number {
-  color: rgba(255, 255, 255, 0.82);
+  color: #ffffff;
 }
 
 .day-header.today .day-name {
@@ -165,7 +162,8 @@
 }
 
 .day-col.today-col {
-  background: rgba(var(--color-accent-gold-rgb), 0.04);
+  background: rgba(var(--color-accent-gold-rgb), 0.05);
+  box-shadow: inset 0 0 15px rgba(var(--color-accent-gold-rgb), 0.03);
 }
 
 /* ── Booking cards ──────────────────────────────────────────────────────── */

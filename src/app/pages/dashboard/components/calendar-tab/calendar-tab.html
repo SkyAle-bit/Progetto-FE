@@ -1,30 +1,30 @@
 <!-- Mobile week nav -->
-<div class="sm:hidden flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2 bg-[var(--color-primary-navy)] border-b border-[var(--color-accent-gold)]/18">
-  <button *ngIf="!agendaView" class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 border border-white/20 rounded-lg text-white/65 text-base cursor-pointer transition-all flex-shrink-0" (click)="prevWeek()">‹</button>
-  <span *ngIf="!agendaView" class="text-center text-[0.8rem] font-medium text-white/90 tracking-[0.01em] whitespace-nowrap min-w-[130px]">{{ getWeekLabel() }}</span>
-  <button *ngIf="!agendaView" class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 border border-white/20 rounded-lg text-white/65 text-base cursor-pointer transition-all flex-shrink-0" (click)="nextWeek()">›</button>
-  <button class="today-btn px-2 py-1 bg-[var(--color-accent-gold)]/15 border border-[var(--color-accent-gold)]/45 rounded-[6px] text-[var(--color-accent-gold-light)] text-[0.72rem] font-semibold uppercase tracking-[0.05em] cursor-pointer transition-all flex-shrink-0" (click)="goToToday()">Oggi</button>
-  <button class="agenda-toggle-btn flex-shrink-0 flex items-center gap-1 px-2 py-1 border border-white/20 rounded-[6px] text-[0.7rem] font-semibold tracking-[0.03em] cursor-pointer transition-all" [class.active]="agendaView" (click)="toggleAgendaView()"><span>☰</span></button>
+<div class="sm:hidden flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-[var(--color-primary-navy)] to-[#1a3a6e]">
+  <button *ngIf="!agendaView" class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 rounded-lg text-white/90 text-base cursor-pointer transition-all flex-shrink-0" (click)="prevWeek()">‹</button>
+  <span *ngIf="!agendaView" class="text-center text-[0.82rem] font-bold text-white tracking-[0.01em] whitespace-nowrap min-w-[130px]">{{ getWeekLabel() }}</span>
+  <button *ngIf="!agendaView" class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 rounded-lg text-white/90 text-base cursor-pointer transition-all flex-shrink-0" (click)="nextWeek()">›</button>
+  <button class="today-btn px-3 py-1 bg-gradient-to-br from-[var(--color-accent-gold-light)] to-[var(--color-accent-gold)] rounded-[6px] text-[var(--color-primary-navy)] text-[0.7rem] font-bold uppercase tracking-[0.05em] cursor-pointer transition-all flex-shrink-0" (click)="goToToday()">Oggi</button>
+  <button class="agenda-toggle-btn flex-shrink-0 flex items-center gap-1 px-2 py-1 bg-white/5 rounded-[6px] text-[0.7rem] font-semibold tracking-[0.03em] cursor-pointer transition-all" [class.active]="agendaView" (click)="toggleAgendaView()"><span>☰</span></button>
 </div>
 <!-- Desktop week nav -->
-<div class="hidden sm:flex flex-shrink-0 items-center justify-center gap-3 px-6 py-2.5 bg-[var(--color-primary-navy)]/95 border-b border-[var(--color-accent-gold)]/18 backdrop-blur-sm">
-  <button class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 border border-white/20 rounded-lg text-white/65 text-base cursor-pointer transition-all hover:bg-white/18 flex-shrink-0" (click)="prevWeek()">‹</button>
-  <span class="text-center text-[0.88rem] font-medium text-white/90 tracking-[0.01em] whitespace-nowrap min-w-[200px]">{{ getWeekLabel() }}</span>
-  <button class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 border border-white/20 rounded-lg text-white/65 text-base cursor-pointer transition-all hover:bg-white/18 flex-shrink-0" (click)="nextWeek()">›</button>
-  <button class="today-btn px-3 py-1 bg-[var(--color-accent-gold)]/15 border border-[var(--color-accent-gold)]/45 rounded-[6px] text-[var(--color-accent-gold-light)] text-[0.78rem] font-semibold uppercase tracking-[0.05em] cursor-pointer transition-all hover:bg-[var(--color-accent-gold)]/28 flex-shrink-0" (click)="goToToday()">Oggi</button>
+<div class="hidden sm:flex flex-shrink-0 items-center justify-center gap-3 px-6 py-2.5 bg-gradient-to-r from-[var(--color-primary-navy)] to-[#1a3a6e] backdrop-blur-md">
+  <button class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 rounded-lg text-white/95 text-base cursor-pointer transition-all hover:bg-white/20 flex-shrink-0" (click)="prevWeek()">‹</button>
+  <span class="text-center text-[1rem] font-bold text-white tracking-[0.01em] whitespace-nowrap min-w-[200px]">{{ getWeekLabel() }}</span>
+  <button class="nav-btn w-8 h-8 flex items-center justify-center bg-white/10 rounded-lg text-white/95 text-base cursor-pointer transition-all hover:bg-white/20 flex-shrink-0" (click)="nextWeek()">›</button>
+  <button class="today-btn px-5 py-2 bg-gradient-to-br from-[var(--color-accent-gold-light)] to-[var(--color-accent-gold)] rounded-lg text-[var(--color-primary-navy)] text-[0.78rem] font-bold uppercase tracking-[0.06em] cursor-pointer transition-all hover:scale-[1.03] hover:shadow-lg hover:shadow-[var(--color-accent-gold)]/20 flex-shrink-0" (click)="goToToday()">Oggi</button>
 </div>
 <!-- Calendar grid -->
 <div class="calendar-container flex-1 flex flex-col overflow-hidden">
-  <div class="calendar-header flex-shrink-0 bg-[var(--color-primary-navy)] border-b border-[var(--color-accent-gold)]/18 grid grid-cols-[44px_repeat(3,1fr)] sm:grid-cols-[48px_repeat(3,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]" [class.hidden]="agendaView">
-    <div class="border-r border-white/10"></div>
-    <div class="day-header flex flex-col items-center py-[0.7rem] border-r border-white/8 gap-[0.3rem]" *ngFor="let day of weekDays" [class.today]="isToday(day)">
-      <span class="day-name text-[0.62rem] font-semibold text-white/42 tracking-[0.14em] uppercase leading-none">{{ getDayName(day) }}</span>
-      <span class="day-number text-base font-medium text-white/82 w-[30px] h-[30px] flex items-center justify-center rounded-full transition-all" [class.today-circle]="isToday(day)">{{ getDayNumber(day) }}</span>
+  <div class="calendar-header flex-shrink-0 bg-gradient-to-r from-[var(--color-primary-navy)] to-[#1a3a6e] grid grid-cols-[44px_repeat(3,1fr)] sm:grid-cols-[48px_repeat(3,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]" [class.hidden]="agendaView">
+    <div class="border-r border-[var(--color-accent-gold)]/10"></div>
+    <div class="day-header flex flex-col items-center py-[0.7rem] border-r border-[var(--color-accent-gold)]/10 gap-[0.3rem]" *ngFor="let day of weekDays" [class.today]="isToday(day)">
+      <span class="day-name text-[0.62rem] font-bold text-white/90 tracking-[0.14em] uppercase leading-none">{{ getDayName(day) }}</span>
+      <span class="day-number text-base font-bold text-white w-[30px] h-[30px] flex items-center justify-center rounded-full transition-all" [class.today-circle]="isToday(day)">{{ getDayNumber(day) }}</span>
     </div>
   </div>
   <div class="calendar-grid-scroll flex-1 overflow-y-scroll overflow-x-hidden pb-[calc(env(safe-area-inset-bottom)+4rem)] sm:pb-[env(safe-area-inset-bottom)]" [class.hidden]="agendaView">
     <div class="calendar-grid min-h-full bg-[var(--color-bg-subtle)] grid grid-cols-[44px_repeat(3,1fr)] sm:grid-cols-[48px_repeat(3,1fr)] lg:grid-cols-[56px_repeat(7,1fr)]">
-      <div class="time-col border-r border-[var(--color-border-subtle)] sticky left-0 bg-white z-[5] shadow-[2px_0_8px_rgba(26,52,98,0.05)]">
+      <div class="time-col border-r border-[var(--color-border-subtle)] sticky left-0 bg-white z-[5] shadow-[4px_0_12px_rgba(26,52,98,0.12)]">
         <div class="time-slot-label" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)" [class.half-hour]="!isFullHour(slot)">{{ slot }}</div>
       </div>
       <div class="day-col border-r border-[var(--color-border-subtle)]/60" *ngFor="let day of weekDays" [class.today-col]="isToday(day)">
@@ -59,8 +59,8 @@
             <span class="text-[0.68rem] font-semibold text-[var(--color-accent-gold)] uppercase tracking-wide flex-shrink-0" *ngIf="isToday(day)">Oggi</span>
           </div>
           <div class="ml-[52px] flex flex-col gap-[6px]">
-            <div class="agenda-booking-row flex items-center gap-3 px-4 py-[10px] bg-white border border-[var(--color-border-subtle)] rounded-xl shadow-sm cursor-pointer" *ngFor="let b of getBookingsForAgendaDay(day)" [class.opacity-50]="b.status === 'CANCELLED'" (click)="openCallModalEvent.emit(b)">
-              <div class="w-[7px] h-[7px] rounded-full flex-shrink-0" [style.backgroundColor]="b.status === 'CANCELLED' ? 'var(--color-text-muted)' : b.professionalRole === 'NUTRITIONIST' ? '#2d5fa8' : 'var(--color-primary-navy)'"></div>
+            <div class="agenda-booking-row flex items-center gap-3 px-4 py-[10px] bg-white border border-[var(--color-border-subtle)] rounded-xl shadow-sm cursor-pointer" *ngFor="let b of getBookingsForAgendaDay(day)" [class.opacity-50]="b.status === 'CANCELED'" (click)="openCallModalEvent.emit(b)">
+              <div class="w-[7px] h-[7px] rounded-full flex-shrink-0" [style.backgroundColor]="b.status === 'CANCELED' ? 'var(--color-text-muted)' : b.professionalRole === 'NUTRITIONIST' ? '#2d5fa8' : 'var(--color-primary-navy)'"></div>
               <div class="flex-1 min-w-0">
                 <div class="text-[0.875rem] font-semibold text-[var(--color-text-main)] truncate">{{ getBookingLabel(b) }}</div>
                 <div class="text-[0.74rem] text-[var(--color-text-muted)] font-medium">{{ b.startTime }} – {{ b.endTime }}</div>

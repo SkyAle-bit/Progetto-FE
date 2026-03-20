@@ -859,7 +859,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   checkCallTime(): void {
-    if (!this.selectedCallBooking || this.selectedCallBooking.status === 'CANCELLED') {
+    if (!this.selectedCallBooking || this.selectedCallBooking.status === 'CANCELED') {
       this.canJoinCallNow = false;
       return;
     }
@@ -890,6 +890,42 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Apri il link meeting in una nuova tab
     window.open(this.selectedCallBooking.meetingLink, '_blank');
     this.closeCallModal();
+  }
+
+  isCancellationAllowed(): boolean {
+    if (!this.selectedCallBooking || !this.isClient() || this.selectedCallBooking.status !== 'CONFIRMED') return false;
+
+    // Check 24h limit: (startTime - now) >= 24h
+    const b = this.selectedCallBooking;
+    const bookingDate = new Date(`${b.date}T${b.startTime}:00`);
+    const now = new Date();
+    const diffMs = bookingDate.getTime() - now.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+
+    return diffHours >= 24;
+  }
+
+  cancelCurrentBooking(): void {
+    if (!this.selectedCallBooking || !this.currentUser) return;
+
+    if (!confirm('Sei sicuro di voler annullare questa prenotazione? Lo slot verrà liberato e ti verranno restituiti i crediti.')) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.authService.cancelBooking(this.selectedCallBooking.id, this.currentUser.id).subscribe({
+      next: () => {
+        this.toast.success('Prenotazione Annullata', 'La prenotazione è stata annullata con successo.');
+        this.closeCallModal();
+        this.loadDashboardData();
+      },
+      error: (err) => {
+        this.isLoading = false;
+        const msg = err?.error?.message || 'Impossibile annullare la prenotazione in questo momento.';
+        this.toast.error('Errore', msg);
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   // ── Chat (solo badge notifiche nella topbar) ──────────────

@@ -341,6 +341,7 @@
 .panel-title {
   background: linear-gradient(90deg, var(--color-accent-gold-light), var(--color-accent-gold));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -448,6 +449,7 @@
 .avail-title {
   background: linear-gradient(90deg, var(--color-accent-gold-light), var(--color-accent-gold));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -1149,7 +1151,7 @@
    ══════════════════════════════════════════════════════════════════════════ */
 
 .desktop-nav-item {
-  color: rgba(255, 255, 255, 0.52);
+  color: rgba(255, 255, 255, 0.78);
   background: transparent;
   border: 1px solid transparent;
   cursor: pointer;
@@ -1170,9 +1172,9 @@
 }
 
 .desktop-nav-item:hover {
-  color: rgba(255, 255, 255, 0.82);
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .desktop-nav-item.active {

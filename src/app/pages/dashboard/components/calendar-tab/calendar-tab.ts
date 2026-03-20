@@ -127,7 +127,7 @@ export class CalendarTabComponent implements OnInit {
   }
 
   getBookingClass(b: any): string {
-    if (b.status === 'CANCELLED') return 'booking-cancelled';
+    if (b.status === 'CANCELED') return 'booking-cancelled';
     if (b.professionalRole === 'NUTRITIONIST') return 'booking-nutrition';
     return 'booking-pt';
   }

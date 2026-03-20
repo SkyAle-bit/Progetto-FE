@@ -95,6 +95,18 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/api/bookings`, request);
   }
 
+  cancelBooking(bookingId: number, userId: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/api/bookings/${bookingId}/cancel?userId=${userId}`, {});
+  }
+
+  forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/reset-password`, { token, newPassword });
+  }
+
   getMyClients(professionalId: number): Observable<any[]> {
     const timestamp = new Date().getTime();
     return this.http.get<any[]>(`${this.apiUrl}/api/users/${professionalId}/clients?t=${timestamp}`);
