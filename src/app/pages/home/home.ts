@@ -26,11 +26,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('progressBar') progressBarRef?: ElementRef<HTMLDivElement>;
 
     carouselVideos = [
-        { key: 'dashboard', title: 'Dashboard', src: 'assets/videos/carosello/dashboard.mp4', mobileSrc: 'assets/videos/carosello_mobile/dashboard.mp4' },
-        { key: 'calendario', title: 'Calendario', src: 'assets/videos/carosello/calendario.mp4', mobileSrc: 'assets/videos/carosello_mobile/calendario.mp4' },
-        { key: 'prenotazione', title: 'Prenotazione', src: 'assets/videos/carosello/prenotazione.mp4', mobileSrc: 'assets/videos/carosello_mobile/prenotazione.mp4' },
-        { key: 'chat', title: 'Chat', src: 'assets/videos/carosello/chat.mp4', mobileSrc: 'assets/videos/carosello_mobile/chat.mp4' },
-        { key: 'scheda', title: 'Scheda', src: 'assets/videos/carosello/scheda.mp4', mobileSrc: 'assets/videos/carosello_mobile/scheda.mp4' }
+        { key: 'dashboard', title: 'Dashboard', src: 'https://res.cloudinary.com/dpgixeqq0/video/upload/v1774348830/dashboard_d9kgl5.mp4', mobileSrc: 'https://res.cloudinary.com/dpgixeqq0/video/upload/v1774348533/dashboard_rbs4pz.mp4' },
+        { key: 'calendario', title: 'Calendario', src: 'https://res.cloudinary.com/dpgixeqq0/video/upload/v1774348830/calendario_axbrqh.mp4', mobileSrc: 'https://res.cloudinary.com/dpgixeqq0/video/upload/v1774348532/chat_rfr9oh.mp4' },
+        { key: 'prenotazione', title: 'Prenotazione', src: 'https://res.cloudinary.com/dpgixeqq0/video/upload/v1774348830/prenotazione_hqiaw1.mp4', mobileSrc: 'https://res.cloudinary.com/dpgixeqq0/video/upload/v1774348534/prenotazione_eq54m3.mp4' },
+        { key: 'chat', title: 'Chat', src: 'https://res.cloudinary.com/dpgixeqq0/video/upload/v1774348830/chat_godpbw.mp4', mobileSrc: 'https://res.cloudinary.com/dpgixeqq0/video/upload/v1774348532/chat_rfr9oh.mp4' },
+        { key: 'scheda', title: 'Scheda', src: 'https://res.cloudinary.com/dpgixeqq0/video/upload/v1774348836/scheda_mgbfxb.mp4', mobileSrc: 'https://res.cloudinary.com/dpgixeqq0/video/upload/v1774348534/scheda_sr3hsi.mp4' }
     ];
     currentCarouselVideoIndex: number = 0;
     videoProgress: number = 0;
