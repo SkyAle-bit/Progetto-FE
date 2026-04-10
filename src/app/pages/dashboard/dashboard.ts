@@ -730,7 +730,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.authService.getProfessionalSlots(professional.id).subscribe({
       next: (slots) => {
-        this.availableBookingSlots = slots.filter((s: any) => s.available || s.isAvailable);
+        // Calcola la mezzanotte di domani: solo slot a partire dal giorno successivo a oggi
+        const tomorrow = new Date();
+        tomorrow.setHours(0, 0, 0, 0);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        this.availableBookingSlots = slots.filter((s: any) =>
+          (s.available || s.isAvailable) && new Date(s.startTime) >= tomorrow
+        );
         this.buildBookingDays();
         this.isLoading = false;
         this.cdr.detectChanges();
