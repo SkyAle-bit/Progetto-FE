@@ -1,11 +1,18 @@
 import {
-  Component, inject, OnInit, OnDestroy, ChangeDetectorRef, HostListener, ViewChild
+  Component, inject, OnInit, OnDestroy, ChangeDetectorRef, HostListener, ViewChild, DestroyRef
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { switchMap, of, catchError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
+
 import { AuthService } from '../../services/auth.service';
 import { ChatService } from '../../services/chat.service';
+import { AvailabilityService } from '../../services/availability.service';
+import { ToastService } from '../../services/toast.service';
+
 import { HomeTabComponent } from './components/home-tab/home-tab';
 import { CalendarTabComponent } from './components/calendar-tab/calendar-tab';
 import { ChatTabComponent } from './components/chat-tab/chat-tab';
@@ -18,13 +25,34 @@ import { MyProfessionalsTabComponent } from './components/my-professionals-tab/m
 import { MyServicesTabComponent } from './components/my-services-tab/my-services-tab';
 import { AdminStatsTabComponent } from './components/admin-stats-tab/admin-stats-tab';
 import { ToastComponent } from '../../components/toast/toast';
-import { ToastService } from '../../services/toast.service';
 import { PullToRefreshDirective } from '../../directives/pull-to-refresh.directive';
+
+import {
+  AuthUser,
+  DashboardData,
+  ClientBasicInfo,
+  UserProfile,
+  Plan,
+  Subscription,
+  ProStats,
+  ActivityFeedItem,
+  ProfessionalSlot,
+  Booking,
+  ProfessionalSummary,
+  ProfileEditData,
+  ApiErrorResponse,
+  TabId
+} from '../../models/dashboard.types';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent, ClientsTabComponent, AdminHomeTabComponent, AdminUsersTabComponent, AdminPlansTabComponent, InsuranceHomeTabComponent, MyProfessionalsTabComponent, MyServicesTabComponent, AdminStatsTabComponent, ToastComponent, PullToRefreshDirective],
+  imports: [
+    CommonModule, FormsModule, HomeTabComponent, CalendarTabComponent, ChatTabComponent,
+    ClientsTabComponent, AdminHomeTabComponent, AdminUsersTabComponent, AdminPlansTabComponent,
+    InsuranceHomeTabComponent, MyProfessionalsTabComponent, MyServicesTabComponent,
+    AdminStatsTabComponent, ToastComponent, PullToRefreshDirective
+  ],
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css']
 })
@@ -33,38 +61,73 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private authService = inject(AuthService);
   private chatService = inject(ChatService);
+  private availabilityService = inject(AvailabilityService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private toast = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
 
-  currentUser: any = null;
-  dashboardData: any = null;
+  currentUser: AuthUser | null = null;
+  dashboardData: DashboardData | null = null;
   isLoading: boolean = true;
   isProfileOpen: boolean = false;
-  myClients: any[] = []; // Array per la quick view nel profilo
+  myClients: ClientBasicInfo[] = [];
 
-  // ── Admin / Insurance data ────────────────────────────────
-  allUsers: any[] = [];
-  chatUsers: any[] = [];
-  allPlans: any[] = [];
-  allSubscriptions: any[] = [];
+  allUsers: UserProfile[] = [];
+  chatUsers: UserProfile[] = [];
+  allPlans: Plan[] = [];
+  allSubscriptions: Subscription[] = [];
 
-  // ── Tab mobile ────────────────────────────────────────────
-  activeTab: string = 'home'; // 'home' | 'calendar' | 'chat' | 'clients' | 'professionals'
-
-  // ── Chat (solo badge globale) ───────────────────────────
+  activeTab: TabId = 'home';
   globalUnreadCount: number = 0;
 
-  // ── Statistiche professionista ─────────────────────────
-  proStats: any = null;
+  proStats: ProStats | null = null;
+  activityFeed: ActivityFeedItem[] = [];
 
-  // ── Cronologia attività ────────────────────────────────
-  activityFeed: any[] = [];
-
-  // ── Modale Successo Globale ───────────────────────────────
   isPopupOpen: boolean = false;
   popupTitle: string = '';
   popupMessage: string = '';
+
+  isAvailabilityOpen: boolean = false;
+  nextWeekDays: Date[] = [];
+  selectedSlots: Set<string> = new Set();
+  existingSlots: Set<string> = new Set();
+  existingSlotIds: Map<string, number> = new Map();
+  lockedSlots: Set<string> = new Set();
+
+  isBookingOpen: boolean = false;
+  selectedProfessional: ProfessionalSummary | null = null;
+  availableBookingSlots: ProfessionalSlot[] = [];
+  selectedBookingSlot: ProfessionalSlot | null = null;
+
+  bookingDays: Date[] = [];
+  selectedBookingDay: Date | null = null;
+  slotsForSelectedDay: ProfessionalSlot[] = [];
+
+  currentWeekStart: Date = new Date();
+  weekDays: Date[] = [];
+  timeSlots: string[] = [];
+  readonly START_HOUR = 8;
+  readonly END_HOUR = 21;
+
+  visibleDayCount: number = 7;
+  dayOffset: number = 0;
+
+  isCallModalOpen: boolean = false;
+  selectedCallBooking: Booking | null = null;
+  canJoinCallNow: boolean = false;
+  private timeCheckInterval: ReturnType<typeof setInterval> | null = null;
+
+  isProfileEditOpen: boolean = false;
+  isSavingProfile: boolean = false;
+  profileEditData: ProfileEditData = {
+    firstName: '',
+    lastName: '',
+    password: '',
+    profilePicture: ''
+  };
+
+  copiedDay: Date | null = null;
 
   openPopup(title: string, message: string): void {
     this.popupTitle = title;
@@ -73,7 +136,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   showPopupMessage(title: string, message: string): void {
-    // Determina il tipo di toast dal titolo
     const t = title.toLowerCase();
     if (t.includes('errore') || t.includes('error')) {
       this.toast.error(title, message);
@@ -87,48 +149,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   closePopup(): void {
     this.isPopupOpen = false;
   }
-
-  // ── Disponibilità ─────────────────────────────────────────
-  isAvailabilityOpen: boolean = false;
-  nextWeekDays: Date[] = [];
-  selectedSlots: Set<string> = new Set();
-  existingSlots: Set<string> = new Set();
-  existingSlotIds: Map<string, number> = new Map();
-  lockedSlots: Set<string> = new Set();
-
-  // ── Prenotazione Cliente ──────────────────────────────────
-  isBookingOpen: boolean = false;
-  selectedProfessional: any = null;
-  availableBookingSlots: any[] = [];
-  selectedBookingSlot: any = null;
-
-  bookingDays: Date[] = [];
-  selectedBookingDay: Date | null = null;
-  slotsForSelectedDay: any[] = [];
-
-  currentWeekStart: Date = new Date();
-  weekDays: Date[] = [];
-  timeSlots: string[] = [];
-  readonly START_HOUR = 8;
-  readonly END_HOUR = 21;
-
-  visibleDayCount: number = 7;
-  dayOffset: number = 0;
-  // ── Accesso Call (Modal) ──────────────────────────────────
-  isCallModalOpen: boolean = false;
-  selectedCallBooking: any = null;
-  canJoinCallNow: boolean = false;
-  private timeCheckInterval: any;
-
-  // ── Modale Modifica Profilo ─────────────────────────────────
-  isProfileEditOpen: boolean = false;
-  isSavingProfile: boolean = false;
-  profileEditData: any = {
-    firstName: '',
-    lastName: '',
-    password: '',
-    profilePicture: ''
-  };
 
   openProfileEditModal(): void {
     this.profileEditData = {
@@ -148,24 +168,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!this.currentUser) return;
     this.isSavingProfile = true;
 
-    this.authService.updateProfile(this.currentUser.id, this.profileEditData).subscribe({
-      next: (res) => {
-        this.isSavingProfile = false;
-        this.closeProfileEditModal();
-        this.toast.success('Successo', 'Profilo aggiornato con successo.');
+    this.authService.updateProfile(this.currentUser.id, this.profileEditData)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.isSavingProfile = false;
+          this.closeProfileEditModal();
+          this.toast.success('Successo', 'Profilo aggiornato con successo.');
 
-        // Update local session
-        this.currentUser.profilePicture = this.profileEditData.profilePicture;
-        localStorage.setItem('user', JSON.stringify(this.currentUser));
+          if (this.currentUser) {
+            this.currentUser.profilePicture = this.profileEditData.profilePicture;
+            localStorage.setItem('user', JSON.stringify(this.currentUser));
+          }
 
-        this.loadDashboardData(); // reload UI profile
-      },
-      error: (err) => {
-        this.isSavingProfile = false;
-        this.toast.error('Errore', 'Impossibile aggiornare il profilo.');
-        console.error(err);
-      }
-    });
+          this.loadDashboardData();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.isSavingProfile = false;
+          const apiError = err.error as ApiErrorResponse;
+          this.toast.error('Errore', apiError?.message || 'Impossibile aggiornare il profilo.');
+          console.error(err);
+        }
+      });
   }
 
   contactAdmin(): void {
@@ -174,21 +198,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.toast.warning('Attenzione', 'Sei già un Amministratore.');
       return;
     }
-    this.authService.getAdmin().subscribe({
-      next: (adminUser) => {
-        this.setTab('chat');
-        // Wait a tick for the ChatTabComponent to be rendered
-        setTimeout(() => {
-          if (this.chatTabComponent) {
-            this.chatTabComponent.startConversationWith(adminUser);
-          }
-        }, 150);
-      },
-      error: (err) => {
-        this.toast.error('Errore', 'Impossibile recuperare l\'account Amministratore.');
-        console.error(err);
-      }
-    });
+    this.authService.getAdmin()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (adminUser) => {
+          this.setTab('chat');
+          setTimeout(() => {
+            if (this.chatTabComponent) {
+              this.chatTabComponent.startConversationWith(adminUser);
+            }
+          }, 150);
+        },
+        error: (err: HttpErrorResponse) => {
+          const apiError = err.error as ApiErrorResponse;
+          this.toast.error('Errore', apiError?.message || "Impossibile recuperare l'account Amministratore.");
+          console.error(err);
+        }
+      });
   }
 
   ngOnInit(): void {
@@ -196,18 +222,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (userString) {
       this.currentUser = JSON.parse(userString);
       this.initWeek();
-      this.buildTimeSlots();
+      this.timeSlots = this.availabilityService.buildTimeSlots();
       this.updateVisibleDays();
       this.loadDashboardData();
 
-      // Inizializza chat real-time (WebSocket + polling fallback)
-      this.chatService.init(this.currentUser.id);
+      if (this.currentUser) {
+         this.chatService.init(this.currentUser.id);
+      }
 
-      // Sottoscrizione al conteggio globale non letti
-      this.chatService.unreadCount$.subscribe(count => {
-        this.globalUnreadCount = count;
-        this.cdr.detectChanges();
-      });
+      this.chatService.unreadCount$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(count => {
+          this.globalUnreadCount = count;
+          this.cdr.detectChanges();
+        });
     } else {
       this.router.navigate(['/login']);
     }
@@ -220,8 +248,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.chatService.destroy();
   }
 
-  // ── Responsive ───────────────────────────────────────────
-
   @HostListener('window:resize')
   onResize(): void {
     this.updateVisibleDays();
@@ -231,52 +257,43 @@ export class DashboardComponent implements OnInit, OnDestroy {
   updateVisibleDays(): void {
     const w = window.innerWidth;
     if (w < 640) {
-      this.visibleDayCount = 3;          // mobile
+      this.visibleDayCount = 3;
     } else if (w < 1024) {
-      this.visibleDayCount = 3;          // tablet
+      this.visibleDayCount = 3;
     } else {
-      this.visibleDayCount = 7;          // desktop
+      this.visibleDayCount = 7;
     }
     this.buildWeekDays();
   }
 
-  // ── Caricamento dati ─────────────────────────────────────
-
   loadDashboardData(): void {
-    // Admin, Moderatore e Insurance Manager caricano dati diversi
     if (this.isAdmin() || this.isModerator() || this.isInsuranceManager()) {
       this.loadAdminInsuranceData();
       return;
     }
 
-    this.authService.getDashboard(this.currentUser.id).subscribe({
-      next: (data) => {
-        this.dashboardData = data;
+    if (!this.currentUser) return;
 
-        // Se è un professionista, carichiamo anche i suoi clienti per il pannello laterale
+    this.authService.getDashboard(this.currentUser.id).pipe(
+      switchMap(data => {
+        this.dashboardData = data;
         if (this.isProfessional()) {
-          this.authService.getMyClients(this.currentUser.id).subscribe({
-            next: (res: any) => {
-              this.myClients = Array.isArray(res) ? res : (res && res.value) ? res.value : [];
-              this.isLoading = false;
-              this.cdr.detectChanges();
-              // Carica statistiche professionista
-              this.loadProStats();
-              this.loadActivityFeed();
-            },
-            error: (err) => {
-              console.error('Errore caricamento mini-lista clienti', err);
-              this.isLoading = false;
-              this.cdr.detectChanges();
-            }
-          });
-        } else {
-          this.isLoading = false;
-          this.cdr.detectChanges();
-          this.loadActivityFeed();
+          return this.authService.getMyClients(this.currentUser!.id);
         }
+        return of([] as ClientBasicInfo[]);
+      }),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe({
+      next: (clients) => {
+        if (this.isProfessional()) {
+          this.myClients = Array.isArray(clients) ? clients : [];
+          this.loadProStats();
+        }
+        this.loadActivityFeed();
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         console.error('Errore nel caricamento della dashboard', err);
         this.isLoading = false;
         this.cdr.detectChanges();
@@ -296,11 +313,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       };
 
-      this.authService.getUsersByMode('moderator').subscribe({
-        next: (users: any[]) => {
+      this.authService.getUsersByMode('moderator').pipe(
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe({
+        next: (users) => {
           this.allUsers = users ?? [];
-          this.authService.getModeratorChatContacts().subscribe({
-            next: (contacts: any[]) => {
+          this.authService.getModeratorChatContacts().pipe(
+            takeUntilDestroyed(this.destroyRef)
+          ).subscribe({
+            next: (contacts) => {
               this.loadModeratorChatUsers([...this.allUsers, ...(contacts ?? [])]);
               checkDone();
             },
@@ -317,7 +338,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });
 
-      this.authService.getPlans().subscribe({
+      this.authService.getPlans().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (plans) => {
           this.allPlans = Array.isArray(plans) ? plans : [];
           checkDone();
@@ -328,7 +349,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });
 
-      this.authService.getAllSubscriptionsByMode('moderator').subscribe({
+      this.authService.getAllSubscriptionsByMode('moderator').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (subs) => { this.allSubscriptions = subs ?? []; checkDone(); },
         error: () => { this.allSubscriptions = []; checkDone(); }
       });
@@ -340,7 +361,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const total = 3;
     const checkDone = () => { loaded++; if (loaded >= total) { this.isLoading = false; this.cdr.detectChanges(); } };
 
-    this.authService.getAllUsers().subscribe({
+    this.authService.getAllUsers().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (users) => {
         this.allUsers = users ?? [];
         this.chatUsers = [...this.allUsers];
@@ -352,31 +373,35 @@ export class DashboardComponent implements OnInit, OnDestroy {
         checkDone();
       }
     });
-    this.authService.getPlans().subscribe({
+
+    this.authService.getPlans().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (plans) => { this.allPlans = plans ?? []; checkDone(); },
       error: () => { this.allPlans = []; checkDone(); }
     });
-    this.authService.getAllSubscriptions().subscribe({
+
+    this.authService.getAllSubscriptions().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (subs) => { this.allSubscriptions = subs ?? []; checkDone(); },
       error: () => { this.allSubscriptions = []; checkDone(); }
     });
   }
 
-  private loadModeratorChatUsers(manageableUsers: any[]): void {
+  private loadModeratorChatUsers(manageableUsers: UserProfile[]): void {
     const baseUsers = Array.isArray(manageableUsers) ? [...manageableUsers] : [];
-    this.authService.getAdmin().subscribe({
-      next: (adminUser) => {
-        const merged = [...baseUsers, adminUser].filter((u, index, arr) =>
-          u && typeof u.id !== 'undefined' && arr.findIndex(x => x?.id === u.id) === index
-        );
-        this.chatUsers = merged;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.chatUsers = baseUsers;
-        this.cdr.detectChanges();
-      }
-    });
+    this.authService.getAdmin()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (adminUser) => {
+          const merged = [...baseUsers, adminUser as unknown as UserProfile].filter((u, index, arr) =>
+            u && typeof u.id !== 'undefined' && arr.findIndex(x => x?.id === u.id) === index
+          );
+          this.chatUsers = merged;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.chatUsers = baseUsers;
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   reloadAdminData(): void {
@@ -385,29 +410,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private loadProStats(): void {
     if (!this.isProfessional() || !this.currentUser?.id) return;
-    this.authService.getProfessionalStats(this.currentUser.id).subscribe({
-      next: (stats) => {
-        this.proStats = stats;
-        this.cdr.detectChanges();
-      },
-      error: () => { /* silently ignore */ }
-    });
+    this.authService.getProfessionalStats(this.currentUser.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (stats) => {
+          this.proStats = stats;
+          this.cdr.detectChanges();
+        },
+        error: () => { }
+      });
   }
-
-  // ── Cronologia Attività ──────────────────────────────────
 
   private loadActivityFeed(): void {
     if (!this.currentUser?.id) return;
-    this.authService.getActivityFeed(this.currentUser.id).subscribe({
-      next: (feed) => {
-        this.activityFeed = feed || [];
-        this.cdr.detectChanges();
-      },
-      error: () => { /* silently ignore */ }
-    });
+    this.authService.getActivityFeed(this.currentUser.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (feed) => {
+          this.activityFeed = feed || [];
+          this.cdr.detectChanges();
+        },
+        error: () => { }
+      });
   }
-
-  // ── Pull-to-Refresh ─────────────────────────────────────
 
   onPullRefresh(): void {
     if (this.isAdmin() || this.isModerator() || this.isInsuranceManager()) {
@@ -417,12 +442,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // ── Accessori dati ───────────────────────────────────────
-
-  get profile() { return this.dashboardData?.profile; }
-  get subscription() { return this.dashboardData?.subscription; }
-  get professionals() { return this.dashboardData?.followingProfessionals ?? []; }
-  get bookings(): any[] { return this.dashboardData?.upcomingBookings ?? []; }
+  get profile(): UserProfile | undefined { return this.dashboardData?.profile; }
+  get subscription(): Subscription | null | undefined { return this.dashboardData?.subscription; }
+  get professionals(): ProfessionalSummary[] { return this.dashboardData?.followingProfessionals ?? []; }
+  get bookings(): Booking[] { return this.dashboardData?.upcomingBookings ?? []; }
 
   isClient(): boolean { return this.currentUser?.role === 'CLIENT'; }
   isProfessional(): boolean {
@@ -433,15 +456,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isModerator(): boolean { return this.currentUser?.role === 'MODERATOR'; }
   isInsuranceManager(): boolean { return this.currentUser?.role === 'INSURANCE_MANAGER'; }
 
-  setTab(tab: string): void {
-    this.activeTab = tab;
+  setTab(tab: TabId | string): void {
+    this.activeTab = tab as TabId;
     if (tab === 'chat') {
       this.globalUnreadCount = 0;
     }
     this.cdr.detectChanges();
   }
-
-  // ── Calendario ───────────────────────────────────────────
 
   initWeek(): void {
     const today = new Date();
@@ -464,30 +485,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  buildTimeSlots(): void {
-    this.timeSlots = [];
-    for (let h = this.START_HOUR; h < this.END_HOUR; h++) {
-      this.timeSlots.push(`${h.toString().padStart(2, '0')}:00`);
-      this.timeSlots.push(`${h.toString().padStart(2, '0')}:30`);
-    }
-  }
+  isFullHour(slot: string): boolean { return this.availabilityService.isFullHour(slot); }
 
-  isFullHour(slot: string): boolean { return slot.endsWith(':00'); }
+  formatDate(date: Date): string { return this.availabilityService.formatDate(date); }
 
-  formatDate(date: Date): string {
-    const y = date.getFullYear();
-    const m = (date.getMonth() + 1).toString().padStart(2, '0');
-    const d = date.getDate().toString().padStart(2, '0');
-    return `${y}-${m}-${d}`;
-  }
+  getDayName(date: Date): string { return this.availabilityService.getDayName(date); }
 
-  getDayName(date: Date): string {
-    return date.toLocaleDateString('it-IT', { weekday: 'short' }).toUpperCase();
-  }
+  getDayNumber(date: Date): number { return this.availabilityService.getDayNumber(date); }
 
-  getDayNumber(date: Date): number { return date.getDate(); }
-
-  getBookingLabel(b: any): string {
+  getBookingLabel(b: Booking): string {
     if (this.isClient()) {
       const role = b.professionalRole === 'PERSONAL_TRAINER' ? 'PT' : 'Nutr.';
       return `${role} – ${b.professionalName ?? ''}`;
@@ -499,8 +505,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.weekDays.reduce((acc, day) =>
       acc + this.bookings.filter(b => b.date === this.formatDate(day)).length, 0);
   }
-
-  // ── Profilo ──────────────────────────────────────────────
 
   toggleProfile(): void { this.isProfileOpen = !this.isProfileOpen; }
   closeProfile(): void { this.isProfileOpen = false; }
@@ -517,25 +521,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return Math.max(0, Math.ceil((end.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
   }
 
-  // ── Disponibilità ────────────────────────────────────────
-
   buildNextWeekDays(): void {
-    this.nextWeekDays = [];
-    const today = new Date();
-    const day = today.getDay();
-    // Lunedì della settimana prossima
-    const daysUntilNextMonday = day === 0 ? 1 : 8 - day;
-    const nextMonday = new Date(today);
-    nextMonday.setDate(today.getDate() + daysUntilNextMonday);
-    nextMonday.setHours(0, 0, 0, 0);
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(nextMonday);
-      d.setDate(nextMonday.getDate() + i);
-      this.nextWeekDays.push(d);
-    }
+    this.nextWeekDays = this.availabilityService.buildNextWeekDays();
   }
 
   openAvailability(): void {
+    if (!this.currentUser) return;
     this.buildNextWeekDays();
     this.selectedSlots.clear();
     this.existingSlots.clear();
@@ -544,30 +535,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.isAvailabilityOpen = true;
     this.isLoading = true;
 
-    this.authService.getProfessionalSlots(this.currentUser.id).subscribe({
-      next: (slots: any[]) => {
-        slots.forEach(slot => {
-          const start = new Date(slot.startTime);
-          const timeLabel = `${start.getHours().toString().padStart(2, '0')}:${start.getMinutes().toString().padStart(2, '0')}`;
-          const key = this.slotKey(start, timeLabel);
+    this.availabilityService.loadProfessionalSlots(this.currentUser.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (slots) => {
+          slots.forEach(slot => {
+            const start = new Date(slot.startTime);
+            const timeLabel = this.availabilityService.getSlotTimeLabel(slot);
+            const key = this.availabilityService.slotKey(start, timeLabel);
 
-          this.existingSlots.add(key);
-          this.existingSlotIds.set(key, slot.id);
-          // Se lo slot è prenotato (isAvailable == false o available == false), lo blocchiamo
-          if (slot.isAvailable === false || slot.available === false) {
-            this.lockedSlots.add(key);
-          }
-        });
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Errore nel caricamento disponibilità esistente', err);
-        // Anche in caso di errore apriamo la modale vuota e sblocchiamo il loading
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      }
-    });
+            this.existingSlots.add(key);
+            this.existingSlotIds.set(key, slot.id);
+            if (slot.isAvailable === false || slot.available === false) {
+              this.lockedSlots.add(key);
+            }
+          });
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error('Errore nel caricamento disponibilità esistente', err);
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   closeAvailability(): void {
@@ -575,11 +566,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   slotKey(day: Date, slot: string): string {
-    return `${this.formatDate(day)}|${slot}`;
+    return this.availabilityService.slotKey(day, slot);
   }
 
   toggleSlot(day: Date, slot: string): void {
-    const key = this.slotKey(day, slot);
+    if (!this.currentUser) return;
+    const key = this.availabilityService.slotKey(day, slot);
 
     if (this.existingSlots.has(key)) {
       if (this.lockedSlots.has(key)) {
@@ -588,21 +580,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
         const slotId = this.existingSlotIds.get(key);
         if (slotId && confirm('Vuoi rimuovere questa disponibilità?')) {
           this.isLoading = true;
-          this.authService.deleteProfessionalSlot(this.currentUser.id, slotId).subscribe({
-            next: () => {
-              this.existingSlots.delete(key);
-              this.existingSlotIds.delete(key);
-              this.isLoading = false;
-              this.cdr.detectChanges();
-              this.loadDashboardData();
-            },
-            error: (err) => {
-              console.error('Errore rimozione slot', err);
-              this.isLoading = false;
-              this.toast.error('Errore', 'Impossibile rimuovere lo slot in questo momento.');
-              this.cdr.detectChanges();
-            }
-          });
+          this.availabilityService.deleteSlot(this.currentUser.id, slotId)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: () => {
+                this.existingSlots.delete(key);
+                this.existingSlotIds.delete(key);
+                this.isLoading = false;
+                this.cdr.detectChanges();
+                this.loadDashboardData();
+              },
+              error: (err: HttpErrorResponse) => {
+                console.error('Errore rimozione slot', err);
+                this.isLoading = false;
+                const apiError = err.error as ApiErrorResponse;
+                this.toast.error('Errore', apiError?.message || 'Impossibile rimuovere lo slot in questo momento.');
+                this.cdr.detectChanges();
+              }
+            });
         }
       }
       return;
@@ -616,15 +611,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   isSlotSelected(day: Date, slot: string): boolean {
-    return this.selectedSlots.has(this.slotKey(day, slot));
+    return this.selectedSlots.has(this.availabilityService.slotKey(day, slot));
   }
 
   isSlotExisting(day: Date, slot: string): boolean {
-    return this.existingSlots.has(this.slotKey(day, slot));
+    return this.existingSlots.has(this.availabilityService.slotKey(day, slot));
   }
 
   isSlotLocked(day: Date, slot: string): boolean {
-    return this.lockedSlots.has(this.slotKey(day, slot));
+    return this.lockedSlots.has(this.availabilityService.slotKey(day, slot));
   }
 
   getSelectedCount(): number {
@@ -632,93 +627,66 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   confirmAvailability(): void {
+    if (!this.currentUser) return;
     if (this.selectedSlots.size === 0) {
       this.toast.warning('Attenzione', 'Nessuno slot selezionato.');
       return;
     }
 
     this.isLoading = true;
+    const slotsPayload = this.availabilityService.buildSlotPayloads(this.selectedSlots);
 
-    const slotsPayload = Array.from(this.selectedSlots).map(key => {
-      const [date, time] = key.split('|');
-
-      const startStr = `${date}T${time}:00`;
-      const startDate = new Date(startStr);
-      // Aggiunge 30 minuti per calcolare l'endTime
-      const endDate = new Date(startDate.getTime() + 30 * 60000);
-
-      const pad = (n: number) => n.toString().padStart(2, '0');
-      const endStr = `${endDate.getFullYear()}-${pad(endDate.getMonth() + 1)}-${pad(endDate.getDate())}T${pad(endDate.getHours())}:${pad(endDate.getMinutes())}:00`;
-
-      return {
-        startTime: startStr,
-        endTime: endStr,
-        isAvailable: true
-      };
-    });
-
-    this.authService.createProfessionalSlots(this.currentUser.id, slotsPayload).subscribe({
-      next: () => {
-        this.toast.success('Disponibilità Confermate', 'I tuoi slot sono stati salvati con successo. I clienti potranno ora prenotarli.');
-        this.selectedSlots.clear();
-        this.copiedDay = null;
-        this.isLoading = false;
-        this.closeAvailability();
-        // Ricarica la dashboard per riflettere le modifiche (se la view mostra gli slot del prof)
-        this.loadDashboardData();
-      },
-      error: (err) => {
-        console.error('Errore salvataggio disponibilità', err);
-        this.toast.error('Errore', 'Si è verificato un errore durante il salvataggio. Riprova più tardi.');
-        this.isLoading = false;
-      }
-    });
+    this.availabilityService.createSlots(this.currentUser.id, slotsPayload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toast.success('Disponibilità Confermate', 'I tuoi slot sono stati salvati con successo. I clienti potranno ora prenotarli.');
+          this.selectedSlots.clear();
+          this.copiedDay = null;
+          this.isLoading = false;
+          this.closeAvailability();
+          this.loadDashboardData();
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error('Errore salvataggio disponibilità', err);
+          const apiError = err.error as ApiErrorResponse;
+          this.toast.error('Errore', apiError?.message || 'Si è verificato un errore durante il salvataggio. Riprova più tardi.');
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
   }
-
-  /** Clipboard per il copia/incolla giorno */
-  copiedDay: Date | null = null;
 
   get isCopyMode(): boolean { return this.copiedDay !== null; }
 
-  /** Verifica se un giorno ha slot selezionati */
   hasDaySlots(day: Date): boolean {
     return this.timeSlots.some(slot => this.isSlotSelected(day, slot));
   }
 
-  /** Verifica se questo giorno è quello copiato */
   isCopiedDay(day: Date): boolean {
-    return this.copiedDay !== null && this.formatDate(this.copiedDay) === this.formatDate(day);
+    return this.copiedDay !== null && this.availabilityService.formatDate(this.copiedDay) === this.availabilityService.formatDate(day);
   }
 
-  /** Memorizza il giorno come sorgente copia */
   copyDay(day: Date): void {
     this.copiedDay = day;
   }
 
-  /** Annulla la copia */
   clearCopy(): void {
     this.copiedDay = null;
   }
 
-  /** Incolla gli slot del giorno copiato nel giorno destinazione */
   pasteDay(targetDay: Date): void {
     if (!this.copiedDay) return;
     const sourceSlots = this.timeSlots.filter(slot => this.isSlotSelected(this.copiedDay!, slot));
-    sourceSlots.forEach(slot => this.selectedSlots.add(this.slotKey(targetDay, slot)));
+    sourceSlots.forEach(slot => this.selectedSlots.add(this.availabilityService.slotKey(targetDay, slot)));
     this.copiedDay = null;
   }
 
   getNextWeekLabel(): string {
-    if (this.nextWeekDays.length === 0) return '';
-    const first = this.nextWeekDays[0];
-    const last = this.nextWeekDays[6];
-    const opts: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long' };
-    return `${first.toLocaleDateString('it-IT', opts)} – ${last.toLocaleDateString('it-IT', { ...opts, year: 'numeric' })}`;
+    return this.availabilityService.getNextWeekLabel(this.nextWeekDays);
   }
 
-  // ── Prenotazione Cliente ──────────────────────────────────
-
-  openBooking(professional: any): void {
+  openBooking(professional: ProfessionalSummary): void {
     this.selectedProfessional = professional;
     this.isLoading = true;
     this.isBookingOpen = true;
@@ -728,26 +696,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.slotsForSelectedDay = [];
     this.selectedBookingSlot = null;
 
-    this.authService.getProfessionalSlots(professional.id).subscribe({
-      next: (slots) => {
-        // Calcola la mezzanotte di domani: solo slot a partire dal giorno successivo a oggi
-        const tomorrow = new Date();
-        tomorrow.setHours(0, 0, 0, 0);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-
-        this.availableBookingSlots = slots.filter((s: any) =>
-          (s.available || s.isAvailable) && new Date(s.startTime) >= tomorrow
-        );
-        this.buildBookingDays();
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Errore nel caricamento degli slot', err);
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      }
-    });
+    this.availabilityService.getAvailableSlotsFromTomorrow(professional.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (slots) => {
+          this.availableBookingSlots = slots;
+          this.buildBookingDays();
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error('Errore nel caricamento degli slot', err);
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   closeBooking(): void {
@@ -761,20 +724,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   buildBookingDays(): void {
-    this.bookingDays = [];
-    const uniqueDates = new Set<string>();
-
-    this.availableBookingSlots.forEach(s => {
-      const d = new Date(s.startTime);
-      d.setHours(0, 0, 0, 0);
-      uniqueDates.add(d.getTime().toString());
-    });
-
-    this.bookingDays = Array.from(uniqueDates)
-      .map(timeStr => new Date(Number(timeStr)))
-      .sort((a, b) => a.getTime() - b.getTime());
-
-    // Auto-seleziona il primo giorno disponibile
+    this.bookingDays = this.availabilityService.buildBookingDays(this.availableBookingSlots);
     if (this.bookingDays.length > 0) {
       this.selectBookingDay(this.bookingDays[0]);
     } else {
@@ -786,21 +736,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   selectBookingDay(day: Date): void {
     this.selectedBookingDay = day;
     this.selectedBookingSlot = null;
-    const dayTime = day.getTime();
-
-    this.slotsForSelectedDay = this.availableBookingSlots.filter(s => {
-      const d = new Date(s.startTime);
-      d.setHours(0, 0, 0, 0);
-      return d.getTime() === dayTime;
-    }).sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+    this.slotsForSelectedDay = this.availabilityService.getSlotsForDay(this.availableBookingSlots, day);
   }
 
-  getSlotTimeLabel(slot: any): string {
-    const d = new Date(slot.startTime);
-    return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+  getSlotTimeLabel(slot: ProfessionalSlot): string {
+    return this.availabilityService.getSlotTimeLabel(slot);
   }
 
-  toggleBookingSlot(slot: any): void {
+  toggleBookingSlot(slot: ProfessionalSlot): void {
     if (!slot) return;
     if (this.selectedBookingSlot?.id === slot.id) {
       this.selectedBookingSlot = null;
@@ -809,12 +752,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  isBookingSlotSelected(slot: any): boolean {
+  isBookingSlotSelected(slot: ProfessionalSlot): boolean {
     return this.selectedBookingSlot?.id === slot?.id;
   }
 
   confirmBooking(): void {
-    if (!this.selectedBookingSlot || !this.selectedProfessional) return;
+    if (!this.selectedBookingSlot || !this.selectedProfessional || !this.currentUser) return;
 
     this.isLoading = true;
     const request = {
@@ -822,36 +765,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
       slotId: this.selectedBookingSlot.id
     };
 
-    this.authService.createBooking(request).subscribe({
-      next: () => {
-        this.toast.success('Prenotazione Confermata', `Hai prenotato con successo un appuntamento per il ${this.selectedBookingDay?.toLocaleDateString('it-IT')} alle ${this.getSlotTimeLabel(this.selectedBookingSlot)}.`);
-        this.closeBooking();
-        this.loadDashboardData();
-      },
-      error: (err) => {
-        console.error('Errore nella prenotazione', err);
-        let errMsg = 'Errore durante la prenotazione';
-        if (err.error && err.error.message) errMsg = err.error.message;
-        else if (err.error && typeof err.error === 'string') errMsg = err.error;
-        this.toast.error('Errore di Prenotazione', errMsg);
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      }
-    });
+    this.availabilityService.createBooking(request)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toast.success('Prenotazione Confermata', `Hai prenotato con successo un appuntamento per il ${this.selectedBookingDay?.toLocaleDateString('it-IT')} alle ${this.getSlotTimeLabel(this.selectedBookingSlot!)}.`);
+          this.closeBooking();
+          this.loadDashboardData();
+        },
+        error: (err: HttpErrorResponse) => {
+          console.error('Errore nella prenotazione', err);
+          const apiError = err.error as ApiErrorResponse;
+          this.toast.error('Errore di Prenotazione', apiError?.message || 'Errore durante la prenotazione');
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   isMobileChatOpen(): boolean {
     return this.activeTab === 'chat' && this.chatTabComponent?.chatView === 'conversation';
   }
 
-  // ── Accesso alle Call ────────────────────────────────────
-
-  openCallModal(booking: any): void {
+  openCallModal(booking: Booking): void {
     this.selectedCallBooking = booking;
     this.checkCallTime();
     this.isCallModalOpen = true;
 
-    // Avvia un controllo ogni 10 secondi per abilitare il pulsante se l'utente aspetta nel modal
     if (this.timeCheckInterval) clearInterval(this.timeCheckInterval);
     this.timeCheckInterval = setInterval(() => this.checkCallTime(), 10000);
   }
@@ -871,30 +811,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Il backend ci dice già "canJoin" per default, ma implementiamo anche un fallback lato client per live updates
-    const b = this.selectedCallBooking;
-    if (b.canJoin) {
+    if (this.selectedCallBooking.canJoin) {
       this.canJoinCallNow = true;
       return;
     }
 
-    // Fallback: Controlliamo se mancano <= 30 minuti all'inizio
-    const dateStr = b.date; // "yyyy-MM-dd"
-    const timeStr = b.startTime; // "HH:mm"
-    if (!dateStr || !timeStr) {
+    if (!this.selectedCallBooking.date || !this.selectedCallBooking.startTime) {
       this.canJoinCallNow = false;
       return;
     }
 
-
-    // allow join se (startTime - now) <= 30 minuti
     this.canJoinCallNow = true;
   }
 
   joinCall(): void {
     if (!this.canJoinCallNow || !this.selectedCallBooking?.meetingLink) return;
 
-    // Apri il link meeting in una nuova tab
     window.open(this.selectedCallBooking.meetingLink, '_blank');
     this.closeCallModal();
   }
@@ -902,7 +834,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   isCancellationAllowed(): boolean {
     if (!this.selectedCallBooking || !this.isClient() || this.selectedCallBooking.status !== 'CONFIRMED') return false;
 
-    // Check 24h limit: (startTime - now) >= 24h
     const b = this.selectedCallBooking;
     const bookingDate = new Date(`${b.date}T${b.startTime}:00`);
     const now = new Date();
@@ -920,22 +851,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-    this.authService.cancelBooking(this.selectedCallBooking.id, this.currentUser.id).subscribe({
-      next: () => {
-        this.toast.success('Prenotazione Annullata', 'La prenotazione è stata annullata con successo.');
-        this.closeCallModal();
-        this.loadDashboardData();
-      },
-      error: (err) => {
-        this.isLoading = false;
-        const msg = err?.error?.message || 'Impossibile annullare la prenotazione in questo momento.';
-        this.toast.error('Errore', msg);
-        this.cdr.detectChanges();
-      }
-    });
+    this.availabilityService.cancelBooking(this.selectedCallBooking.id, this.currentUser.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.toast.success('Prenotazione Annullata', 'La prenotazione è stata annullata con successo.');
+          this.closeCallModal();
+          this.loadDashboardData();
+        },
+        error: (err: HttpErrorResponse) => {
+          this.isLoading = false;
+          const apiError = err.error as ApiErrorResponse;
+          this.toast.error('Errore', apiError?.message || 'Impossibile annullare la prenotazione in questo momento.');
+          this.cdr.detectChanges();
+        }
+      });
   }
-
-  // ── Chat (solo badge notifiche nella topbar) ──────────────
 
   getTotalUnread(): number {
     return this.globalUnreadCount;
@@ -945,9 +876,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.globalUnreadCount = 0;
     this.setTab('chat');
   }
-
-
-  // ── Logout ───────────────────────────────────────────────
 
   logout(): void {
     this.authService.logout();

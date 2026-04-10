@@ -133,13 +133,13 @@
                        bg-[var(--color-accent-gold)]/15 border border-[var(--color-accent-gold)]/30 rounded-[6px]
                        text-[var(--color-accent-gold-light)] text-[0.8rem] font-semibold transition-all">
             <span>💪</span>
-            <span class="tabular-nums">{{ subscription.remainingPtCredits }}</span>
+            <span class="tabular-nums">{{ subscription?.remainingPtCredits }}</span>
           </div>
           <div class="topbar-credit-badge flex items-center gap-1 px-2 py-[0.2rem]
                        bg-[var(--color-accent-gold)]/15 border border-[var(--color-accent-gold)]/30 rounded-[6px]
                        text-[var(--color-accent-gold-light)] text-[0.8rem] font-semibold transition-all">
             <span>🥗</span>
-            <span class="tabular-nums">{{ subscription.remainingNutritionistCredits }}</span>
+            <span class="tabular-nums">{{ subscription?.remainingNutritionistCredits }}</span>
           </div>
         </div>
       </div>
@@ -156,7 +156,7 @@
                      bg-[var(--color-accent-gold)]/12 cursor-pointer flex items-center justify-center
                      transition-all overflow-hidden p-0 flex-shrink-0" (click)="toggleProfile()"
         [class.active]="isProfileOpen">
-        <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar"
+        <img *ngIf="currentUser?.profilePicture" [src]="currentUser?.profilePicture" alt="Avatar"
           class="w-full h-full object-cover">
         <span *ngIf="!currentUser?.profilePicture" class="text-[0.78rem] font-bold text-[var(--color-accent-gold)]">{{ getInitials()
           }}</span>
@@ -527,7 +527,7 @@
       </ng-container>
       <ng-container *ngIf="!isLoading && dashboardData">
         <div class="panel-avatar-wrap relative mb-1">
-          <img *ngIf="currentUser?.profilePicture" [src]="currentUser.profilePicture" alt="Avatar"
+          <img *ngIf="currentUser?.profilePicture" [src]="currentUser?.profilePicture" alt="Avatar"
             class="w-[82px] h-[82px] rounded-full object-cover border-2 border-[var(--color-accent-gold)] relative z-[1]">
           <div *ngIf="!currentUser?.profilePicture"
             class="panel-avatar-fallback w-[82px] h-[82px] rounded-full

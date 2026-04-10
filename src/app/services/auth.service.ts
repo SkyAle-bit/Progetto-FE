@@ -1,7 +1,21 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { environment } from '../../environments/environment'; // IMPORTANTE: Importa l'environment!
+import { environment } from '../../environments/environment';
+import {
+  DashboardData,
+  ProfessionalSlot,
+  ProfessionalSummary,
+  SlotPayload,
+  BookingRequest,
+  ClientBasicInfo,
+  ActivityFeedItem,
+  ProStats,
+  Subscription,
+  Plan,
+  UserProfile,
+  ProfileEditData,
+} from '../models/dashboard.types';
 
 export interface AuthResponse {
   token: string;
@@ -59,44 +73,44 @@ export class AuthService {
     localStorage.removeItem('user');
   }
 
-  getPlans(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/api/plans`);
+  getPlans(): Observable<Plan[]> {
+    return this.http.get<Plan[]>(`${this.apiUrl}/api/plans`);
   }
 
-  getProfessionals(role: string): Observable<any> {
-    return this.http.get(`${this.apiUrl}/api/professionals?role=${role}`);
+  getProfessionals(role: string): Observable<ProfessionalSummary[]> {
+    return this.http.get<ProfessionalSummary[]>(`${this.apiUrl}/api/professionals?role=${role}`);
   }
 
-  getDashboard(userId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/api/users/dashboard/${userId}`);
+  getDashboard(userId: number): Observable<DashboardData> {
+    return this.http.get<DashboardData>(`${this.apiUrl}/api/users/dashboard/${userId}`);
   }
 
-  updateProfile(userId: number, profileData: any): Observable<any> {
-    return this.http.put(`${this.apiUrl}/api/users/${userId}/profile`, profileData);
+  updateProfile(userId: number, profileData: ProfileEditData): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/api/users/${userId}/profile`, profileData);
   }
 
-  getAdmin(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/api/users/admin`);
+  getAdmin(): Observable<ClientBasicInfo> {
+    return this.http.get<ClientBasicInfo>(`${this.apiUrl}/api/users/admin`);
   }
 
-  getProfessionalSlots(professionalId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/api/professionals/${professionalId}/slots`);
+  getProfessionalSlots(professionalId: number): Observable<ProfessionalSlot[]> {
+    return this.http.get<ProfessionalSlot[]>(`${this.apiUrl}/api/professionals/${professionalId}/slots`);
   }
 
-  createProfessionalSlots(professionalId: number, slots: any[]): Observable<any> {
-    return this.http.post(`${this.apiUrl}/api/professionals/${professionalId}/slots`, slots);
+  createProfessionalSlots(professionalId: number, slots: SlotPayload[]): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/api/professionals/${professionalId}/slots`, slots);
   }
 
-  deleteProfessionalSlot(professionalId: number, slotId: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/api/professionals/${professionalId}/slots/${slotId}`);
+  deleteProfessionalSlot(professionalId: number, slotId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/api/professionals/${professionalId}/slots/${slotId}`);
   }
 
-  createBooking(request: { userId: number; slotId: number }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/api/bookings`, request);
+  createBooking(request: BookingRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/api/bookings`, request);
   }
 
-  cancelBooking(bookingId: number, userId: number): Observable<any> {
-    return this.http.put(`${this.apiUrl}/api/bookings/${bookingId}/cancel?userId=${userId}`, {});
+  cancelBooking(bookingId: number, userId: number): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/api/bookings/${bookingId}/cancel?userId=${userId}`, {});
   }
 
   forgotPassword(email: string): Observable<any> {
@@ -107,9 +121,9 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}/reset-password`, { token, newPassword });
   }
 
-  getMyClients(professionalId: number): Observable<any[]> {
+  getMyClients(professionalId: number): Observable<ClientBasicInfo[]> {
     const timestamp = new Date().getTime();
-    return this.http.get<any[]>(`${this.apiUrl}/api/users/${professionalId}/clients?t=${timestamp}`);
+    return this.http.get<ClientBasicInfo[]>(`${this.apiUrl}/api/users/${professionalId}/clients?t=${timestamp}`);
   }
 
   // ── Documenti ──────────────────────────────────────────────
@@ -145,17 +159,17 @@ export class AuthService {
 
   // ── Admin API ──────────────────────────────────────────────
 
-  getAllUsers(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/api/admin/users`);
+  getAllUsers(): Observable<UserProfile[]> {
+    return this.http.get<UserProfile[]>(`${this.apiUrl}/api/admin/users`);
   }
 
-  getAllSubscriptions(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/api/admin/subscriptions`);
+  getAllSubscriptions(): Observable<Subscription[]> {
+    return this.http.get<Subscription[]>(`${this.apiUrl}/api/admin/subscriptions`);
   }
 
-  getAllSubscriptionsByMode(mode: UserManagementMode): Observable<any[]> {
+  getAllSubscriptionsByMode(mode: UserManagementMode): Observable<Subscription[]> {
     const url = `${this.usersBaseByMode(mode).replace('/users', '')}/subscriptions`;
-    return this.http.get<any[]>(url);
+    return this.http.get<Subscription[]>(url);
   }
 
   createUser(data: any): Observable<any> {
@@ -188,12 +202,12 @@ export class AuthService {
       : `${this.apiUrl}/api/admin/users`;
   }
 
-  getUsersByMode(mode: UserManagementMode): Observable<any[]> {
-    return this.http.get<any[]>(this.usersBaseByMode(mode));
+  getUsersByMode(mode: UserManagementMode): Observable<UserProfile[]> {
+    return this.http.get<UserProfile[]>(this.usersBaseByMode(mode));
   }
 
-  getModeratorChatContacts(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/api/moderator/chat-contacts`);
+  getModeratorChatContacts(): Observable<UserProfile[]> {
+    return this.http.get<UserProfile[]>(`${this.apiUrl}/api/moderator/chat-contacts`);
   }
 
   createUserByMode(mode: UserManagementMode, data: ManagedUserPayload): Observable<any> {
@@ -212,12 +226,12 @@ export class AuthService {
     return this.http.put(`${this.apiUrl}/api/documents/${documentId}/notes`, { notes });
   }
 
-  getProfessionalStats(professionalId: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/api/professional/stats/${professionalId}`);
+  getProfessionalStats(professionalId: number): Observable<ProStats> {
+    return this.http.get<ProStats>(`${this.apiUrl}/api/professional/stats/${professionalId}`);
   }
 
-  getActivityFeed(userId: number, days: number = 14, limit: number = 15): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/api/activity/feed/${userId}?days=${days}&limit=${limit}`);
+  getActivityFeed(userId: number, days: number = 14, limit: number = 15): Observable<ActivityFeedItem[]> {
+    return this.http.get<ActivityFeedItem[]>(`${this.apiUrl}/api/activity/feed/${userId}?days=${days}&limit=${limit}`);
   }
 
   updateSubscriptionCredits(mode: UserManagementMode, subscriptionId: number, creditsPT: number, creditsNutri: number): Observable<any> {
