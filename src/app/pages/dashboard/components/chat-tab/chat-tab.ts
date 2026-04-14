@@ -72,7 +72,18 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     return users;
   }
 
-  startConversationWith(user: any): void {
+  /** @returns true se la conversazione esisteva già, false se è stata creata ex-novo */
+  startConversationWith(user: any): boolean {
+    // Controlla se esiste già una conversazione con questo utente
+    const existing = this.chatConversations.find(c => c.otherUserId === user.id);
+    if (existing) {
+      // Riapri la conversazione esistente senza duplicare
+      this.showUserPicker = false;
+      this.userPickerSearch = '';
+      this.openConversation(existing);
+      return true;
+    }
+
     const conv: Conversation = {
       otherUserId: user.id,
       otherUserName: `${user.firstName} ${user.lastName}`,
@@ -86,6 +97,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     this.showUserPicker = false;
     this.userPickerSearch = '';
     this.openConversation(conv);
+    return false;
   }
 
   getRoleLabel(role: string): string {
@@ -447,6 +459,20 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     this.chatMessages = [];
     this.chatService.stopMessagePolling();
     this.loadConversations();
+  }
+
+  terminateChat(conv: Conversation): void {
+    if (confirm('Vuoi davvero terminare questa chat? Non sarà più visibile nella tua lista finché non aprirai una nuova conversazione.')) {
+      this.chatService.terminateChat(this.currentUser.id, conv.otherUserId).subscribe({
+        next: () => {
+          this.chatConversations = this.chatConversations.filter(c => c.otherUserId !== conv.otherUserId);
+          this.backToConversations();
+        },
+        error: (err) => {
+          console.error('Errore durante la terminazione della chat', err);
+        }
+      });
+    }
   }
 
   isMyMessage(msg: ChatMessage): boolean { return msg.senderId === this.currentUser?.id; }

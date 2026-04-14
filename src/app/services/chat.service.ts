@@ -25,6 +25,7 @@ export interface Conversation {
   lastMessage?: string;
   lastMessageTime?: string;
   unreadCount: number;
+  terminated?: boolean;
 }
 
 export interface SendMessageRequest {
@@ -95,6 +96,12 @@ export class ChatService {
     return this.http.get<number>(
       `${this.apiUrl}/api/chat/unread/${userId}`
     ).pipe(catchError(() => of(0)));
+  }
+
+  terminateChat(userId: number, otherUserId: number): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/api/chat/terminate/${userId}/${otherUserId}`, {}
+    ).pipe(catchError(() => of(null)));
   }
 
   // ══════════════════════════════════════════════════════════════

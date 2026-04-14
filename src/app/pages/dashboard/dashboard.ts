@@ -205,7 +205,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.setTab('chat');
           setTimeout(() => {
             if (this.chatTabComponent) {
-              this.chatTabComponent.startConversationWith(adminUser);
+              const wasExisting = this.chatTabComponent.startConversationWith(adminUser);
+              if (wasExisting) {
+                this.toast.success('Chat Supporto', 'Hai già una conversazione aperta con il supporto. Ti abbiamo reindirizzato alla chat esistente.');
+              }
             }
           }, 150);
         },
