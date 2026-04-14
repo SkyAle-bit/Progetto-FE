@@ -116,7 +116,7 @@
           <div class="text-[0.92rem] font-bold text-[var(--color-text-main)] truncate">{{ activeConversation.otherUserName }}</div>
           <div class="text-[0.65rem] text-[var(--color-text-muted)]">{{ getRoleLabel(activeConversation.otherUserRole) }}</div>
         </div>
-        <button *ngIf="!isAdmin && !isModerator"
+        <button *ngIf="(!isAdmin && !isModerator) && (activeConversation.otherUserRole === 'MODERATOR' || activeConversation.otherUserRole === 'ADMIN')"
           class="ml-auto text-[0.7rem] px-2.5 py-1.5 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600 font-semibold transition-all active:scale-95"
           (click)="terminateChat(activeConversation)">Termina Chat</button>
         <div *ngIf="activeConversation.terminated" class="ml-auto px-2 py-1 rounded bg-red-50 text-red-600 text-[0.7rem] font-bold border border-red-200">
