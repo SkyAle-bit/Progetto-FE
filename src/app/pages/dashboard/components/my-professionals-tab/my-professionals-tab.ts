@@ -52,7 +52,7 @@ export class MyProfessionalsTabComponent implements OnChanges, OnInit {
 
     loadReviewData(): void {
         this.professionals.forEach(p => {
-            // Inizializza form solo la prima volta
+
             if (this.reviewRating[p.id] === undefined) {
                 this.reviewRating[p.id] = 5;
                 this.reviewComment[p.id] = '';

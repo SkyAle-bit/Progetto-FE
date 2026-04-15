@@ -108,25 +108,20 @@ export class ChatService {
   //  INIZIALIZZAZIONE REAL-TIME
   // ══════════════════════════════════════════════════════════════
 
-  /**
-   * Inizializza la chat real-time:
-   * 1) Connette il WebSocket
-   * 2) Sottoscrive agli eventi in arrivo
-   * 3) Avvia polling globale come fallback
-   */
+  /** Bootstrap real-time chat: WebSocket + event subscriptions + global polling fallback. */
   init(userId: number): void {
     this.destroy(); // CLEANUP prevent duplicate listeners and memory leaks
     
-    // Connetti WebSocket
+
     this.socketService.connect(userId);
 
-    // Sottoscrivi ai messaggi in arrivo dal WebSocket
+
     const msgSub = this.socketService.incomingMessage$.subscribe(wsMsg => {
       this.handleIncomingWsMessage(wsMsg, userId);
     });
     this.wsSubscriptions.push(msgSub);
 
-    // Sottoscrivi agli aggiornamenti unread dal WebSocket
+
     const unreadSub = this.socketService.unreadUpdate$.subscribe(update => {
       if (update.userId === userId) {
         this.unreadCountSubject.next(update.unreadCount);
@@ -134,7 +129,7 @@ export class ChatService {
     });
     this.wsSubscriptions.push(unreadSub);
 
-    // Avvia polling globale leggero come fallback
+
     this.startGlobalPolling(userId);
   }
 
@@ -191,12 +186,12 @@ export class ChatService {
     if (idx >= 0 && convs[idx].unreadCount > 0) {
       const readMessages = convs[idx].unreadCount;
 
-      // Azzera conteggio locale 
+
       const updated = [...convs];
       updated[idx] = { ...updated[idx], unreadCount: 0 };
       this.conversationsSubject.next(updated);
 
-      // Sottrai dal contatore globale immediatamente
+
       const currentGlobal = this.unreadCountSubject.value;
       if (currentGlobal >= readMessages) {
         this.unreadCountSubject.next(currentGlobal - readMessages);
@@ -235,7 +230,7 @@ export class ChatService {
       const serverDuplicateIdx = currentMsgs.findIndex(m => m.id > 0 && m.id === msg.id);
 
       if (localOptimisticIdx >= 0) {
-        // Sostituisci il messaggio locale ottimistico con quello dal server
+
         const updated = [...currentMsgs];
         updated[localOptimisticIdx] = msg;
         this.messagesSubject.next(updated);
@@ -258,7 +253,7 @@ export class ChatService {
     const idx = convs.findIndex(c => c.otherUserId === otherUserId);
 
     if (idx >= 0) {
-      // Aggiorna conversazione esistente
+
       const updated = [...convs];
       updated[idx] = {
         ...updated[idx],
@@ -270,7 +265,7 @@ export class ChatService {
       };
       this.conversationsSubject.next(updated);
     } else {
-      // Nuova conversazione da utente non ancora in lista (es. admin → cliente)
+
       const newConv: Conversation = {
         otherUserId,
         otherUserName: otherUserName || 'Utente',
@@ -294,7 +289,7 @@ export class ChatService {
     this.refreshUnreadCount(userId);
     this.refreshConversations(userId);
 
-    // Polling più lento quando WS è connesso, più veloce se WS è down
+
     const getInterval = () => this.socketService.isConnected ? 15000 : 5000;
     this.globalPollInterval = setInterval(() => {
       if (!this.globalPollingActive) return;
@@ -323,19 +318,18 @@ export class ChatService {
     this.getConversations(userId).subscribe(convs => {
       let currentConvs = convs ?? [];
 
-      // Assicurati che se c'è una conversazione attiva (es: appena creata dall'admin locale) non vada persa se non ancora restituita dal DB
+      // Preserve active conversation not yet persisted on backend
       if (this._activeConversation) {
         const activeId = this._activeConversation.otherUserId;
 
-        // Forza l'azzeramento delle notifiche (optimistic) per la chat che stai guardando
-        // per evitare che il polling asincrono sovrascriva temporaneamente l'UI
+        // Optimistic unread reset for the active conversation
         const activeConv = currentConvs.find(c => c.otherUserId === activeId);
         if (activeConv) {
           activeConv.unreadCount = 0;
         }
 
         if (!currentConvs.some(c => c.otherUserId === activeId)) {
-          // Cercala nei messaggi correnti subject
+
           const existingLocal = this.conversationsSubject.value.find(c => c.otherUserId === activeId);
           if (existingLocal) {
             currentConvs = [existingLocal, ...currentConvs];
@@ -359,12 +353,12 @@ export class ChatService {
       if (!this.msgPollingActive) return;
       this.getMessages(currentUserId, otherUserId).subscribe(msgs => {
         if (msgs.length > 0) {
-          // Merge: mantieni i messaggi locali ottimistici (id < 0) non ancora confermati
+
           const currentMsgs = this.messagesSubject.value;
           const localOptimistic = currentMsgs.filter(m => m.id < 0);
           const serverIds = new Set(msgs.map(m => m.id));
 
-          // Filtra i locali ottimistici che non hanno ancora un corrispondente dal server
+
           const unresolvedLocal = localOptimistic.filter(local =>
             !msgs.some(server => server.senderId === local.senderId && server.content === local.content)
           );

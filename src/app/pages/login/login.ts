@@ -6,7 +6,7 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
-  standalone: true, // Assicurati che sia true se stai usando Angular 14+
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
@@ -20,7 +20,7 @@ export class LoginComponent {
     this.showPassword = !this.showPassword;
   }
 
-  // Iniezione delle dipendenze moderna (Angular 14+)
+
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);

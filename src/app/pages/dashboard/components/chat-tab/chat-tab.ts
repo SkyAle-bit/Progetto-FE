@@ -74,10 +74,10 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
   /** @returns true se la conversazione esisteva già, false se è stata creata ex-novo */
   startConversationWith(user: any): boolean {
-    // Controlla se esiste già una conversazione con questo utente
+
     const existing = this.chatConversations.find(c => c.otherUserId === user.id);
     if (existing) {
-      // Riapri la conversazione esistente senza duplicare
+
       this.showUserPicker = false;
       this.userPickerSearch = '';
       this.openConversation(existing);
@@ -142,7 +142,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadConversations();
 
-    // Ripristina conversazione attiva dal service (sopravvive alla distruzione del componente)
+
     const savedConv = this.chatService.activeConversation;
     const currentMsgs = this.chatService.getMessagesSnapshot();
     if (savedConv) {
@@ -180,7 +180,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
       const baseLocalContacts = this.buildLocalConversations();
       let storedEmpty = this.loadStoredEmptyConvs();
 
-      // RIMUOVI dal localStorage le conversazioni che ora esistono nel backend (hanno ricevuto il loro primo messaggio)
+      // Prune cached empty conversations now present on backend
       const cachedLength = storedEmpty.length;
       storedEmpty = storedEmpty.filter(sc => !backendIds.has(sc.otherUserId));
       if (storedEmpty.length !== cachedLength) {
@@ -195,15 +195,14 @@ export class ChatTabComponent implements OnInit, OnDestroy {
       // Filtra quelli che sono già nel backend (quindi non più "vuoti")
       const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
 
-      // Array to track manually created picker-only contacts
-      // Only keep them if they are not already in backendConvs and localOnly
+
       const currentLocalIds = new Set([...backendIds, ...localOnly.map(l => l.otherUserId)]);
       const pickerOnly = this.chatConversations.filter(c => !currentLocalIds.has(c.otherUserId));
 
-      // To avoid losing the active conversation while typing, ensure it is always present
+
       let mergedConversations = [...backendConvs, ...localOnly, ...pickerOnly];
 
-      // If there is an active conversation, make sure it's in the list
+
       if (this.activeConversation && !mergedConversations.some(c => c.otherUserId === this.activeConversation!.otherUserId)) {
         mergedConversations.unshift(this.activeConversation);
       }
@@ -237,7 +236,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.forEach(s => s.unsubscribe());
     this.subscriptions = [];
-    // NON chiamare leaveRoom/clearMessages qui — l'utente potrebbe tornare alla chat
+
     this.chatService.stopMessagePolling();
   }
 
@@ -267,7 +266,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
         const localOnly = localContacts.filter(lc => !backendIds.has(lc.otherUserId));
 
         let mergedObj = [...backendConvs, ...localOnly];
-        // Assicura che la conversazione attiva (se presente) non venga persa
+
         if (this.activeConversation && !mergedObj.some(c => c.otherUserId === this.activeConversation!.otherUserId)) {
           mergedObj.unshift(this.activeConversation);
         }
@@ -348,10 +347,10 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     this.chatView = 'conversation';
     this.chatLoading = true;
 
-    // Entra nella stanza WebSocket
+
     this.chatService.joinRoom(conv.otherUserId);
 
-    // Carica storico messaggi via REST e unisci con eventuali messaggi locali ottimistici
+
     this.chatService.getMessages(this.currentUser.id, conv.otherUserId).subscribe({
       next: (serverMsgs) => {
         // Mantieni i messaggi locali ottimistici (id < 0) non ancora confermati dal server
@@ -367,7 +366,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
       error: () => { this.chatLoading = false; this.cdr.detectChanges(); }
     });
 
-    // Segna come letti (via WS se connesso, altrimenti REST)
+
     if (this.socketService.isConnected) {
       this.chatService.markAsReadRealTime(conv.otherUserId);
     } else {
@@ -375,7 +374,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     }
     conv.unreadCount = 0;
 
-    // Avvia polling messaggi solo come fallback se WS non è connesso
+
     this.chatService.startMessagePolling(this.currentUser.id, conv.otherUserId);
   }
 
@@ -455,7 +454,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     this.chatService.activeConversation = null;
 
     this.chatView = 'list';
-    // Manteniamo this.chatMessages o svuotiamoli a seconda delle preferenze, svuotandoli è più pulito
+
     this.chatMessages = [];
     this.chatService.stopMessagePolling();
     this.loadConversations();

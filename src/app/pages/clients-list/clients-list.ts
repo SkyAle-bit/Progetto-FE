@@ -37,7 +37,7 @@ export class ClientsListComponent implements OnInit {
   loadClients() {
     this.userService.getMyClients(this.professionalId).subscribe({
       next: (res: ClientBasicInfo[] | any) => {
-        // Assicura che diventi un Array pulito, ed eseguiamo Change Detection forzata
+
         this.clients = Array.isArray(res) ? res : (res && res.value) ? res.value : [];
         this.cdr.detectChanges();
       },

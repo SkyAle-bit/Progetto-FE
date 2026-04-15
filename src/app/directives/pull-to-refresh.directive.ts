@@ -12,8 +12,8 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
   private startY = 0;
   private currentY = 0;
   private pulling = false;
-  private threshold = 70;    // px da tirare per attivare il refresh
-  private maxPull = 110;     // px massimi di pull
+  private threshold = 70;
+  private maxPull = 110;
   private indicator: HTMLElement | null = null;
   private spinner: HTMLElement | null = null;
   private arrow: HTMLElement | null = null;
@@ -42,7 +42,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
   }
 
   private createIndicator(): void {
-    // Container indicatore
+
     this.indicator = this.renderer.createElement('div');
     this.renderer.setStyle(this.indicator, 'position', 'absolute');
     this.renderer.setStyle(this.indicator, 'top', '0');
@@ -58,7 +58,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
     this.renderer.setStyle(this.indicator, 'pointer-events', 'none');
     this.renderer.setStyle(this.indicator, 'transition', 'none');
 
-    // Spinner (nascosto fino al rilascio)
+
     this.spinner = this.renderer.createElement('div');
     this.renderer.setStyle(this.spinner, 'width', '20px');
     this.renderer.setStyle(this.spinner, 'height', '20px');
@@ -67,7 +67,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
     this.renderer.setStyle(this.spinner, 'borderRadius', '50%');
     this.renderer.setStyle(this.spinner, 'display', 'none');
 
-    // Freccia
+
     this.arrow = this.renderer.createElement('div');
     this.renderer.setProperty(this.arrow, 'innerHTML', '↓');
     this.renderer.setStyle(this.arrow, 'fontSize', '16px');
@@ -75,7 +75,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
     this.renderer.setStyle(this.arrow, 'transition', 'transform 0.2s ease');
     this.renderer.setStyle(this.arrow, 'fontWeight', '700');
 
-    // Testo
+
     this.text = this.renderer.createElement('span');
     this.renderer.setProperty(this.text, 'textContent', 'Tira per aggiornare');
     this.renderer.setStyle(this.text, 'fontSize', '0.72rem');
@@ -86,7 +86,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
     this.renderer.appendChild(this.indicator, this.arrow);
     this.renderer.appendChild(this.indicator, this.text);
 
-    // Assicura position relative sul parent
+
     const host = this.el.nativeElement;
     const pos = getComputedStyle(host).position;
     if (pos === 'static' || !pos) {
@@ -99,7 +99,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
     const el = this.el.nativeElement;
 
     this.removeTouchStart = this.renderer.listen(el, 'touchstart', (e: TouchEvent) => {
-      // Solo se scrollato in cima
+
       if (el.scrollTop > 5) return;
       this.startY = e.touches[0].clientY;
       this.pulling = true;
@@ -116,11 +116,11 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
       if (diff < 0) { this.resetVisual(); return; }
       if (el.scrollTop > 0) { this.resetVisual(); return; }
 
-      // Resistenza logaritmica per sensazione naturale
+
       const pull = Math.min(diff * 0.45, this.maxPull);
 
       if (pull > 10) {
-        // Previene scroll nativo del browser quando stiamo tirando
+
         e.preventDefault();
       }
 
@@ -146,11 +146,11 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
       const diff = (this.currentY - this.startY) * 0.45;
 
       if (diff >= this.threshold) {
-        // Attivato! Mostra spinner
+
         this.showRefreshing();
         this.zone.run(() => this.refresh.emit());
 
-        // Auto-chiudi dopo 1.2s (il componente padre farà il refresh nel frattempo)
+
         setTimeout(() => this.hideIndicator(), 1200);
       } else {
         this.hideIndicator();
@@ -178,7 +178,7 @@ export class PullToRefreshDirective implements OnInit, OnDestroy {
       this.renderer.setStyle(this.indicator, 'transition', 'height 0.25s ease');
     }
 
-    // Inietta keyframe se non esiste
+
     if (!document.getElementById('ptr-spin-style')) {
       const style = document.createElement('style');
       style.id = 'ptr-spin-style';

@@ -126,7 +126,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        // Inizializzazione form candidatura
+
         this.applicationForm = this.fb.group({
             firstName: ['', Validators.required],
             lastName: ['', Validators.required],
@@ -135,7 +135,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             message: ['', Validators.required]
         });
 
-        // Caricamento dei piani all'avvio
+
         this.planService.getPlans().subscribe({
             next: (res) => {
                 if (res && res.length > 0) {
@@ -228,7 +228,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         const step = (currentTime: number) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            // Easing: ease-out cubic
+            // ease-out cubic
             const eased = 1 - Math.pow(1 - progress, 3);
             const current = Math.round(eased * target);
             el.textContent = current + suffix;
@@ -369,7 +369,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 return;
             }
 
-            // Forza attributi runtime utili per l'autoplay mobile/desktop.
+
             videoEl.muted = true;
             videoEl.defaultMuted = true;
             videoEl.playsInline = true;
@@ -380,7 +380,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.isCarouselPlaying = true;
                 this.cdr.detectChanges();
             }).catch(() => {
-                // Ritenta per i browser che non avviano subito il primo frame.
+
                 if (retryCount < this.maxCarouselAutoplayRetries) {
                     setTimeout(() => this.playCurrentCarouselVideo(retryCount + 1), 180);
                 }
@@ -446,7 +446,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
         const formData = new FormData();
 
-        // Aggiungiamo i dati JSON come Blob con content-type application/json
+
         const jsonBlob = new Blob([JSON.stringify(this.applicationForm.value)], { type: 'application/json' });
         formData.append('data', jsonBlob);
 

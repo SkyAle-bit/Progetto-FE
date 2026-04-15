@@ -73,7 +73,7 @@ export class SocketService {
     if (this.client?.connected) return;
     this.currentUserId = userId;
 
-    // Converte http(s) in ws(s) per WebSocket nativo
+
     const wsUrl = environment.apiUrl.replace(/^http/, 'ws') + '/ws/websocket';
 
     this.client = new Client({
@@ -81,17 +81,17 @@ export class SocketService {
       connectHeaders: {
         userId: userId.toString()
       },
-      // Heartbeat: client manda ogni 10s, si aspetta dal server ogni 10s
+
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
-      // Riconnessione automatica con backoff
+
       reconnectDelay: 3000,
 
       onConnect: () => {
         this.zone.run(() => {
           this.connectedSubject.next(true);
           console.log('[WS] Connesso come userId:', userId);
-          // Sottoscrivi al canale notifiche personali (/user/{id}/queue/notifications)
+    
           this.subscribeNotifications(userId);
         });
       },
@@ -158,12 +158,12 @@ export class SocketService {
     // Prevent duplicate room joins
     if (this.activeRoomId === roomId && this.roomSubscription) return;
 
-    // Lascia la stanza precedente se diversa
+
     this.leaveRoom();
 
     this.activeRoomId = roomId;
 
-    // 1) Sottoscrivi al topic della stanza → ricevi messaggi in real-time
+
     this.roomSubscription = this.client.subscribe(
       `/topic/room/${roomId}`,
       (message: IMessage) => {
@@ -174,7 +174,7 @@ export class SocketService {
       }
     );
 
-    // 2) Notifica il server che ci siamo uniti alla stanza
+
     this.client.publish({
       destination: '/app/chat.join',
       body: JSON.stringify({ userId: this.currentUserId, roomId })
@@ -269,8 +269,7 @@ export class SocketService {
   private subscribeNotifications(userId: number): void {
     if (!this.client?.connected) return;
 
-    // Canale personale: il server manda qui gli aggiornamenti unread count
-    // e notifiche di nuovi messaggi quando l'utente NON è nella stanza
+
     this.notificationSubscription = this.client.subscribe(
       `/user/${userId}/queue/notifications`,
       (message: IMessage) => {
@@ -283,7 +282,7 @@ export class SocketService {
               unreadCount: payload.unreadCount
             });
           } else if (payload.type === 'NEW_MESSAGE') {
-            // Messaggio ricevuto mentre NON sei nella stanza → aggiorna badge
+
             this.incomingMessageSubject.next(payload.message);
           }
         });
