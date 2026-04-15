@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { UserService } from '../../../../services/user.service';
 import { SubscriptionService } from '../../../../services/subscription.service';
-import { ManagedUserPayload } from '../../../../services/auth.service';
+import { ManagedUserPayload } from '../../../../models/dashboard.types';
 import { ToastService } from '../../../../services/toast.service';
 
 @Component({

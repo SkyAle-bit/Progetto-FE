@@ -18,7 +18,7 @@ export class ClientsTabComponent {
 
   @Input() myClients: any[] = [];
   @Input() currentUser: any;
-  @Output() showPopup = new EventEmitter<{title: string, message: string}>();
+  @Output() showPopup = new EventEmitter<{title: string, message: string, type: 'success' | 'error' | 'warning'}>();
 
   selectedClient: any = null;
   clientDocuments: any[] = [];
@@ -80,12 +80,12 @@ export class ClientsTabComponent {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0 || !this.selectedClient) return;
     const file = input.files[0];
-    if (file.type !== 'application/pdf') { this.showPopup.emit({title: 'Errore', message: 'Puoi caricare solo file PDF.'}); input.value = ''; return; }
-    if (file.size > 10 * 1024 * 1024) { this.showPopup.emit({title: 'Errore', message: 'Il file non può superare i 10MB.'}); input.value = ''; return; }
+    if (file.type !== 'application/pdf') { this.showPopup.emit({title: 'Errore', message: 'Puoi caricare solo file PDF.', type: 'error'}); input.value = ''; return; }
+    if (file.size > 10 * 1024 * 1024) { this.showPopup.emit({title: 'Errore', message: 'Il file non può superare i 10MB.', type: 'error'}); input.value = ''; return; }
     this.isUploading = true;
     this.authService.uploadDocument(file, this.selectedClient.id, this.currentUser.id, type).subscribe({
-      next: () => { this.isUploading = false; this.showPopup.emit({title: 'Caricato!', message: `${type === 'WORKOUT_PLAN' ? 'Scheda' : 'Dieta'} caricata con successo.`}); this.loadClientDocuments(); input.value = ''; },
-      error: () => { this.isUploading = false; this.showPopup.emit({title: 'Errore', message: 'Impossibile caricare il file. Riprova.'}); input.value = ''; }
+      next: () => { this.isUploading = false; this.showPopup.emit({title: 'Caricato!', message: `${type === 'WORKOUT_PLAN' ? 'Scheda' : 'Dieta'} caricata con successo.`, type: 'success'}); this.loadClientDocuments(); input.value = ''; },
+      error: () => { this.isUploading = false; this.showPopup.emit({title: 'Errore', message: 'Impossibile caricare il file. Riprova.', type: 'error'}); input.value = ''; }
     });
   }
 
@@ -130,11 +130,11 @@ export class ClientsTabComponent {
     const file = files[0];
 
     if (file.type !== 'application/pdf') {
-      this.showPopup.emit({ title: 'Errore', message: 'Puoi caricare solo file PDF.' });
+      this.showPopup.emit({ title: 'Errore', message: 'Puoi caricare solo file PDF.', type: 'error' });
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      this.showPopup.emit({ title: 'Errore', message: 'Il file non può superare i 10MB.' });
+      this.showPopup.emit({ title: 'Errore', message: 'Il file non può superare i 10MB.', type: 'error' });
       return;
     }
 
@@ -147,13 +147,13 @@ export class ClientsTabComponent {
     this.authService.uploadDocument(file, this.selectedClient.id, this.currentUser.id, type).subscribe({
       next: () => {
         this.isUploading = false;
-        this.showPopup.emit({ title: 'Caricato!', message: `${type === 'WORKOUT_PLAN' ? 'Scheda' : 'Dieta'} caricata con successo.` });
+        this.showPopup.emit({ title: 'Caricato!', message: `${type === 'WORKOUT_PLAN' ? 'Scheda' : 'Dieta'} caricata con successo.`, type: 'success' });
         this.loadClientDocuments();
         this.cdr.detectChanges();
       },
       error: () => {
         this.isUploading = false;
-        this.showPopup.emit({ title: 'Errore', message: 'Impossibile caricare il file. Riprova.' });
+        this.showPopup.emit({ title: 'Errore', message: 'Impossibile caricare il file. Riprova.', type: 'error' });
         this.cdr.detectChanges();
       }
     });
@@ -195,7 +195,7 @@ export class ClientsTabComponent {
       error: () => {
         this.pdfViewerOpen = false;
         this.pdfViewerLoading = false;
-        this.showPopup.emit({title: 'Errore', message: 'Impossibile aprire il documento.'});
+        this.showPopup.emit({title: 'Errore', message: 'Impossibile aprire il documento.', type: 'error'});
         this.cdr.detectChanges();
       }
     });
@@ -215,11 +215,11 @@ export class ClientsTabComponent {
     if (this.currentBlobUrl) window.open(this.currentBlobUrl, '_blank');
   }
 
-  deleteDoc(doc: any): void {
+deleteDocument(doc: any): void {
     if (!confirm(`Eliminare "${doc.fileName}"?`)) return;
     this.authService.deleteDocument(doc.id).subscribe({
       next: () => { this.loadClientDocuments(); },
-      error: () => { this.showPopup.emit({title: 'Errore', message: 'Impossibile eliminare il documento.'}); }
+      error: () => { this.showPopup.emit({title: 'Errore', message: 'Impossibile eliminare il documento.', type: 'error'}); }
     });
   }
 
@@ -271,19 +271,19 @@ export class ClientsTabComponent {
   }
 
   saveNotes(doc: any): void {
-    this.savingNotes = true;
-    this.authService.updateDocumentNotes(doc.id, this.editingNotesText).subscribe({
+this.authService.updateDocumentNotes(this.editingNotesDocId!, this.editingNotesText).subscribe({
       next: () => {
-        doc.notes = this.editingNotesText;
+        const doc = this.clientDocuments.find(d => d.id === this.editingNotesDocId);
+        if (doc) doc.notes = this.editingNotesText;
         this.editingNotesDocId = null;
         this.editingNotesText = '';
         this.savingNotes = false;
-        this.showPopup.emit({ title: 'Salvato!', message: 'Appunti aggiornati con successo.' });
+        this.showPopup.emit({ title: 'Salvato!', message: 'Appunti aggiornati con successo.', type: 'success' });
         this.cdr.detectChanges();
       },
       error: () => {
         this.savingNotes = false;
-        this.showPopup.emit({ title: 'Errore', message: 'Impossibile salvare gli appunti.' });
+        this.showPopup.emit({ title: 'Errore', message: 'Impossibile salvare gli appunti.', type: 'error' });
         this.cdr.detectChanges();
       }
     });

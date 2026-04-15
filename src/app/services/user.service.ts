@@ -9,9 +9,10 @@ import {
   ProStats,
   UserProfile,
   ProfileEditData,
-  ActivityFeedItem
+  ActivityFeedItem,
+  UserManagementMode,
+  ManagedUserPayload
 } from '../models/dashboard.types';
-import { UserManagementMode, ManagedUserPayload } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -90,5 +91,3 @@ export class UserService {
     return this.http.get(`${this.apiUrl}/api/admin/stats`);
   }
 }
-
-

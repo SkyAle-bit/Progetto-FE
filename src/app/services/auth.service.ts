@@ -14,19 +14,6 @@ export interface AuthResponse {
   profilePicture?: string;
 }
 
-export type UserManagementMode = 'admin' | 'moderator';
-
-export interface ManagedUserPayload {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password?: string;
-  role: string;
-  planId?: number;
-  assignedPTId?: number;
-  assignedNutritionistId?: number;
-}
-
 @Injectable({
   providedIn: 'root'
 })

@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError, of, switchMap } from 'rxjs';
+import { catchError, of, switchMap, forkJoin } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { AuthService } from '../../services/auth.service';
@@ -45,7 +45,8 @@ import {
   ProfessionalSummary,
   ProfileEditData,
   ApiErrorResponse,
-  TabId
+  TabId,
+  UserRole
 } from '../../models/dashboard.types';
 
 @Component({
@@ -96,25 +97,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   popupTitle: string = '';
   popupMessage: string = '';
 
-  get isAvailabilityOpen() { return this.dashboardFacade.currentCalendarState.isAvailabilityOpen; }
-  get nextWeekDays() { return this.dashboardFacade.currentCalendarState.nextWeekDays; }
-  get timeSlots() { return this.dashboardFacade.currentCalendarState.timeSlots; }
-  get copiedDay() { return this.dashboardFacade.currentCalendarState.copiedDay; }
-
-  get isBookingOpen() { return this.dashboardFacade.currentBookingState.isBookingOpen; }
-  get availableBookingSlots() { return this.dashboardFacade.currentBookingState.availableBookingSlots; }
-  get selectedProfessional() { return this.dashboardFacade.currentBookingState.selectedProfessional; }
-  get bookingDays() { return this.dashboardFacade.currentBookingState.bookingDays; }
-  get selectedBookingDay() { return this.dashboardFacade.currentBookingState.selectedBookingDay; }
-  get slotsForSelectedDay() { return this.dashboardFacade.currentBookingState.slotsForSelectedDay; }
-  get selectedBookingSlot() { return this.dashboardFacade.currentBookingState.selectedBookingSlot; }
-
-  get isCalendarLoading() { return this.dashboardFacade.currentCalendarState.isLoading || this.dashboardFacade.currentBookingState.isLoading; }
+  calendarState$ = this.dashboardFacade.calendarState$;
+  bookingState$ = this.dashboardFacade.bookingState$;
 
   currentWeekStart: Date = new Date();
   weekDays: Date[] = [];
-  readonly START_HOUR = 8;
-  readonly END_HOUR = 21;
 
   visibleDayCount: number = 7;
   dayOffset: number = 0;
@@ -139,19 +126,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.isPopupOpen = true;
   }
 
-  showPopupMessage(title: string, message: string): void {
-    const t = title.toLowerCase();
-    if (t.includes('errore') || t.includes('error')) {
+  closePopup(): void {
+    this.isPopupOpen = false;
+  }
+
+  showPopupMessage(title: string, message: string, type: 'success' | 'error' | 'warning' = 'success'): void {
+    if (type === 'error') {
       this.toast.error(title, message);
-    } else if (t.includes('attenzione') || t.includes('warning')) {
+    } else if (type === 'warning') {
       this.toast.warning(title, message);
     } else {
       this.toast.success(title, message);
     }
-  }
-
-  closePopup(): void {
-    this.isPopupOpen = false;
   }
 
   openProfileEditModal(): void {
@@ -242,6 +228,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.globalUnreadCount = count;
           this.cdr.detectChanges();
         });
+
+      this.dashboardFacade.actionSuccess$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          this.loadDashboardData();
+        });
     } else {
       this.router.navigate(['/login']);
     }
@@ -309,105 +301,67 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private loadAdminInsuranceData(): void {
     if (this.isModerator()) {
-      let loaded = 0;
-      const total = 3;
-      const checkDone = () => {
-        loaded++;
-        if (loaded >= total) {
+      forkJoin({
+        users: this.userService.getUsersByMode('moderator').pipe(
+          switchMap(users => {
+            if (!users) return of({ allUsers: [], chatUsers: [] });
+            return this.userService.getModeratorChatContacts().pipe(
+              catchError(() => of([])),
+              switchMap(contacts => {
+                const allU = users || [];
+                const cont = contacts || [];
+                const manageableUsers = [...allU, ...cont];
+                return this.userService.getAdmin().pipe(
+                  catchError(() => of(null)),
+                  switchMap(adminUser => {
+                    const merged = [...manageableUsers, adminUser as unknown as UserProfile].filter((u, index, arr) =>
+                      u && typeof u.id !== 'undefined' && arr.findIndex(x => x?.id === u.id) === index
+                    );
+                    return of({ allUsers: allU, chatUsers: merged });
+                  })
+                );
+              })
+            );
+          }),
+          catchError(() => of({ allUsers: [], chatUsers: [] }))
+        ),
+        plans: this.planService.getPlans().pipe(
+          catchError(() => of([]))
+        ),
+        subs: this.subscriptionService.getAllSubscriptionsByMode('moderator').pipe(
+          catchError(() => of([]))
+        )
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.allUsers = result.users.allUsers;
+          this.chatUsers = result.users.chatUsers;
+          this.allPlans = Array.isArray(result.plans) ? result.plans : [];
+          this.allSubscriptions = result.subs || [];
           this.isLoading = false;
           this.cdr.detectChanges();
         }
-      };
-
-      this.userService.getUsersByMode('moderator').pipe(
-        takeUntilDestroyed(this.destroyRef)
-      ).subscribe({
-        next: (users) => {
-          this.allUsers = users ?? [];
-          this.userService.getModeratorChatContacts().pipe(
-            takeUntilDestroyed(this.destroyRef)
-          ).subscribe({
-            next: (contacts) => {
-              this.loadModeratorChatUsers([...this.allUsers, ...(contacts ?? [])]);
-              checkDone();
-            },
-            error: () => {
-              this.loadModeratorChatUsers(this.allUsers);
-              checkDone();
-            }
-          });
-        },
-        error: () => {
-          this.allUsers = [];
-          this.chatUsers = [];
-          checkDone();
-        }
       });
-
-      this.planService.getPlans().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-        next: (plans) => {
-          this.allPlans = Array.isArray(plans) ? plans : [];
-          checkDone();
-        },
-        error: () => {
-          this.allPlans = [];
-          checkDone();
-        }
-      });
-
-      this.subscriptionService.getAllSubscriptionsByMode('moderator').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-        next: (subs) => { this.allSubscriptions = subs ?? []; checkDone(); },
-        error: () => { this.allSubscriptions = []; checkDone(); }
-      });
-
       return;
     }
 
-    let loaded = 0;
-    const total = 3;
-    const checkDone = () => { loaded++; if (loaded >= total) { this.isLoading = false; this.cdr.detectChanges(); } };
-
-    this.userService.getAllUsers().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (users) => {
-        this.allUsers = users ?? [];
+    forkJoin({
+      users: this.userService.getAllUsers().pipe(catchError(() => of([]))),
+      plans: this.planService.getPlans().pipe(catchError(() => of([]))),
+      subs: this.subscriptionService.getAllSubscriptions().pipe(catchError(() => of([])))
+    })
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
+      next: (result) => {
+        this.allUsers = result.users || [];
         this.chatUsers = [...this.allUsers];
-        checkDone();
-      },
-      error: () => {
-        this.allUsers = [];
-        this.chatUsers = [];
-        checkDone();
+        this.allPlans = result.plans || [];
+        this.allSubscriptions = result.subs || [];
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
-
-    this.planService.getPlans().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (plans) => { this.allPlans = plans ?? []; checkDone(); },
-      error: () => { this.allPlans = []; checkDone(); }
-    });
-
-    this.subscriptionService.getAllSubscriptions().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (subs) => { this.allSubscriptions = subs ?? []; checkDone(); },
-      error: () => { this.allSubscriptions = []; checkDone(); }
-    });
-  }
-
-  private loadModeratorChatUsers(manageableUsers: UserProfile[]): void {
-    const baseUsers = Array.isArray(manageableUsers) ? [...manageableUsers] : [];
-    this.userService.getAdmin()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (adminUser) => {
-          const merged = [...baseUsers, adminUser as unknown as UserProfile].filter((u, index, arr) =>
-            u && typeof u.id !== 'undefined' && arr.findIndex(x => x?.id === u.id) === index
-          );
-          this.chatUsers = merged;
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.chatUsers = baseUsers;
-          this.cdr.detectChanges();
-        }
-      });
   }
 
   reloadAdminData(): void {
@@ -453,14 +407,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   get professionals(): ProfessionalSummary[] { return this.dashboardData?.followingProfessionals ?? []; }
   get bookings(): Booking[] { return this.dashboardData?.upcomingBookings ?? []; }
 
-  isClient(): boolean { return this.currentUser?.role === 'CLIENT'; }
+  isClient(): boolean { return this.currentUser?.role === UserRole.CLIENT; }
   isProfessional(): boolean {
     const r = this.currentUser?.role;
-    return r === 'PERSONAL_TRAINER' || r === 'NUTRITIONIST';
+    return r === UserRole.PERSONAL_TRAINER || r === UserRole.NUTRITIONIST;
   }
-  isAdmin(): boolean { return this.currentUser?.role === 'ADMIN'; }
-  isModerator(): boolean { return this.currentUser?.role === 'MODERATOR'; }
-  isInsuranceManager(): boolean { return this.currentUser?.role === 'INSURANCE_MANAGER'; }
+  isAdmin(): boolean { return this.currentUser?.role === UserRole.ADMIN; }
+  isModerator(): boolean { return this.currentUser?.role === UserRole.MODERATOR; }
+  isInsuranceManager(): boolean { return this.currentUser?.role === UserRole.INSURANCE_MANAGER; }
 
   setTab(tab: TabId | string): void {
     this.activeTab = tab as TabId;
@@ -501,7 +455,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   getBookingLabel(b: Booking): string {
     if (this.isClient()) {
-      const role = b.professionalRole === 'PERSONAL_TRAINER' ? 'PT' : 'Nutr.';
+      const role = b.professionalRole === UserRole.PERSONAL_TRAINER ? 'PT' : 'Nutr.';
       return `${role} – ${b.professionalName ?? ''}`;
     }
     return b.clientName ?? '';
@@ -527,14 +481,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return Math.max(0, Math.ceil((end.getTime() - Date.now()) / (1000 * 60 * 60 * 24)));
   }
 
-  buildNextWeekDays(): void {
-    const nextMonday = new Date();
-    const dow = nextMonday.getDay();
-    const daysUntilNextMonday = dow === 0 ? 1 : 8 - dow;
-    nextMonday.setDate(nextMonday.getDate() + daysUntilNextMonday);
-    nextMonday.setHours(0, 0, 0, 0);
-  }
-
   openAvailability(): void {
     if (!this.currentUser) return;
     this.dashboardFacade.openAvailability(this.currentUser.id);
@@ -544,15 +490,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardFacade.closeAvailability();
   }
 
-  slotKey(day: Date, slot: string): string {
-    return this.availabilityService.slotKey(day, slot);
-  }
-
   toggleSlot(day: Date, slot: string): void {
     if (!this.currentUser) return;
-    this.dashboardFacade.toggleSlot(day, slot, this.currentUser.id, () => {
-      this.loadDashboardData();
-    });
+    this.dashboardFacade.toggleSlot(day, slot, this.currentUser.id);
   }
 
   isSlotSelected(day: Date, slot: string): boolean {
@@ -573,15 +513,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   confirmAvailability(): void {
     if (!this.currentUser) return;
-    this.dashboardFacade.confirmAvailability(this.currentUser.id, () => {
-      this.loadDashboardData();
-    });
+    this.dashboardFacade.confirmAvailability(this.currentUser.id);
   }
-
-  get isCopyMode(): boolean { return this.dashboardFacade.currentCalendarState.copiedDay !== null; }
 
   hasDaySlots(day: Date): boolean {
     return this.dashboardFacade.currentCalendarState.timeSlots.some(slot => this.isSlotSelected(day, slot));
+  }
+
+  get isCopyMode(): boolean {
+    return this.dashboardFacade.currentCalendarState.copiedDay !== null;
   }
 
   isCopiedDay(day: Date): boolean {
@@ -613,10 +553,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardFacade.closeBooking();
   }
 
-  buildBookingDays(): void {
-    // Logica spostata nel facade
-  }
-
   selectBookingDay(day: Date): void {
     this.dashboardFacade.selectBookingDay(day);
   }
@@ -635,9 +571,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   confirmBooking(): void {
     if (!this.currentUser) return;
-    this.dashboardFacade.confirmBooking(this.currentUser.id, () => {
-      this.loadDashboardData();
-    });
+    this.dashboardFacade.confirmBooking(this.currentUser.id);
   }
 
   isMobileChatOpen(): boolean {
@@ -720,7 +654,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           const apiError = err.error as ApiErrorResponse;
           this.toast.error('Errore', apiError?.message || 'Impossibile annullare la prenotazione in questo momento.');
-          this.cdr.detectChanges();
         }
       });
   }
@@ -729,10 +662,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.globalUnreadCount;
   }
 
-  onNotificationBellClick(): void {
-    this.globalUnreadCount = 0;
-    this.setTab('chat');
-  }
 
   logout(): void {
     this.authService.logout();

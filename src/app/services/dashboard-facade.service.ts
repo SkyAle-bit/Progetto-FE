@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { AvailabilityService } from './availability.service';
 import { ToastService } from './toast.service';
@@ -35,6 +35,8 @@ export interface BookingState {
 export class DashboardFacadeService {
   private availabilityService = inject(AvailabilityService);
   private toast = inject(ToastService);
+
+  public readonly actionSuccess$ = new Subject<void>();
 
   private calendarState = new BehaviorSubject<CalendarState>({
     isAvailabilityOpen: false,
@@ -92,7 +94,7 @@ export class DashboardFacadeService {
         const existingSlotIds = new Map<string, number>();
         const lockedSlots = new Set<string>();
 
-        slots.forEach((slot: any) => {
+        slots.forEach((slot: ProfessionalSlot) => {
           const start = new Date(slot.startTime);
           const timeLabel = this.availabilityService.getSlotTimeLabel(slot);
           const key = this.availabilityService.slotKey(start, timeLabel);
@@ -126,7 +128,7 @@ export class DashboardFacadeService {
     });
   }
 
-  toggleSlot(day: Date, slot: string, professionalId: number, onSuccess: () => void): void {
+  toggleSlot(day: Date, slot: string, professionalId: number): void {
     const state = this.currentCalendarState;
     const key = this.availabilityService.slotKey(day, slot);
 
@@ -148,7 +150,7 @@ export class DashboardFacadeService {
                 existingSlots: newExisting,
                 existingSlotIds: newIds
               });
-              onSuccess();
+              this.actionSuccess$.next();
             },
             error: (err) => {
               console.error(err);
@@ -170,7 +172,7 @@ export class DashboardFacadeService {
     this.updateCalendarState({ selectedSlots: newSelected });
   }
 
-  confirmAvailability(professionalId: number, onSuccess: () => void): void {
+  confirmAvailability(professionalId: number): void {
     const state = this.currentCalendarState;
     if (state.selectedSlots.size === 0) {
       this.toast.warning('Attenzione', 'Nessuno slot selezionato.');
@@ -184,7 +186,7 @@ export class DashboardFacadeService {
       next: () => {
         this.toast.success('Fatto', 'Disponibilità salvate con successo.');
         this.closeAvailability();
-        onSuccess();
+        this.actionSuccess$.next();
       },
       error: (err) => {
         console.error(err);
@@ -234,7 +236,7 @@ export class DashboardFacadeService {
       next: (slots) => {
         const bookingDays = this.availabilityService.buildBookingDays(slots);
         let selectedBookingDay = null;
-        let slotsForSelectedDay: any[] = [];
+        let slotsForSelectedDay: ProfessionalSlot[] = [];
 
         if (bookingDays.length > 0) {
           selectedBookingDay = bookingDays[0];
@@ -269,24 +271,24 @@ export class DashboardFacadeService {
   }
 
   selectBookingDay(day: Date): void {
-    const state = this.currentBookingState;
+    const slots = this.availabilityService.getSlotsForDay(this.currentBookingState.availableBookingSlots, day);
     this.updateBookingState({
       selectedBookingDay: day,
-      selectedBookingSlot: null,
-      slotsForSelectedDay: this.availabilityService.getSlotsForDay(state.availableBookingSlots, day)
+      slotsForSelectedDay: slots,
+      selectedBookingSlot: null
     });
   }
 
   toggleBookingSlot(slot: ProfessionalSlot): void {
-    const state = this.currentBookingState;
-    if (state.selectedBookingSlot?.id === slot.id) {
+    const currentState = this.currentBookingState;
+    if (currentState.selectedBookingSlot?.id === slot.id) {
       this.updateBookingState({ selectedBookingSlot: null });
     } else {
       this.updateBookingState({ selectedBookingSlot: slot });
     }
   }
 
-  confirmBooking(userId: number, onSuccess: () => void): void {
+  confirmBooking(userId: number): void {
     const state = this.currentBookingState;
     if (!state.selectedBookingSlot || !state.selectedProfessional) return;
 
@@ -300,7 +302,7 @@ export class DashboardFacadeService {
       next: () => {
         this.toast.success('Prenotato', 'Appuntamento confermato.');
         this.closeBooking();
-        onSuccess();
+        this.actionSuccess$.next();
       },
       error: (err) => {
         console.error(err);

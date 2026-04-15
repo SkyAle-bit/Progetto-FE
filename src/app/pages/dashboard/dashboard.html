@@ -227,7 +227,7 @@
          └──────────────────────────────────────────────────────┘ -->
     <app-clients-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'clients' && isProfessional()" appPullToRefresh
       (refresh)="onPullRefresh()" [myClients]="myClients" [currentUser]="currentUser"
-      (showPopup)="showPopupMessage($event.title, $event.message)">
+      (showPopup)="showPopupMessage($event.title, $event.message, $event.type)">
     </app-clients-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
@@ -486,8 +486,7 @@
               d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
             </path>
           </svg>
-          {{ canJoinCallNow && selectedCallBooking.status === 'CONFIRMED' ? 'Accedi alla Call' : 'Link non ancora
-          attivo' }}
+          {{ canJoinCallNow && selectedCallBooking.status === 'CONFIRMED' ? 'Accedi alla Call' : 'Link non ancora attivo' }}
         </button>
 
         <!-- Annulla Prenotazione (solo Cliente + >24h) -->
@@ -638,11 +637,12 @@
   </aside>
 
   <!-- ── MODALE DISPONIBILITÀ ── -->
+  <ng-container *ngIf="calendarState$ | async as calState">
   <div class="fixed inset-0 bg-[var(--color-primary-navy)]/38 z-[200] backdrop-blur-[5px]" style="animation: fadeIn 0.2s ease"
-    *ngIf="isAvailabilityOpen" (click)="closeAvailability()"></div>
+    *ngIf="calState.isAvailabilityOpen" (click)="closeAvailability()"></div>
   <div class="avail-modal fixed z-[201] bg-white overflow-hidden flex flex-col top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
               w-[min(96vw,920px)] h-[min(92vh,700px)] rounded-2xl max-sm:top-0 max-sm:left-0 max-sm:translate-x-0 max-sm:translate-y-0
-              max-sm:w-screen max-sm:h-[100dvh] max-sm:rounded-none" *ngIf="isAvailabilityOpen">
+              max-sm:w-screen max-sm:h-[100dvh] max-sm:rounded-none" *ngIf="calState.isAvailabilityOpen">
     <div class="flex items-center justify-between px-6 py-[1.1rem] bg-[var(--color-primary-navy)] flex-shrink-0">
       <div class="flex flex-col gap-[0.15rem]">
         <span class="avail-title font-['Darker_Grotesque'] text-[1.1rem] font-black tracking-[0.02em]">Disponibilità
@@ -658,8 +658,8 @@
       <div class="avail-time-gutter border-r border-[var(--color-border-subtle)] flex items-center justify-center">
         <button *ngIf="isCopyMode" class="btn-cancel-copy" (click)="clearCopy()" title="Annulla copia">✕</button>
       </div>
-      <div class="avail-day-header flex flex-col items-center py-[0.55rem] border-r border-[var(--color-border-subtle)]/60 gap-[0.2rem]"
-        *ngFor="let day of nextWeekDays" [class.is-copy-source]="isCopiedDay(day)">
+        <div class="avail-day-header flex flex-col items-center py-[0.55rem] border-r border-[var(--color-border-subtle)]/60 gap-[0.2rem]"
+          *ngFor="let day of calState.nextWeekDays" [class.is-copy-source]="isCopiedDay(day)">
         <span class="avail-day-name text-[0.60rem] max-sm:text-[0.52rem] font-bold text-[var(--color-text-muted)] tracking-[0.12em]">{{
           getDayName(day) }}</span>
         <span class="avail-day-number text-[0.9rem] max-sm:text-[0.78rem] font-semibold text-[var(--color-text-main)]">{{
@@ -673,12 +673,12 @@
     <div class="avail-body flex-1 overflow-y-scroll overflow-x-hidden">
       <div class="avail-grid min-h-full grid grid-cols-[36px_repeat(7,1fr)] sm:grid-cols-[44px_repeat(7,1fr)]">
         <div class="avail-time-col border-r border-[var(--color-border-subtle)] bg-[var(--color-bg-subtle)] sticky left-0 z-[2]">
-          <div class="avail-time-label" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
+          <div class="avail-time-label" *ngFor="let slot of calState.timeSlots" [class.full-hour]="isFullHour(slot)"
             [class.half-hour]="!isFullHour(slot)">{{ isFullHour(slot) ? slot : '' }}</div>
         </div>
-        <div class="avail-day-col border-r border-[var(--color-border-subtle)]/50" *ngFor="let day of nextWeekDays"
+        <div class="avail-day-col border-r border-[var(--color-border-subtle)]/50" *ngFor="let day of calState.nextWeekDays"
           [class.is-paste-target]="isCopyMode && !isCopiedDay(day)" [class.is-copy-source]="isCopiedDay(day)">
-          <div class="avail-slot" *ngFor="let slot of timeSlots" [class.full-hour]="isFullHour(slot)"
+          <div class="avail-slot" *ngFor="let slot of calState.timeSlots" [class.full-hour]="isFullHour(slot)"
             [class.half-hour]="!isFullHour(slot)" [class.selected]="isSlotSelected(day, slot)"
             [class.existing]="isSlotExisting(day, slot)" [class.locked]="isSlotLocked(day, slot)"
             (click)="toggleSlot(day, slot)"
@@ -702,42 +702,44 @@
       </div>
     </div>
   </div>
+  </ng-container>
 
   <!-- ── MODALE PRENOTAZIONE CLIENTE ── -->
+  <ng-container *ngIf="bookingState$ | async as bookState">
   <div class="fixed inset-0 bg-[var(--color-text-main)]/40 backdrop-blur-[4px] z-[2000]" style="animation: fadeIn 0.3s ease"
-    *ngIf="isBookingOpen" (click)="closeBooking()"></div>
+    *ngIf="bookState.isBookingOpen" (click)="closeBooking()"></div>
   <div
     class="booking-modal fixed z-[2001] bg-white rounded-xl overflow-hidden flex flex-col top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[540px] max-h-[90vh]"
-    *ngIf="isBookingOpen">
+    *ngIf="bookState.isBookingOpen">
     <div class="flex justify-between items-start px-6 py-5 bg-[var(--color-text-main)] border-b-2 border-[var(--color-accent-gold)]">
       <div class="flex flex-col gap-[0.3rem]">
         <span class="font-['Darker_Grotesque'] text-[1.6rem] font-extrabold leading-tight text-white">Prenota con {{
-          selectedProfessional?.fullName }}</span>
+          bookState.selectedProfessional?.fullName }}</span>
         <span class="text-[0.85rem] text-[var(--color-accent-gold)] font-medium tracking-[0.03em] uppercase">{{
-          selectedProfessional?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</span>
+          bookState.selectedProfessional?.role === 'PERSONAL_TRAINER' ? 'Personal Trainer' : 'Nutrizionista' }}</span>
       </div>
       <button
         class="booking-close w-7 h-7 bg-white/10 border-none rounded-full text-white text-[0.9rem] cursor-pointer flex items-center justify-center transition-all"
         (click)="closeBooking()">✕</button>
     </div>
-    <div class="flex flex-col items-center justify-center gap-4 p-12" *ngIf="isLoading">
+    <div class="flex flex-col items-center justify-center gap-4 p-12" *ngIf="bookState.isLoading">
       <div class="loading-spinner"></div>
       <div class="text-[#64748b] text-[0.9rem]">Caricamento disponibilità...</div>
     </div>
-    <div class="booking-body flex-1 overflow-y-auto px-6 py-6 flex flex-col bg-[#f8f9fc]" *ngIf="!isLoading">
-      <div class="text-center py-8 px-4" *ngIf="bookingDays.length === 0">
+    <div class="booking-body flex-1 overflow-y-auto px-6 py-6 flex flex-col bg-[#f8f9fc]" *ngIf="!bookState.isLoading">
+      <div class="text-center py-8 px-4" *ngIf="bookState.bookingDays.length === 0">
         <div class="text-[2.5rem] mb-4 opacity-80">📅</div>
         <p class="text-[1.1rem] font-semibold text-[var(--color-text-main)] mb-2">Nessuna disponibilità</p>
         <p class="text-[0.9rem] text-[#64748b] leading-[1.5]">Questo professionista non ha ancora inserito
           disponibilità.</p>
       </div>
-      <ng-container *ngIf="bookingDays.length > 0">
+      <ng-container *ngIf="bookState.bookingDays.length > 0">
         <div class="text-[0.9rem] font-bold text-[var(--color-text-main)] mb-3 uppercase tracking-[0.03em]">Seleziona una data</div>
         <div class="booking-day-selector flex gap-3 overflow-x-auto pb-2">
           <button
             class="booking-day-card flex-[0_0_auto] w-[72px] py-3 flex flex-col items-center justify-center bg-white border border-[#e2e8f0] rounded-[10px] cursor-pointer transition-all"
-            *ngFor="let day of bookingDays"
-            [class.selected]="selectedBookingDay && day.getTime() === selectedBookingDay.getTime()"
+            *ngFor="let day of bookState.bookingDays"
+            [class.selected]="bookState.selectedBookingDay && day.getTime() === bookState.selectedBookingDay.getTime()"
             (click)="selectBookingDay(day)">
             <span class="bdc-name text-[0.75rem] text-[#64748b] uppercase font-semibold mb-[0.2rem]">{{ getDayName(day)
               }}</span>
@@ -750,35 +752,36 @@
         </div>
         <div class="text-[0.9rem] font-bold text-[var(--color-text-main)] uppercase tracking-[0.03em] mt-6 mb-3">Orari disponibili
         </div>
-        <div class="flex flex-wrap gap-[0.6rem]" *ngIf="slotsForSelectedDay.length > 0">
+        <div class="flex flex-wrap gap-[0.6rem]" *ngIf="bookState.slotsForSelectedDay.length > 0">
           <button
             class="booking-time-pill px-5 py-[0.6rem] bg-white border border-[#e2e8f0] rounded-full text-[var(--color-text-main)] font-semibold text-[0.9rem] cursor-pointer transition-all"
-            *ngFor="let slot of slotsForSelectedDay" [class.selected]="isBookingSlotSelected(slot)"
+            *ngFor="let slot of bookState.slotsForSelectedDay" [class.selected]="isBookingSlotSelected(slot)"
             (click)="toggleBookingSlot(slot)">
             {{ getSlotTimeLabel(slot) }}
           </button>
         </div>
         <div class="p-4 bg-[var(--color-text-main)]/3 rounded-lg text-[#64748b] text-[0.9rem] text-center italic"
-          *ngIf="selectedBookingDay && slotsForSelectedDay.length === 0">Nessun orario disponibile in questa data.</div>
+          *ngIf="bookState.selectedBookingDay && bookState.slotsForSelectedDay.length === 0">Nessun orario disponibile in questa data.</div>
       </ng-container>
     </div>
-    <div class="flex flex-col gap-4 px-6 py-5 bg-white border-t border-[#e2e8f0]" *ngIf="!isLoading">
+    <div class="flex flex-col gap-4 px-6 py-5 bg-white border-t border-[#e2e8f0]" *ngIf="!bookState.isLoading">
       <div
         class="booking-selection-info flex items-center gap-2 text-[0.95rem] px-[0.6rem] py-[0.6rem] bg-[var(--color-accent-gold)]/10 rounded-md text-[var(--color-text-main)]"
-        style="animation: fadeIn 0.3s" *ngIf="selectedBookingSlot && selectedBookingDay">
+        style="animation: fadeIn 0.3s" *ngIf="bookState.selectedBookingSlot && bookState.selectedBookingDay">
         <span class="font-medium text-[#64748b]">Data selezionata:</span>
-        <span class="font-bold text-[var(--color-text-main)]">{{ selectedBookingDay.toLocaleDateString('it-IT', { weekday: 'long', day:
-          'numeric', month: 'long' }) }} alle {{ getSlotTimeLabel(selectedBookingSlot) }}</span>
+        <span class="font-bold text-[var(--color-text-main)]">{{ bookState.selectedBookingDay.toLocaleDateString('it-IT', { weekday: 'long', day:
+          'numeric', month: 'long' }) }} alle {{ getSlotTimeLabel(bookState.selectedBookingSlot) }}</span>
       </div>
-      <div class="text-[var(--color-text-muted)] italic text-[0.95rem]" *ngIf="!selectedBookingSlot">Seleziona un orario per continuare
+      <div class="text-[var(--color-text-muted)] italic text-[0.95rem]" *ngIf="!bookState.selectedBookingSlot">Seleziona un orario per continuare
       </div>
       <div class="flex gap-2 justify-end">
         <button class="btn-avail-cancel" (click)="closeBooking()">Annulla</button>
-        <button class="btn-book-confirm" (click)="confirmBooking()" [disabled]="!selectedBookingSlot">Conferma
+        <button class="btn-book-confirm" (click)="confirmBooking()" [disabled]="!bookState.selectedBookingSlot">Conferma
           Prenotazione</button>
       </div>
     </div>
   </div>
+  </ng-container>
 
   <!-- ── MODALE MODIFICA PROFILO ── -->
   <div class="fixed inset-0 bg-[var(--color-text-main)]/40 backdrop-blur-[4px] z-[2000]" style="animation: fadeIn 0.2s ease"

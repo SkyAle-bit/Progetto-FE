@@ -7,13 +7,14 @@
 // Enums
 // ─────────────────────────────────────────────────────────────
 
-export type UserRole =
-  | 'CLIENT'
-  | 'PERSONAL_TRAINER'
-  | 'NUTRITIONIST'
-  | 'MODERATOR'
-  | 'INSURANCE_MANAGER'
-  | 'ADMIN';
+export enum UserRole {
+  CLIENT = 'CLIENT',
+  PERSONAL_TRAINER = 'PERSONAL_TRAINER',
+  NUTRITIONIST = 'NUTRITIONIST',
+  MODERATOR = 'MODERATOR',
+  INSURANCE_MANAGER = 'INSURANCE_MANAGER',
+  ADMIN = 'ADMIN'
+}
 
 export type BookingStatus =
   | 'PENDING'
@@ -38,6 +39,19 @@ export type TabId =
 // ─────────────────────────────────────────────────────────────
 // User & Auth
 // ─────────────────────────────────────────────────────────────
+
+export type UserManagementMode = 'admin' | 'moderator';
+
+export interface ManagedUserPayload {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password?: string;
+  role: string;
+  planId?: number;
+  assignedPTId?: number;
+  assignedNutritionistId?: number;
+}
 
 /** Dati utente salvati in localStorage dopo il login (da AuthResponse.java). */
 export interface AuthUser {

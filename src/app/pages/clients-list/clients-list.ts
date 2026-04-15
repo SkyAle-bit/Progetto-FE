@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { Router, RouterModule } from '@angular/router';
+import { UserRole, ClientBasicInfo } from '../../models/dashboard.types';
 
 @Component({
   selector: 'app-clients-list',
@@ -14,7 +15,7 @@ export class ClientsListComponent implements OnInit {
   userService = inject(UserService);
   router = inject(Router);
   cdr = inject(ChangeDetectorRef);
-  clients: any[] = [];
+  clients: ClientBasicInfo[] = [];
   professionalId: number = 0;
 
   ngOnInit() {
@@ -22,7 +23,7 @@ export class ClientsListComponent implements OnInit {
     if (userStr) {
       const user = JSON.parse(userStr);
       // Extra check: only PTs and Nutritionists should see this
-      if (user.role === 'CLIENT') {
+      if (user.role === UserRole.CLIENT) {
         this.router.navigate(['/dashboard']);
         return;
       }
@@ -35,7 +36,7 @@ export class ClientsListComponent implements OnInit {
 
   loadClients() {
     this.userService.getMyClients(this.professionalId).subscribe({
-      next: (res: any) => {
+      next: (res: ClientBasicInfo[] | any) => {
         // Assicura che diventi un Array pulito, ed eseguiamo Change Detection forzata
         this.clients = Array.isArray(res) ? res : (res && res.value) ? res.value : [];
         this.cdr.detectChanges();
