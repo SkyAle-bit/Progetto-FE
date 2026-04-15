@@ -124,10 +124,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   visibleDayCount: number = 7;
   dayOffset: number = 0;
 
-  isCallModalOpen: boolean = false;
-  selectedCallBooking: Booking | null = null;
-  canJoinCallNow: boolean = false;
-  private timeCheckInterval: ReturnType<typeof setInterval> | null = null;
+
 
   isProfileEditOpen: boolean = false;
   isSavingProfile: boolean = false;
