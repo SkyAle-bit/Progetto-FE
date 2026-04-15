@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../../../services/auth.service';
+import { UserService } from '../../../../services/user.service';
 
 @Component({
   selector: 'app-admin-stats-tab',
@@ -10,7 +10,7 @@ import { AuthService } from '../../../../services/auth.service';
   styleUrls: ['./admin-stats-tab.css']
 })
 export class AdminStatsTabComponent implements OnInit {
-  private authService = inject(AuthService);
+  private authService = inject(UserService);
   private cdr = inject(ChangeDetectorRef);
 
   stats: any = null;

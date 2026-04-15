@@ -1,8 +1,10 @@
 import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators, ValidationErrors, FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { PlanService } from '../../services/plan.service';
+import { SlotService } from '../../services/slot.service';
 import { ReviewService, ReviewResponse } from '../../services/review.service';
 
 // Validator custom: verifica che password e conferma combacino
@@ -16,7 +18,7 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, DecimalPipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })
@@ -50,10 +52,12 @@ export class RegisterComponent implements OnInit {
   toast: { message: string; type: 'success' | 'error' } | null = null;
   private toastTimer: any = null;
 
-  private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
-  private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private planService = inject(PlanService);
+  private slotService = inject(SlotService);
   private reviewService = inject(ReviewService);
 
   // ── Modal Vedi Recensioni ────────────────
@@ -103,9 +107,25 @@ export class RegisterComponent implements OnInit {
   toggleConfirmPasswordVisibility(): void { this.showConfirmPassword = !this.showConfirmPassword; }
 
   ngOnInit(): void {
-    this.authService.getPlans().subscribe(res => this.plans = res);
-    this.authService.getProfessionals('PERSONAL_TRAINER').subscribe(res => this.personalTrainers = res);
-    this.authService.getProfessionals('NUTRITIONIST').subscribe(res => this.nutritionists = res);
+    this.planService.getPlans().subscribe(res => this.plans = res);
+    this.slotService.getProfessionals('PERSONAL_TRAINER').subscribe(res => this.personalTrainers = res);
+    this.slotService.getProfessionals('NUTRITIONIST').subscribe(res => this.nutritionists = res);
+
+    this.registerForm.get('role')?.valueChanges.subscribe(role => {
+      const isTrainer = role === 'PERSONAL_TRAINER';
+      const isNutritionist = role === 'NUTRITIONIST';
+
+      this.registerForm.patchValue({
+        selectedPtId: isTrainer ? this.registerForm.get('selectedPtId')?.value : null,
+        selectedNutritionistId: isNutritionist ? this.registerForm.get('selectedNutritionistId')?.value : null
+      });
+
+      this.registerForm.get('selectedPtId')?.setValidators(isTrainer ? [Validators.required] : null);
+      this.registerForm.get('selectedNutritionistId')?.setValidators(isNutritionist ? [Validators.required] : null);
+
+      this.registerForm.get('selectedPtId')?.updateValueAndValidity();
+      this.registerForm.get('selectedNutritionistId')?.updateValueAndValidity();
+    });
   }
 
   showToast(message: string, type: 'success' | 'error'): void {

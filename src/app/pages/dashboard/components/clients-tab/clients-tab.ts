@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, inject, ChangeDetectorRef } fro
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { AuthService } from '../../../../services/auth.service';
+import { DocumentService } from '../../../../services/document.service';
 
 @Component({
   selector: 'app-clients-tab',
@@ -12,7 +12,7 @@ import { AuthService } from '../../../../services/auth.service';
   styleUrls: ['./clients-tab.css']
 })
 export class ClientsTabComponent {
-  private authService = inject(AuthService);
+  private authService = inject(DocumentService);
   private cdr = inject(ChangeDetectorRef);
   private sanitizer = inject(DomSanitizer);
 

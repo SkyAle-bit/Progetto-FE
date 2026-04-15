@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
@@ -11,7 +11,7 @@ import { Router, RouterModule } from '@angular/router';
   styleUrls: ['./clients-list.css']
 })
 export class ClientsListComponent implements OnInit {
-  authService = inject(AuthService);
+  userService = inject(UserService);
   router = inject(Router);
   cdr = inject(ChangeDetectorRef);
   clients: any[] = [];
@@ -34,7 +34,7 @@ export class ClientsListComponent implements OnInit {
   }
 
   loadClients() {
-    this.authService.getMyClients(this.professionalId).subscribe({
+    this.userService.getMyClients(this.professionalId).subscribe({
       next: (res: any) => {
         // Assicura che diventi un Array pulito, ed eseguiamo Change Detection forzata
         this.clients = Array.isArray(res) ? res : (res && res.value) ? res.value : [];

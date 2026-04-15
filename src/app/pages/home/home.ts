@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../services/auth.service';
+import { PlanService } from '../../services/plan.service';
 import { environment } from '../../../environments/environment';
 
 @Component({
@@ -90,6 +91,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     isDragging: boolean = false;
 
     private authService = inject(AuthService);
+    private planService = inject(PlanService);
     private router = inject(Router);
     private cdr = inject(ChangeDetectorRef);
     private fb = inject(FormBuilder);
@@ -134,7 +136,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         // Caricamento dei piani all'avvio
-        this.authService.getPlans().subscribe({
+        this.planService.getPlans().subscribe({
             next: (res) => {
                 if (res && res.length > 0) {
                     this.semestralePlans = res.filter((p: any) => p.duration === 'SEMESTRALE');

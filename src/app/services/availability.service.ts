@@ -1,11 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { AuthService } from './auth.service';
-import {
-  ProfessionalSlot,
-  SlotPayload,
-  BookingRequest,
-} from '../models/dashboard.types';
+import { SlotService } from './slot.service';
+import { ProfessionalSlot, SlotPayload, BookingRequest } from '../models/dashboard.types';
 
 const START_HOUR = 8;
 const END_HOUR = 21;
@@ -18,23 +14,23 @@ const END_HOUR = 21;
  */
 @Injectable({ providedIn: 'root' })
 export class AvailabilityService {
-  private authService = inject(AuthService);
+  private slotService = inject(SlotService);
 
   // ── HTTP: Slot professionista ────────────────────────────
 
   /** Carica tutti gli slot di un professionista. */
   loadProfessionalSlots(professionalId: number): Observable<ProfessionalSlot[]> {
-    return this.authService.getProfessionalSlots(professionalId);
+    return this.slotService.getProfessionalSlots(professionalId);
   }
 
   /** Crea nuovi slot di disponibilità per un professionista. */
   createSlots(professionalId: number, slots: SlotPayload[]): Observable<void> {
-    return this.authService.createProfessionalSlots(professionalId, slots);
+    return this.slotService.createProfessionalSlots(professionalId, slots);
   }
 
   /** Elimina un singolo slot di un professionista. */
   deleteSlot(professionalId: number, slotId: number): Observable<void> {
-    return this.authService.deleteProfessionalSlot(professionalId, slotId);
+    return this.slotService.deleteProfessionalSlot(professionalId, slotId);
   }
 
   // ── HTTP: Booking cliente ────────────────────────────────
@@ -59,12 +55,12 @@ export class AvailabilityService {
 
   /** Crea una prenotazione. */
   createBooking(request: BookingRequest): Observable<void> {
-    return this.authService.createBooking(request);
+    return this.slotService.createBooking(request);
   }
 
   /** Annulla una prenotazione. */
   cancelBooking(bookingId: number, userId: number): Observable<void> {
-    return this.authService.cancelBooking(bookingId, userId);
+    return this.slotService.cancelBooking(bookingId, userId);
   }
 
   // ── Pure: Costruzione giorni e time slots ─────────────────

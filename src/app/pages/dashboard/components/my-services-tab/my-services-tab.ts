@@ -1,7 +1,7 @@
 import { Component, Input, inject, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { AuthService } from '../../../../services/auth.service';
+import { DocumentService } from '../../../../services/document.service';
 
 @Component({
   selector: 'app-my-services-tab',
@@ -11,7 +11,7 @@ import { AuthService } from '../../../../services/auth.service';
   styleUrls: ['./my-services-tab.css']
 })
 export class MyServicesTabComponent implements OnInit {
-  private authService = inject(AuthService);
+  private documentService = inject(DocumentService);
   private cdr = inject(ChangeDetectorRef);
   private sanitizer = inject(DomSanitizer);
 
@@ -50,7 +50,7 @@ export class MyServicesTabComponent implements OnInit {
     if (!type || this.loadedType === type) return;
     this.loading = true;
     this.loadedType = type;
-    this.authService.getClientDocumentsByType(this.currentUser.id, type).subscribe({
+    this.documentService.getClientDocumentsByType(this.currentUser.id, type).subscribe({
       next: (docs) => { this.docs = docs ?? []; this.loading = false; this.cdr.detectChanges(); },
       error: () => { this.docs = []; this.loading = false; this.cdr.detectChanges(); }
     });
@@ -58,7 +58,7 @@ export class MyServicesTabComponent implements OnInit {
 
   viewPdf(doc: any): void {
     this.pdfLoading = true; this.pdfName = doc.fileName; this.pdfOpen = true; this.cdr.detectChanges();
-    this.authService.downloadDocument(doc.id).subscribe({
+    this.documentService.downloadDocument(doc.id).subscribe({
       next: (blob) => {
         if (this.blobUrl) URL.revokeObjectURL(this.blobUrl);
         this.blobUrl = URL.createObjectURL(blob);

@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { AuthService } from '../../../../services/auth.service';
+import { UserService } from '../../../../services/user.service';
+import { SubscriptionService } from '../../../../services/subscription.service';
 import { ManagedUserPayload } from '../../../../services/auth.service';
 import { ToastService } from '../../../../services/toast.service';
 
@@ -13,7 +14,8 @@ import { ToastService } from '../../../../services/toast.service';
   styleUrls: ['./admin-users-tab.css']
 })
 export class AdminUsersTabComponent {
-  private authService = inject(AuthService);
+  private authService = inject(UserService);
+  private subscriptionService = inject(SubscriptionService);
   private cdr = inject(ChangeDetectorRef);
   private toast = inject(ToastService);
   private fb = inject(FormBuilder);
@@ -276,19 +278,19 @@ export class AdminUsersTabComponent {
   saveCredits(): void {
     if (this.creditsForm.invalid || !this.selectedSubscription) return;
     this.updatingCredits = true;
-    
-    const pt = this.creditsForm.value.creditsPT || 0;
-    const nutri = this.creditsForm.value.creditsNutri || 0;
 
-    this.authService.updateSubscriptionCredits(this.mode, this.selectedSubscription.id, pt, nutri).subscribe({
-      next: (res: any) => {
+    const pt = this.creditsForm.value.creditsPT || 0;
+      const nutri = this.creditsForm.value.creditsNutri || 0;
+
+      this.subscriptionService.updateSubscriptionCredits(this.mode, this.selectedSubscription.id, pt, nutri).subscribe({
+        next: (res: any) => {
         this.updatingCredits = false;
         this.closeCreditsModal();
         this.toast.success('Fatto', 'Crediti aggiornati con successo.');
-        
+
         this.selectedSubscription.currentCreditsPT = pt;
         this.selectedSubscription.currentCreditsNutri = nutri;
-        this.usersChanged.emit(); 
+        this.usersChanged.emit();
       },
       error: (err: unknown) => {
         this.updatingCredits = false;

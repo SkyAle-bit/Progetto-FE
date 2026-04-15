@@ -5,12 +5,16 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { switchMap, of, catchError } from 'rxjs';
+import { catchError, of, switchMap } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
+import { PlanService } from '../../services/plan.service';
+import { SubscriptionService } from '../../services/subscription.service';
 import { ChatService } from '../../services/chat.service';
 import { AvailabilityService } from '../../services/availability.service';
+import { DashboardFacadeService } from '../../services/dashboard-facade.service';
 import { ToastService } from '../../services/toast.service';
 
 import { HomeTabComponent } from './components/home-tab/home-tab';
@@ -60,8 +64,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   @ViewChild(ChatTabComponent) chatTabComponent!: ChatTabComponent;
 
   private authService = inject(AuthService);
+  private userService = inject(UserService);
+  private planService = inject(PlanService);
+  private subscriptionService = inject(SubscriptionService);
   private chatService = inject(ChatService);
   private availabilityService = inject(AvailabilityService);
+  public dashboardFacade = inject(DashboardFacadeService);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
   private toast = inject(ToastService);
@@ -88,25 +96,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
   popupTitle: string = '';
   popupMessage: string = '';
 
-  isAvailabilityOpen: boolean = false;
-  nextWeekDays: Date[] = [];
-  selectedSlots: Set<string> = new Set();
-  existingSlots: Set<string> = new Set();
-  existingSlotIds: Map<string, number> = new Map();
-  lockedSlots: Set<string> = new Set();
+  get isAvailabilityOpen() { return this.dashboardFacade.currentCalendarState.isAvailabilityOpen; }
+  get nextWeekDays() { return this.dashboardFacade.currentCalendarState.nextWeekDays; }
+  get timeSlots() { return this.dashboardFacade.currentCalendarState.timeSlots; }
+  get copiedDay() { return this.dashboardFacade.currentCalendarState.copiedDay; }
 
-  isBookingOpen: boolean = false;
-  selectedProfessional: ProfessionalSummary | null = null;
-  availableBookingSlots: ProfessionalSlot[] = [];
-  selectedBookingSlot: ProfessionalSlot | null = null;
+  get isBookingOpen() { return this.dashboardFacade.currentBookingState.isBookingOpen; }
+  get availableBookingSlots() { return this.dashboardFacade.currentBookingState.availableBookingSlots; }
+  get selectedProfessional() { return this.dashboardFacade.currentBookingState.selectedProfessional; }
+  get bookingDays() { return this.dashboardFacade.currentBookingState.bookingDays; }
+  get selectedBookingDay() { return this.dashboardFacade.currentBookingState.selectedBookingDay; }
+  get slotsForSelectedDay() { return this.dashboardFacade.currentBookingState.slotsForSelectedDay; }
+  get selectedBookingSlot() { return this.dashboardFacade.currentBookingState.selectedBookingSlot; }
 
-  bookingDays: Date[] = [];
-  selectedBookingDay: Date | null = null;
-  slotsForSelectedDay: ProfessionalSlot[] = [];
+  get isCalendarLoading() { return this.dashboardFacade.currentCalendarState.isLoading || this.dashboardFacade.currentBookingState.isLoading; }
 
   currentWeekStart: Date = new Date();
   weekDays: Date[] = [];
-  timeSlots: string[] = [];
   readonly START_HOUR = 8;
   readonly END_HOUR = 21;
 
@@ -126,8 +132,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     password: '',
     profilePicture: ''
   };
-
-  copiedDay: Date | null = null;
 
   openPopup(title: string, message: string): void {
     this.popupTitle = title;
@@ -168,7 +172,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!this.currentUser) return;
     this.isSavingProfile = true;
 
-    this.authService.updateProfile(this.currentUser.id, this.profileEditData)
+    this.userService.updateProfile(this.currentUser.id, this.profileEditData)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
@@ -198,7 +202,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.toast.warning('Attenzione', 'Sei già un Amministratore.');
       return;
     }
-    this.authService.getAdmin()
+    this.userService.getAdmin()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (adminUser) => {
@@ -225,7 +229,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (userString) {
       this.currentUser = JSON.parse(userString);
       this.initWeek();
-      this.timeSlots = this.availabilityService.buildTimeSlots();
       this.updateVisibleDays();
       this.loadDashboardData();
 
@@ -277,11 +280,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (!this.currentUser) return;
 
-    this.authService.getDashboard(this.currentUser.id).pipe(
+    this.userService.getDashboard(this.currentUser.id).pipe(
       switchMap(data => {
         this.dashboardData = data;
         if (this.isProfessional()) {
-          return this.authService.getMyClients(this.currentUser!.id);
+          return this.userService.getMyClients(this.currentUser!.id);
         }
         return of([] as ClientBasicInfo[]);
       }),
@@ -316,12 +319,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       };
 
-      this.authService.getUsersByMode('moderator').pipe(
+      this.userService.getUsersByMode('moderator').pipe(
         takeUntilDestroyed(this.destroyRef)
       ).subscribe({
         next: (users) => {
           this.allUsers = users ?? [];
-          this.authService.getModeratorChatContacts().pipe(
+          this.userService.getModeratorChatContacts().pipe(
             takeUntilDestroyed(this.destroyRef)
           ).subscribe({
             next: (contacts) => {
@@ -341,7 +344,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });
 
-      this.authService.getPlans().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      this.planService.getPlans().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (plans) => {
           this.allPlans = Array.isArray(plans) ? plans : [];
           checkDone();
@@ -352,7 +355,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });
 
-      this.authService.getAllSubscriptionsByMode('moderator').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      this.subscriptionService.getAllSubscriptionsByMode('moderator').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (subs) => { this.allSubscriptions = subs ?? []; checkDone(); },
         error: () => { this.allSubscriptions = []; checkDone(); }
       });
@@ -364,7 +367,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const total = 3;
     const checkDone = () => { loaded++; if (loaded >= total) { this.isLoading = false; this.cdr.detectChanges(); } };
 
-    this.authService.getAllUsers().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.userService.getAllUsers().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (users) => {
         this.allUsers = users ?? [];
         this.chatUsers = [...this.allUsers];
@@ -377,12 +380,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.authService.getPlans().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.planService.getPlans().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (plans) => { this.allPlans = plans ?? []; checkDone(); },
       error: () => { this.allPlans = []; checkDone(); }
     });
 
-    this.authService.getAllSubscriptions().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.subscriptionService.getAllSubscriptions().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (subs) => { this.allSubscriptions = subs ?? []; checkDone(); },
       error: () => { this.allSubscriptions = []; checkDone(); }
     });
@@ -390,7 +393,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private loadModeratorChatUsers(manageableUsers: UserProfile[]): void {
     const baseUsers = Array.isArray(manageableUsers) ? [...manageableUsers] : [];
-    this.authService.getAdmin()
+    this.userService.getAdmin()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (adminUser) => {
@@ -413,7 +416,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private loadProStats(): void {
     if (!this.isProfessional() || !this.currentUser?.id) return;
-    this.authService.getProfessionalStats(this.currentUser.id)
+    this.userService.getProfessionalStats(this.currentUser.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (stats) => {
@@ -426,7 +429,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   private loadActivityFeed(): void {
     if (!this.currentUser?.id) return;
-    this.authService.getActivityFeed(this.currentUser.id)
+    this.userService.getActivityFeed(this.currentUser.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (feed) => {
@@ -525,47 +528,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   buildNextWeekDays(): void {
-    this.nextWeekDays = this.availabilityService.buildNextWeekDays();
+    const nextMonday = new Date();
+    const dow = nextMonday.getDay();
+    const daysUntilNextMonday = dow === 0 ? 1 : 8 - dow;
+    nextMonday.setDate(nextMonday.getDate() + daysUntilNextMonday);
+    nextMonday.setHours(0, 0, 0, 0);
   }
 
   openAvailability(): void {
     if (!this.currentUser) return;
-    this.buildNextWeekDays();
-    this.selectedSlots.clear();
-    this.existingSlots.clear();
-    this.existingSlotIds.clear();
-    this.lockedSlots.clear();
-    this.isAvailabilityOpen = true;
-    this.isLoading = true;
-
-    this.availabilityService.loadProfessionalSlots(this.currentUser.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (slots) => {
-          slots.forEach(slot => {
-            const start = new Date(slot.startTime);
-            const timeLabel = this.availabilityService.getSlotTimeLabel(slot);
-            const key = this.availabilityService.slotKey(start, timeLabel);
-
-            this.existingSlots.add(key);
-            this.existingSlotIds.set(key, slot.id);
-            if (slot.isAvailable === false || slot.available === false) {
-              this.lockedSlots.add(key);
-            }
-          });
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (err: HttpErrorResponse) => {
-          console.error('Errore nel caricamento disponibilità esistente', err);
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        }
-      });
+    this.dashboardFacade.openAvailability(this.currentUser.id);
   }
 
   closeAvailability(): void {
-    this.isAvailabilityOpen = false;
+    this.dashboardFacade.closeAvailability();
   }
 
   slotKey(day: Date, slot: string): string {
@@ -574,172 +550,75 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   toggleSlot(day: Date, slot: string): void {
     if (!this.currentUser) return;
-    const key = this.availabilityService.slotKey(day, slot);
-
-    if (this.existingSlots.has(key)) {
-      if (this.lockedSlots.has(key)) {
-        this.toast.warning('Slot Prenotato', 'Questo slot è già stato prenotato da un cliente e non può essere rimosso.');
-      } else {
-        const slotId = this.existingSlotIds.get(key);
-        if (slotId && confirm('Vuoi rimuovere questa disponibilità?')) {
-          this.isLoading = true;
-          this.availabilityService.deleteSlot(this.currentUser.id, slotId)
-            .pipe(takeUntilDestroyed(this.destroyRef))
-            .subscribe({
-              next: () => {
-                this.existingSlots.delete(key);
-                this.existingSlotIds.delete(key);
-                this.isLoading = false;
-                this.cdr.detectChanges();
-                this.loadDashboardData();
-              },
-              error: (err: HttpErrorResponse) => {
-                console.error('Errore rimozione slot', err);
-                this.isLoading = false;
-                const apiError = err.error as ApiErrorResponse;
-                this.toast.error('Errore', apiError?.message || 'Impossibile rimuovere lo slot in questo momento.');
-                this.cdr.detectChanges();
-              }
-            });
-        }
-      }
-      return;
-    }
-
-    if (this.selectedSlots.has(key)) {
-      this.selectedSlots.delete(key);
-    } else {
-      this.selectedSlots.add(key);
-    }
+    this.dashboardFacade.toggleSlot(day, slot, this.currentUser.id, () => {
+      this.loadDashboardData();
+    });
   }
 
   isSlotSelected(day: Date, slot: string): boolean {
-    return this.selectedSlots.has(this.availabilityService.slotKey(day, slot));
+    return this.dashboardFacade.currentCalendarState.selectedSlots.has(this.availabilityService.slotKey(day, slot));
   }
 
   isSlotExisting(day: Date, slot: string): boolean {
-    return this.existingSlots.has(this.availabilityService.slotKey(day, slot));
+    return this.dashboardFacade.currentCalendarState.existingSlots.has(this.availabilityService.slotKey(day, slot));
   }
 
   isSlotLocked(day: Date, slot: string): boolean {
-    return this.lockedSlots.has(this.availabilityService.slotKey(day, slot));
+    return this.dashboardFacade.currentCalendarState.lockedSlots.has(this.availabilityService.slotKey(day, slot));
   }
 
   getSelectedCount(): number {
-    return this.selectedSlots.size;
+    return this.dashboardFacade.currentCalendarState.selectedSlots.size;
   }
 
   confirmAvailability(): void {
     if (!this.currentUser) return;
-    if (this.selectedSlots.size === 0) {
-      this.toast.warning('Attenzione', 'Nessuno slot selezionato.');
-      return;
-    }
-
-    this.isLoading = true;
-    const slotsPayload = this.availabilityService.buildSlotPayloads(this.selectedSlots);
-
-    this.availabilityService.createSlots(this.currentUser.id, slotsPayload)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.toast.success('Disponibilità Confermate', 'I tuoi slot sono stati salvati con successo. I clienti potranno ora prenotarli.');
-          this.selectedSlots.clear();
-          this.copiedDay = null;
-          this.isLoading = false;
-          this.closeAvailability();
-          this.loadDashboardData();
-        },
-        error: (err: HttpErrorResponse) => {
-          console.error('Errore salvataggio disponibilità', err);
-          const apiError = err.error as ApiErrorResponse;
-          this.toast.error('Errore', apiError?.message || 'Si è verificato un errore durante il salvataggio. Riprova più tardi.');
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        }
-      });
+    this.dashboardFacade.confirmAvailability(this.currentUser.id, () => {
+      this.loadDashboardData();
+    });
   }
 
-  get isCopyMode(): boolean { return this.copiedDay !== null; }
+  get isCopyMode(): boolean { return this.dashboardFacade.currentCalendarState.copiedDay !== null; }
 
   hasDaySlots(day: Date): boolean {
-    return this.timeSlots.some(slot => this.isSlotSelected(day, slot));
+    return this.dashboardFacade.currentCalendarState.timeSlots.some(slot => this.isSlotSelected(day, slot));
   }
 
   isCopiedDay(day: Date): boolean {
-    return this.copiedDay !== null && this.availabilityService.formatDate(this.copiedDay) === this.availabilityService.formatDate(day);
+    const state = this.dashboardFacade.currentCalendarState;
+    return state.copiedDay !== null && this.availabilityService.formatDate(state.copiedDay) === this.availabilityService.formatDate(day);
   }
 
   copyDay(day: Date): void {
-    this.copiedDay = day;
+    this.dashboardFacade.copyDay(day);
   }
 
   clearCopy(): void {
-    this.copiedDay = null;
+    this.dashboardFacade.clearCopy();
   }
 
   pasteDay(targetDay: Date): void {
-    if (!this.copiedDay) return;
-    const sourceSlots = this.timeSlots.filter(slot => this.isSlotSelected(this.copiedDay!, slot));
-    sourceSlots.forEach(slot => this.selectedSlots.add(this.availabilityService.slotKey(targetDay, slot)));
-    this.copiedDay = null;
+    this.dashboardFacade.pasteDay(targetDay);
   }
 
   getNextWeekLabel(): string {
-    return this.availabilityService.getNextWeekLabel(this.nextWeekDays);
+    return this.availabilityService.getNextWeekLabel(this.dashboardFacade.currentCalendarState.nextWeekDays);
   }
 
   openBooking(professional: ProfessionalSummary): void {
-    this.selectedProfessional = professional;
-    this.isLoading = true;
-    this.isBookingOpen = true;
-    this.availableBookingSlots = [];
-    this.bookingDays = [];
-    this.selectedBookingDay = null;
-    this.slotsForSelectedDay = [];
-    this.selectedBookingSlot = null;
-
-    this.availabilityService.getAvailableSlotsFromTomorrow(professional.id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (slots) => {
-          this.availableBookingSlots = slots;
-          this.buildBookingDays();
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        },
-        error: (err: HttpErrorResponse) => {
-          console.error('Errore nel caricamento degli slot', err);
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        }
-      });
+    this.dashboardFacade.openBooking(professional);
   }
 
   closeBooking(): void {
-    this.isBookingOpen = false;
-    this.selectedProfessional = null;
-    this.availableBookingSlots = [];
-    this.bookingDays = [];
-    this.selectedBookingDay = null;
-    this.slotsForSelectedDay = [];
-    this.selectedBookingSlot = null;
+    this.dashboardFacade.closeBooking();
   }
 
   buildBookingDays(): void {
-    this.bookingDays = this.availabilityService.buildBookingDays(this.availableBookingSlots);
-    if (this.bookingDays.length > 0) {
-      this.selectBookingDay(this.bookingDays[0]);
-    } else {
-      this.selectedBookingDay = null;
-      this.slotsForSelectedDay = [];
-    }
+    // Logica spostata nel facade
   }
 
   selectBookingDay(day: Date): void {
-    this.selectedBookingDay = day;
-    this.selectedBookingSlot = null;
-    this.slotsForSelectedDay = this.availabilityService.getSlotsForDay(this.availableBookingSlots, day);
+    this.dashboardFacade.selectBookingDay(day);
   }
 
   getSlotTimeLabel(slot: ProfessionalSlot): string {
@@ -747,43 +626,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   toggleBookingSlot(slot: ProfessionalSlot): void {
-    if (!slot) return;
-    if (this.selectedBookingSlot?.id === slot.id) {
-      this.selectedBookingSlot = null;
-    } else {
-      this.selectedBookingSlot = slot;
-    }
+    this.dashboardFacade.toggleBookingSlot(slot);
   }
 
   isBookingSlotSelected(slot: ProfessionalSlot): boolean {
-    return this.selectedBookingSlot?.id === slot?.id;
+    return this.dashboardFacade.currentBookingState.selectedBookingSlot?.id === slot?.id;
   }
 
   confirmBooking(): void {
-    if (!this.selectedBookingSlot || !this.selectedProfessional || !this.currentUser) return;
-
-    this.isLoading = true;
-    const request = {
-      userId: this.currentUser.id,
-      slotId: this.selectedBookingSlot.id
-    };
-
-    this.availabilityService.createBooking(request)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.toast.success('Prenotazione Confermata', `Hai prenotato con successo un appuntamento per il ${this.selectedBookingDay?.toLocaleDateString('it-IT')} alle ${this.getSlotTimeLabel(this.selectedBookingSlot!)}.`);
-          this.closeBooking();
-          this.loadDashboardData();
-        },
-        error: (err: HttpErrorResponse) => {
-          console.error('Errore nella prenotazione', err);
-          const apiError = err.error as ApiErrorResponse;
-          this.toast.error('Errore di Prenotazione', apiError?.message || 'Errore durante la prenotazione');
-          this.isLoading = false;
-          this.cdr.detectChanges();
-        }
-      });
+    if (!this.currentUser) return;
+    this.dashboardFacade.confirmBooking(this.currentUser.id, () => {
+      this.loadDashboardData();
+    });
   }
 
   isMobileChatOpen(): boolean {
