@@ -74,6 +74,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
   /** @returns true se la conversazione esisteva già, false se è stata creata ex-novo */
   startConversationWith(user: any): boolean {
+    if (user.id === this.currentUser?.id) return false;
 
     const existing = this.chatConversations.find(c => c.otherUserId === user.id);
     if (existing) {
@@ -312,9 +313,8 @@ export class ChatTabComponent implements OnInit, OnDestroy {
         convs.push({ otherUserId: a.id, otherUserName: `${a.firstName} ${a.lastName}`, otherUserRole: 'Admin', lastMessage: undefined, lastMessageTime: undefined, unreadCount: 0 });
       });
     }
-    // Admin: può chattare con tutti gli utenti
     if (this.isAdmin && this.allUsers?.length > 0) {
-      this.allUsers.filter(u => u.id !== this.currentUser?.id).forEach((u: any) => {
+      this.allUsers.filter(u => u.id !== this.currentUser?.id && (u.role === 'MODERATOR' || u.role === 'INSURANCE_MANAGER')).forEach((u: any) => {
         convs.push({
           otherUserId: u.id,
           otherUserName: `${u.firstName} ${u.lastName}`,

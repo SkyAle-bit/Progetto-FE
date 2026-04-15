@@ -207,8 +207,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (adminUser) => {
-          this.dashboardFacade.setPendingChatUser(adminUser as UserProfile);
-          this.setTab('chat');
+          if (this.activeTab === 'chat' && this._chatTabComponent) {
+            const wasExisting = this._chatTabComponent.startConversationWith(adminUser);
+            if (wasExisting) {
+              this.toast.success('Chat Supporto', 'Hai già una conversazione aperta con il supporto. Ti abbiamo reindirizzato alla chat esistente.');
+            }
+          } else {
+            this.dashboardFacade.setPendingChatUser(adminUser as UserProfile);
+            this.setTab('chat');
+          }
         },
         error: (err: HttpErrorResponse) => {
           const apiError = err.error as ApiErrorResponse;
@@ -614,12 +621,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return diffHours >= 24;
   }
 
+  showCancelBookingModal: boolean = false;
+
+  openCancelBookingModal(): void {
+    this.showCancelBookingModal = true;
+  }
+
+  closeCancelBookingModal(): void {
+    this.showCancelBookingModal = false;
+  }
+
   cancelCurrentBooking(): void {
     if (!this.selectedCallBooking || !this.currentUser) return;
-
-    if (!confirm('Sei sicuro di voler annullare questa prenotazione? Lo slot verrà liberato e ti verranno restituiti i crediti.')) {
-      return;
-    }
+    this.showCancelBookingModal = false;
 
     this.isLoading = true;
     this.availabilityService.cancelBooking(this.selectedCallBooking.id, this.currentUser.id)

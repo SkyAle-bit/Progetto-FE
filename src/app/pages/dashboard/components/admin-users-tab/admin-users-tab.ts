@@ -24,6 +24,7 @@ export class AdminUsersTabComponent {
   @Input() allPlans: any[] = [];
   @Input() allSubscriptions: any[] = [];
   @Input() mode: 'admin' | 'moderator' = 'admin';
+  @Input() currentUser: any = null;
   @Output() usersChanged = new EventEmitter<void>();
 
   searchQuery: string = '';
@@ -209,6 +210,10 @@ export class AdminUsersTabComponent {
 
   // ── Delete user ──
   openDeleteModal(user: any): void {
+    if (this.currentUser && user.id === this.currentUser.id) {
+      this.toast.warning('Operazione non consentita', 'Non puoi eliminare il tuo stesso account.');
+      return;
+    }
     this.userToDelete = user;
     this.showDeleteModal = true;
   }

@@ -257,7 +257,7 @@
          │  TAB: ADMIN UTENTI (solo admin)                      │
          └──────────────────────────────────────────────────────┘ -->
     <app-admin-users-tab class="flex-1 overflow-y-auto" *ngIf="activeTab === 'admin-users' && (isAdmin() || isModerator())"
-      [allUsers]="allUsers" [allPlans]="allPlans" [allSubscriptions]="allSubscriptions" [mode]="isModerator() ? 'moderator' : 'admin'" (usersChanged)="reloadAdminData()">
+      [allUsers]="allUsers" [allPlans]="allPlans" [allSubscriptions]="allSubscriptions" [mode]="isModerator() ? 'moderator' : 'admin'" [currentUser]="currentUser" (usersChanged)="reloadAdminData()">
     </app-admin-users-tab>
 
     <!-- ┌──────────────────────────────────────────────────────┐
@@ -492,12 +492,43 @@
         <!-- Annulla Prenotazione (solo Cliente + >24h) -->
         <button *ngIf="isCancellationAllowed()"
           class="mt-3 w-full py-3 rounded-xl text-[0.85rem] font-bold uppercase tracking-wide transition-all border border-red-200 text-red-600 hover:bg-red-50 flex items-center justify-center gap-2"
-          (click)="cancelCurrentBooking()">
+          (click)="openCancelBookingModal()">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
           Annulla Prenotazione
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modale Conferma Annullamento Prenotazione -->
+  <div class="fixed inset-0 bg-[var(--color-text-main)]/40 backdrop-blur-[4px] z-[200] flex items-center justify-center p-4"
+    *ngIf="showCancelBookingModal" (click)="closeCancelBookingModal()">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-[340px] overflow-hidden" (click)="$event.stopPropagation()">
+      <div class="p-6 flex flex-col items-center text-center">
+        <div class="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mb-4">
+          <span class="text-[1.8rem]">❌</span>
+        </div>
+        <h3 class="font-['Darker_Grotesque'] text-[1.4rem] font-black text-[var(--color-text-main)] leading-tight mb-2">
+          Annullare la prenotazione?
+        </h3>
+        <p class="text-[0.85rem] text-[var(--color-text-muted)] leading-relaxed mb-6">
+          Lo slot verrà liberato e ti verranno <span class="text-emerald-600 font-bold">restituiti i crediti</span>.<br>
+          Questa azione <span class="text-red-500 font-bold">non può essere annullata</span>.
+        </p>
+        <div class="w-full flex gap-3">
+          <button
+            class="flex-1 py-2.5 rounded-xl bg-white border border-[var(--color-border-subtle)] text-[var(--color-text-main)] text-[0.85rem] font-bold hover:bg-[var(--color-bg-subtle)] transition-all active:scale-[0.97]"
+            (click)="closeCancelBookingModal()">
+            Torna indietro
+          </button>
+          <button
+            class="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-[0.85rem] font-bold hover:bg-red-600 transition-all active:scale-[0.97]"
+            (click)="cancelCurrentBooking()">
+            Annulla
+          </button>
+        </div>
       </div>
     </div>
   </div>
