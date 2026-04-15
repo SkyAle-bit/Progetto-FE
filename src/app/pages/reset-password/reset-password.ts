@@ -32,7 +32,7 @@ export class ResetPasswordComponent {
   errorMessage: string = '';
 
   ngOnInit(): void {
-    // Se c'è un token nella query string, mostra il form di reset
+    // Handle query string token
     this.route.queryParams.subscribe(params => {
       if (params['token']) {
         this.token = params['token'];

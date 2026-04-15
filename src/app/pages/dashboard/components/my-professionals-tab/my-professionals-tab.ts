@@ -58,14 +58,14 @@ export class MyProfessionalsTabComponent implements OnChanges, OnInit {
                 this.reviewComment[p.id] = '';
             }
 
-            // 1. Stato ripreso dal backend (affidabile anche dopo navigazione)
+            // Retrieve authoritative state from backend
             this.reviewService.canReview(this.currentUser.id, p.id).subscribe(r => {
                 this.canReviewMap[p.id] = r.canReview;
                 this.hasReviewedServerMap[p.id] = r.hasReviewed;
                 this.cdr.detectChanges();
             });
 
-            // 2. Recensioni pubbliche (per rating medio e per estrarre la propria)
+            // Load public reviews computing average rating and personal submission
             this.reviewService.getReviewsForProfessional(p.id).subscribe(reviews => {
                 this.reviewsMap[p.id] = reviews;
                 const mine = reviews.find(r => r.authorName === this.currentUser.firstName);

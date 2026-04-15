@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription, timer } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { AvailabilityService } from './availability.service';
 import { ToastService } from './toast.service';
-import { ProfessionalSlot, BookingRequest, ProfessionalSummary } from '../models/dashboard.types';
+import { ProfessionalSlot, BookingRequest, ProfessionalSummary, Booking, UserProfile } from '../models/dashboard.types';
 import { HttpErrorResponse } from '@angular/common/http';
 
 export interface CalendarState {
@@ -27,6 +27,12 @@ export interface BookingState {
   selectedBookingDay: Date | null;
   slotsForSelectedDay: ProfessionalSlot[];
   selectedBookingSlot: ProfessionalSlot | null;
+}
+
+export interface CallState {
+  isCallModalOpen: boolean;
+  selectedCallBooking: Booking | null;
+  canJoinCallNow: boolean;
 }
 
 @Injectable({
@@ -61,8 +67,19 @@ export class DashboardFacadeService {
     selectedBookingSlot: null
   });
 
+  private callState = new BehaviorSubject<CallState>({
+    isCallModalOpen: false,
+    selectedCallBooking: null,
+    canJoinCallNow: false
+  });
+
+  private pendingChatUser = new BehaviorSubject<UserProfile | null>(null);
+
   calendarState$ = this.calendarState.asObservable();
   bookingState$ = this.bookingState.asObservable();
+  callState$ = this.callState.asObservable();
+
+  private callTimerSub?: Subscription;
 
   get currentCalendarState(): CalendarState {
     return this.calendarState.value;
@@ -71,6 +88,83 @@ export class DashboardFacadeService {
   get currentBookingState(): BookingState {
     return this.bookingState.value;
   }
+
+  get currentCallState(): CallState {
+    return this.callState.value;
+  }
+
+  // ── Chat State ─────────────────────────────────────────────────────────
+
+  get currentPendingChatUser(): UserProfile | null {
+    return this.pendingChatUser.value;
+  }
+
+  setPendingChatUser(user: UserProfile | null): void {
+    this.pendingChatUser.next(user);
+  }
+
+  clearPendingChatUser(): void {
+    this.pendingChatUser.next(null);
+  }
+
+  // ── Call State & Polling ───────────────────────────────────────────────
+
+  openCallModal(booking: Booking): void {
+    const canJoin = this.checkIfCanJoinNow(booking);
+
+    this.updateCallState({
+      isCallModalOpen: true,
+      selectedCallBooking: booking,
+      canJoinCallNow: canJoin
+    });
+
+    this.startCallTimer(booking, canJoin);
+  }
+
+  closeCallModal(): void {
+    this.updateCallState({
+      isCallModalOpen: false,
+      selectedCallBooking: null,
+      canJoinCallNow: false
+    });
+
+    if (this.callTimerSub) {
+      this.callTimerSub.unsubscribe();
+      this.callTimerSub = undefined;
+    }
+  }
+
+  private updateCallState(partial: Partial<CallState>): void {
+    this.callState.next({ ...this.callState.value, ...partial });
+  }
+
+  private checkIfCanJoinNow(booking: Booking): boolean {
+    if (booking.status === 'CANCELED') return false;
+    if (booking.canJoin) return true;
+    if (!booking.date || !booking.startTime) return false;
+
+    const bookingDate = new Date(`${booking.date}T${booking.startTime}:00`);
+    return bookingDate.getTime() <= Date.now();
+  }
+
+  private startCallTimer(booking: Booking, alreadyCanJoin: boolean): void {
+    if (this.callTimerSub) {
+      this.callTimerSub.unsubscribe();
+    }
+
+    if (alreadyCanJoin || booking.status === 'CANCELED') return;
+    if (!booking.date || !booking.startTime) return;
+
+    const bookingDate = new Date(`${booking.date}T${booking.startTime}:00`);
+    const timeDifference = bookingDate.getTime() - Date.now();
+
+    if (timeDifference > 0) {
+      this.callTimerSub = timer(timeDifference).subscribe(() => {
+        this.updateCallState({ canJoinCallNow: true });
+      });
+    }
+  }
+
 
   // ── Availability ────────────────────────────────────────────────────────
 

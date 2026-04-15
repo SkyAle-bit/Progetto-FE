@@ -155,7 +155,7 @@ export class SocketService {
 
     const roomId = this.getRoomId(this.currentUserId, otherUserId);
 
-    // Se siamo già in questa stanza, non fare nulla
+    // Prevent duplicate room joins
     if (this.activeRoomId === roomId && this.roomSubscription) return;
 
     // Lascia la stanza precedente se diversa

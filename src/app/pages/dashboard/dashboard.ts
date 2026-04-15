@@ -62,7 +62,25 @@ import {
   styleUrls: ['./dashboard.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  @ViewChild(ChatTabComponent) chatTabComponent!: ChatTabComponent;
+  @ViewChild(ChatTabComponent) 
+  set chatTabComponent(content: ChatTabComponent | undefined) {
+    this._chatTabComponent = content;
+    if (content) {
+      const pendingUser = this.dashboardFacade.currentPendingChatUser;
+      if (pendingUser) {
+        const wasExisting = content.startConversationWith(pendingUser);
+        if (wasExisting) {
+          this.toast.success('Chat Supporto', 'Hai già una conversazione aperta con il supporto. Ti abbiamo reindirizzato alla chat esistente.');
+        }
+        this.dashboardFacade.clearPendingChatUser();
+      }
+    }
+  }
+  
+  get chatTabComponent(): ChatTabComponent | undefined {
+    return this._chatTabComponent;
+  }
+  private _chatTabComponent?: ChatTabComponent;
 
   private authService = inject(AuthService);
   private userService = inject(UserService);
@@ -192,15 +210,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (adminUser) => {
+          this.dashboardFacade.setPendingChatUser(adminUser as UserProfile);
           this.setTab('chat');
-          setTimeout(() => {
-            if (this.chatTabComponent) {
-              const wasExisting = this.chatTabComponent.startConversationWith(adminUser);
-              if (wasExisting) {
-                this.toast.success('Chat Supporto', 'Hai già una conversazione aperta con il supporto. Ti abbiamo reindirizzato alla chat esistente.');
-              }
-            }
-          }, 150);
         },
         error: (err: HttpErrorResponse) => {
           const apiError = err.error as ApiErrorResponse;
@@ -240,9 +251,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.timeCheckInterval) {
-      clearInterval(this.timeCheckInterval);
-    }
     this.chatService.destroy();
   }
 
@@ -578,41 +586,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.activeTab === 'chat' && this.chatTabComponent?.chatView === 'conversation';
   }
 
-  openCallModal(booking: Booking): void {
-    this.selectedCallBooking = booking;
-    this.checkCallTime();
-    this.isCallModalOpen = true;
+  get isCallModalOpen(): boolean { return this.dashboardFacade.currentCallState.isCallModalOpen; }
+  get selectedCallBooking(): Booking | null { return this.dashboardFacade.currentCallState.selectedCallBooking; }
+  get canJoinCallNow(): boolean { return this.dashboardFacade.currentCallState.canJoinCallNow; }
 
-    if (this.timeCheckInterval) clearInterval(this.timeCheckInterval);
-    this.timeCheckInterval = setInterval(() => this.checkCallTime(), 10000);
+  openCallModal(booking: Booking): void {
+    this.dashboardFacade.openCallModal(booking);
   }
 
   closeCallModal(): void {
-    this.isCallModalOpen = false;
-    this.selectedCallBooking = null;
-    if (this.timeCheckInterval) {
-      clearInterval(this.timeCheckInterval);
-      this.timeCheckInterval = null;
-    }
-  }
-
-  checkCallTime(): void {
-    if (!this.selectedCallBooking || this.selectedCallBooking.status === 'CANCELED') {
-      this.canJoinCallNow = false;
-      return;
-    }
-
-    if (this.selectedCallBooking.canJoin) {
-      this.canJoinCallNow = true;
-      return;
-    }
-
-    if (!this.selectedCallBooking.date || !this.selectedCallBooking.startTime) {
-      this.canJoinCallNow = false;
-      return;
-    }
-
-    this.canJoinCallNow = true;
+    this.dashboardFacade.closeCallModal();
   }
 
   joinCall(): void {

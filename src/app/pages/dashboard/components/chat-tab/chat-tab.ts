@@ -489,12 +489,12 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
   private sortConversations(convs: Conversation[]): Conversation[] {
     return [...convs].sort((a, b) => {
-      // 1. Sort by unread messages first
+      // Sort by unread messages first
       if ((a.unreadCount > 0) !== (b.unreadCount > 0)) {
         return a.unreadCount > 0 ? -1 : 1;
       }
 
-      // 2. Sort by last message time descending
+      // Sort by last message time descending
       const timeA = a.lastMessageTime ? this.parseMessageDate(a.lastMessageTime).getTime() : 0;
       const timeB = b.lastMessageTime ? this.parseMessageDate(b.lastMessageTime).getTime() : 0;
 
@@ -502,7 +502,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
         return timeB - timeA;
       }
 
-      // 3. Fallback to alphabetically
+      // Fallback to alphabetically
       return a.otherUserName.localeCompare(b.otherUserName);
     });
   }

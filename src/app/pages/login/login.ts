@@ -26,28 +26,23 @@ export class LoginComponent {
   private router = inject(Router);
 
   constructor() {
-    // 1. Configurazione del Form e delle regole di Validazione
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
     });
   }
 
-  // 2. Metodo eseguito al click sul bottone "Accedi"
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
-          // Se va a buon fine, navighiamo verso una pagina protetta (es. la dashboard)
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {
-          // Mostriamo un messaggio di errore a schermo (es. cattura il 401 Unauthorized)
           this.errorMessage = 'Email o password errati. Riprova.';
         }
       });
     } else {
-      // Forza la visualizzazione degli errori rossi se l'utente clicca senza scrivere niente
       this.loginForm.markAllAsTouched();
     }
   }
