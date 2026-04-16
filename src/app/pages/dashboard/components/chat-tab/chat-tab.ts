@@ -60,8 +60,30 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   }
 
   get filteredPickerUsers(): any[] {
-    if (!this.allUsers?.length) return [];
-    let users = this.allUsers.filter(u => u.id !== this.currentUser?.id && this.canStartConversationWith(u.role));
+    let users: any[] = [];
+
+    if (this.isClient && this.professionals?.length > 0) {
+      users = this.professionals.map(p => ({
+        id: p.id,
+        firstName: p.firstName || p.fullName?.split(' ')[0],
+        lastName: p.lastName || p.fullName?.split(' ').slice(1).join(' '),
+        role: p.role,
+        email: p.email
+      }));
+    } else if (this.isProfessional && this.myClients?.length > 0) {
+      users = this.myClients.map(c => ({
+        id: c.id,
+        firstName: c.firstName,
+        lastName: c.lastName,
+        role: 'CLIENT',
+        email: c.email
+      }));
+    } else if (this.allUsers?.length) {
+      users = this.allUsers.filter(u => u.id !== this.currentUser?.id && this.canStartConversationWith(u.role));
+    }
+
+    if (!users.length) return [];
+
     // Escludi quelli già in conversazione o tra i contatti locali vuoti
     const existingIds = new Set(this.chatConversations.map(c => c.otherUserId));
     users = users.filter(u => !existingIds.has(u.id));
@@ -198,8 +220,10 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
 
       const currentLocalIds = new Set([...backendIds, ...localOnly.map(l => l.otherUserId)]);
-      const pickerOnly = this.chatConversations.filter(c => !currentLocalIds.has(c.otherUserId));
-
+      const pickerOnly = this.chatConversations.filter(c =>
+        !currentLocalIds.has(c.otherUserId) &&
+        (this.activeConversation && c.otherUserId === this.activeConversation.otherUserId)
+      );
 
       let mergedConversations = [...backendConvs, ...localOnly, ...pickerOnly];
 
@@ -313,31 +337,8 @@ export class ChatTabComponent implements OnInit, OnDestroy {
         convs.push({ otherUserId: a.id, otherUserName: `${a.firstName} ${a.lastName}`, otherUserRole: 'Admin', lastMessage: undefined, lastMessageTime: undefined, unreadCount: 0 });
       });
     }
-    if (this.isAdmin && this.allUsers?.length > 0) {
-      this.allUsers.filter(u => u.id !== this.currentUser?.id && (u.role === 'MODERATOR' || u.role === 'INSURANCE_MANAGER')).forEach((u: any) => {
-        convs.push({
-          otherUserId: u.id,
-          otherUserName: `${u.firstName} ${u.lastName}`,
-          otherUserRole: this.getRoleLabel(u.role),
-          lastMessage: undefined,
-          lastMessageTime: undefined,
-          unreadCount: 0
-        });
-      });
-    }
-    // Moderatore: chatta con Admin e Insurance Manager
-    if (this.isModerator && this.allUsers?.length > 0) {
-      this.allUsers.filter(u => u.role === 'ADMIN' || u.role === 'INSURANCE_MANAGER').forEach((u: any) => {
-        convs.push({
-          otherUserId: u.id,
-          otherUserName: `${u.firstName} ${u.lastName}`,
-          otherUserRole: this.getRoleLabel(u.role),
-          lastMessage: undefined,
-          lastMessageTime: undefined,
-          unreadCount: 0
-        });
-      });
-    }
+    // Per Admin e Moderatori non prepopoliamo le chat vuote nella lista, utilizzeranno il picker.
+    // Le chat vuote scompariranno dalla lista se non ci sono messaggi inviati.
     return convs;
   }
 
@@ -347,11 +348,29 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     this.chatView = 'conversation';
     this.chatLoading = true;
 
+    // Se non abbiamo ancora il chatId, dobbiamo crearlo/recuperarlo tramite backend
+    if (!conv.chatId) {
+      this.chatService.createChat(this.currentUser.id, conv.otherUserId).subscribe({
+        next: (newChatId) => {
+          conv.chatId = newChatId;
+          this.loadMessagesAndJoin(conv);
+        },
+        error: () => {
+          this.chatLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
+    } else {
+      this.loadMessagesAndJoin(conv);
+    }
+  }
 
-    this.chatService.joinRoom(conv.otherUserId);
+  private loadMessagesAndJoin(conv: Conversation): void {
+    if (!conv.chatId) return;
 
+    this.chatService.joinRoom(conv.chatId);
 
-    this.chatService.getMessages(this.currentUser.id, conv.otherUserId).subscribe({
+    this.chatService.getMessages(conv.chatId, this.currentUser.id).subscribe({
       next: (serverMsgs) => {
         // Mantieni i messaggi locali ottimistici (id < 0) non ancora confermati dal server
         const localOptimistic = this.chatMessages.filter(m => m.id < 0 &&
@@ -368,28 +387,29 @@ export class ChatTabComponent implements OnInit, OnDestroy {
 
 
     if (this.socketService.isConnected) {
-      this.chatService.markAsReadRealTime(conv.otherUserId);
+      this.chatService.markAsReadRealTime(conv.chatId, conv.otherUserId);
     } else {
-      this.chatService.markAsRead(this.currentUser.id, conv.otherUserId).subscribe();
+      this.chatService.markAsRead(conv.chatId, this.currentUser.id, conv.otherUserId).subscribe();
     }
     conv.unreadCount = 0;
 
 
-    this.chatService.startMessagePolling(this.currentUser.id, conv.otherUserId);
+    this.chatService.startMessagePolling(conv.chatId, this.currentUser.id);
   }
 
   sendChatMessage(): void {
     const text = this.chatInput.trim();
-    if (!text || !this.activeConversation) return;
+    if (!text || !this.activeConversation || !this.activeConversation.chatId) return;
 
     const receiverId = this.activeConversation.otherUserId;
+    const chatId = this.activeConversation.chatId;
     const senderName = `${this.currentUser.firstName} ${this.currentUser.lastName}`;
     const receiverName = this.activeConversation.otherUserName;
 
     if (this.socketService.isConnected) {
       // ── Real-time via WebSocket ──
       const localMsg = this.chatService.sendMessageRealTime(
-        this.currentUser.id, receiverId, text, senderName, receiverName
+        chatId, this.currentUser.id, text, senderName, receiverName, receiverId
       );
       this.chatMessages = [...this.chatMessages, localMsg];
       this.chatInput = '';
@@ -405,6 +425,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
       // ── Fallback REST ──
       const localMsg: ChatMessage = {
         id: -Date.now(),
+        chatId,
         senderId: this.currentUser.id,
         senderName,
         receiverId,
@@ -423,7 +444,7 @@ export class ChatTabComponent implements OnInit, OnDestroy {
         this.activeConversation.lastMessageTime = localMsg.createdAt;
       }
 
-      this.chatService.sendMessage({ senderId: this.currentUser.id, receiverId, content: text }).subscribe({
+      this.chatService.sendMessage({ senderId: this.currentUser.id, chatId, content: text }).subscribe({
         next: (savedMsg) => {
           const exists = this.chatMessages.some(m => m.id === localMsg.id);
           if (exists) {
@@ -440,11 +461,11 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   }
 
   backToConversations(): void {
-    if (this.activeConversation) {
+    if (this.activeConversation && this.activeConversation.chatId) {
       if (this.socketService.isConnected) {
-        this.chatService.markAsReadRealTime(this.activeConversation.otherUserId);
+        this.chatService.markAsReadRealTime(this.activeConversation.chatId, this.activeConversation.otherUserId);
       } else {
-        this.chatService.markAsRead(this.currentUser.id, this.activeConversation.otherUserId).subscribe();
+        this.chatService.markAsRead(this.activeConversation.chatId, this.currentUser.id, this.activeConversation.otherUserId).subscribe();
       }
       this.activeConversation.unreadCount = 0;
       this.activeConversation = null;
@@ -461,8 +482,8 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   }
 
   terminateChat(conv: Conversation): void {
-    if (confirm('Vuoi davvero terminare questa chat? Non sarà più visibile nella tua lista finché non aprirai una nuova conversazione.')) {
-      this.chatService.terminateChat(this.currentUser.id, conv.otherUserId).subscribe({
+    if (conv.chatId && confirm('Vuoi davvero terminare questa chat? Non sarà più visibile nella tua lista finché non aprirai una nuova conversazione.')) {
+      this.chatService.terminateChat(conv.chatId, this.currentUser.id).subscribe({
         next: () => {
           this.chatConversations = this.chatConversations.filter(c => c.otherUserId !== conv.otherUserId);
           this.backToConversations();
@@ -487,7 +508,13 @@ export class ChatTabComponent implements OnInit, OnDestroy {
   }
 
   private sortConversations(convs: Conversation[]): Conversation[] {
-    return [...convs].sort((a, b) => {
+    const filtered = convs.filter(c => {
+      if (c.lastMessage && c.lastMessage.trim() !== '') return true;
+      if (this.activeConversation && c.otherUserId === this.activeConversation.otherUserId) return true;
+      return false;
+    });
+
+    return [...filtered].sort((a, b) => {
       // Sort by unread messages first
       if ((a.unreadCount > 0) !== (b.unreadCount > 0)) {
         return a.unreadCount > 0 ? -1 : 1;

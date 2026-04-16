@@ -9,6 +9,7 @@ import { environment } from '../../environments/environment';
  */
 export interface WsIncomingMessage {
   id: number;
+  chatId: number;
   senderId: number;
   senderName: string;
   receiverId: number;
@@ -91,7 +92,7 @@ export class SocketService {
         this.zone.run(() => {
           this.connectedSubject.next(true);
           console.log('[WS] Connesso come userId:', userId);
-    
+
           this.subscribeNotifications(userId);
         });
       },
@@ -137,23 +138,14 @@ export class SocketService {
   // ══════════════════════════════════════════════════════════════
 
   /**
-   * Genera un roomId deterministico tra due utenti.
-   * Il roomId è sempre lo stesso indipendentemente dall'ordine: "chat_5_12"
-   */
-  getRoomId(userId1: number, userId2: number): string {
-    const ids = [userId1, userId2].sort((a, b) => a - b);
-    return `chat_${ids[0]}_${ids[1]}`;
-  }
-
-  /**
    * Entra in una stanza chat specifica.
    * - Invia al server un messaggio di JOIN
    * - Sottoscrive al topic della stanza per ricevere messaggi
    */
-  joinRoom(otherUserId: number): void {
+  joinRoom(chatId: number): void {
     if (!this.client?.connected || !this.currentUserId) return;
 
-    const roomId = this.getRoomId(this.currentUserId, otherUserId);
+    const roomId = String(chatId);
 
     // Prevent duplicate room joins
     if (this.activeRoomId === roomId && this.roomSubscription) return;
@@ -163,9 +155,8 @@ export class SocketService {
 
     this.activeRoomId = roomId;
 
-
     this.roomSubscription = this.client.subscribe(
-      `/topic/room/${roomId}`,
+      `/topic/chat/${roomId}`,
       (message: IMessage) => {
         this.zone.run(() => {
           const payload: WsIncomingMessage = JSON.parse(message.body);
@@ -174,13 +165,12 @@ export class SocketService {
       }
     );
 
-
     this.client.publish({
       destination: '/app/chat.join',
       body: JSON.stringify({ userId: this.currentUserId, roomId })
     });
 
-    console.log('[WS] Joined room:', roomId);
+    console.log('[WS] Joined chat room:', roomId);
   }
 
   /**
@@ -211,17 +201,17 @@ export class SocketService {
 
   /**
    * Invia un messaggio via WebSocket.
-   * Il server lo inoltrerà IMMEDIATAMENTE alla stanza e poi lo salverà in DB in modo asincrono.
+   * Il server lo inoltrer IMMEDIATAMENTE alla stanza e poi lo salver in DB in modo asincrono.
    */
-  sendMessage(senderId: number, receiverId: number, content: string): void {
+  sendMessage(chatId: number, senderId: number, content: string): void {
     if (!this.client?.connected) return;
 
-    const roomId = this.getRoomId(senderId, receiverId);
+    const roomId = String(chatId);
     this.client.publish({
       destination: '/app/chat.send',
       body: JSON.stringify({
         senderId,
-        receiverId,
+        chatId: chatId,
         content,
         roomId
       })
@@ -231,10 +221,10 @@ export class SocketService {
   /**
    * Invia typing indicator.
    */
-  sendTyping(receiverId: number, typing: boolean): void {
+  sendTyping(chatId: number, typing: boolean): void {
     if (!this.client?.connected || !this.currentUserId) return;
 
-    const roomId = this.getRoomId(this.currentUserId, receiverId);
+    const roomId = String(chatId);
     this.client.publish({
       destination: '/app/chat.typing',
       body: JSON.stringify({
@@ -248,15 +238,15 @@ export class SocketService {
   /**
    * Notifica il server che i messaggi sono stati letti.
    */
-  markAsRead(otherUserId: number): void {
+  markAsRead(chatId: number): void {
     if (!this.client?.connected || !this.currentUserId) return;
 
-    const roomId = this.getRoomId(this.currentUserId, otherUserId);
+    const roomId = String(chatId);
     this.client.publish({
       destination: '/app/chat.read',
       body: JSON.stringify({
         userId: this.currentUserId,
-        otherUserId,
+        chatId: chatId,
         roomId
       })
     });
@@ -313,5 +303,4 @@ export class SocketService {
     return this.activeRoomId;
   }
 }
-
 

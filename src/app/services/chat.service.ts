@@ -8,6 +8,7 @@ import { SocketService, WsIncomingMessage } from './socket.service';
 
 export interface ChatMessage {
   id: number;
+  chatId: number;
   senderId: number;
   senderName: string;
   receiverId: number;
@@ -18,6 +19,7 @@ export interface ChatMessage {
 }
 
 export interface Conversation {
+  chatId?: number;
   otherUserId: number;
   otherUserName: string;
   otherUserRole: string;
@@ -30,7 +32,7 @@ export interface Conversation {
 
 export interface SendMessageRequest {
   senderId: number;
-  receiverId: number;
+  chatId: number;
   content: string;
 }
 
@@ -75,9 +77,9 @@ export class ChatService {
     ).pipe(catchError(() => of([])));
   }
 
-  getMessages(userId1: number, userId2: number, page = 0, size = 50): Observable<ChatMessage[]> {
+  getMessages(chatId: number, userId: number, page = 0, size = 50): Observable<ChatMessage[]> {
     return this.http.get<ChatMessage[]>(
-      `${this.apiUrl}/api/chat/conversation/${userId1}/${userId2}?page=${page}&size=${size}`
+      `${this.apiUrl}/api/chat/conversation/${chatId}/${userId}?page=${page}&size=${size}`
     ).pipe(catchError(() => of([])));
   }
 
@@ -85,10 +87,14 @@ export class ChatService {
     return this.http.post<ChatMessage>(`${this.apiUrl}/api/chat/send`, request);
   }
 
-  markAsRead(receiverId: number, senderId: number): Observable<any> {
-    this.optimisticMarkAsRead(senderId);
+  createChat(senderId: number, receiverId: number): Observable<number> {
+    return this.http.post<number>(`${this.apiUrl}/api/chat/create/${senderId}/${receiverId}`, {});
+  }
+
+  markAsRead(chatId: number, userId: number, otherUserId: number): Observable<any> {
+    this.optimisticMarkAsRead(otherUserId);
     return this.http.put(
-      `${this.apiUrl}/api/chat/read/${receiverId}/${senderId}`, {}
+      `${this.apiUrl}/api/chat/read/${chatId}/${userId}`, {}
     ).pipe(catchError(() => of(null)));
   }
 
@@ -98,9 +104,9 @@ export class ChatService {
     ).pipe(catchError(() => of(0)));
   }
 
-  terminateChat(userId: number, otherUserId: number): Observable<any> {
+  terminateChat(chatId: number, userId: number): Observable<any> {
     return this.http.post(
-      `${this.apiUrl}/api/chat/terminate/${userId}/${otherUserId}`, {}
+      `${this.apiUrl}/api/chat/terminate/${chatId}/${userId}`, {}
     ).pipe(catchError(() => of(null)));
   }
 
@@ -111,7 +117,7 @@ export class ChatService {
   /** Bootstrap real-time chat: WebSocket + event subscriptions + global polling fallback. */
   init(userId: number): void {
     this.destroy(); // CLEANUP prevent duplicate listeners and memory leaks
-    
+
 
     this.socketService.connect(userId);
 
@@ -148,8 +154,8 @@ export class ChatService {
   //  GESTIONE STANZE
   // ══════════════════════════════════════════════════════════════
 
-  joinRoom(otherUserId: number): void {
-    this.socketService.joinRoom(otherUserId);
+  joinRoom(chatId: number): void {
+    this.socketService.joinRoom(chatId);
   }
 
   leaveRoom(): void {
@@ -160,9 +166,10 @@ export class ChatService {
    * Invia messaggio via WebSocket (real-time).
    * Ritorna il messaggio locale per UI ottimistica.
    */
-  sendMessageRealTime(senderId: number, receiverId: number, content: string, senderName: string, receiverName: string): ChatMessage {
+  sendMessageRealTime(chatId: number, senderId: number, content: string, senderName: string, receiverName: string, receiverId: number): ChatMessage {
     const localMsg: ChatMessage = {
       id: -Date.now(),
+      chatId,
       senderId,
       senderName,
       receiverId,
@@ -171,12 +178,12 @@ export class ChatService {
       status: 'SENT',
       createdAt: new Date().toISOString()
     };
-    this.socketService.sendMessage(senderId, receiverId, content);
+    this.socketService.sendMessage(chatId, senderId, content);
     return localMsg;
   }
 
-  markAsReadRealTime(otherUserId: number): void {
-    this.socketService.markAsRead(otherUserId);
+  markAsReadRealTime(chatId: number, otherUserId: number): void {
+    this.socketService.markAsRead(chatId);
     this.optimisticMarkAsRead(otherUserId);
   }
 
@@ -206,6 +213,7 @@ export class ChatService {
   private handleIncomingWsMessage(wsMsg: WsIncomingMessage, currentUserId: number): void {
     const msg: ChatMessage = {
       id: wsMsg.id,
+      chatId: wsMsg.chatId,
       senderId: wsMsg.senderId,
       senderName: wsMsg.senderName,
       receiverId: wsMsg.receiverId,
@@ -216,7 +224,7 @@ export class ChatService {
     };
 
     const currentRoom = this.socketService.currentRoomId;
-    const msgRoom = wsMsg.roomId || this.socketService.getRoomId(wsMsg.senderId, wsMsg.receiverId);
+    const msgRoom = wsMsg.roomId;
 
     if (currentRoom === msgRoom) {
       const currentMsgs = this.messagesSubject.value;
@@ -267,6 +275,7 @@ export class ChatService {
     } else {
 
       const newConv: Conversation = {
+        chatId: wsMsg.chatId,
         otherUserId,
         otherUserName: otherUserName || 'Utente',
         otherUserRole: '',
@@ -345,13 +354,13 @@ export class ChatService {
 
   // ── Polling messaggi (fallback per quando WS non è connesso) ──
 
-  startMessagePolling(currentUserId: number, otherUserId: number): void {
+  startMessagePolling(chatId: number, currentUserId: number): void {
     if (this.socketService.isConnected) return;
     this.stopMessagePolling();
     this.msgPollingActive = true;
     this.msgPollInterval = setInterval(() => {
       if (!this.msgPollingActive) return;
-      this.getMessages(currentUserId, otherUserId).subscribe(msgs => {
+      this.getMessages(chatId, currentUserId).subscribe(msgs => {
         if (msgs.length > 0) {
 
           const currentMsgs = this.messagesSubject.value;
