@@ -104,13 +104,6 @@ export class ChatService {
     ).pipe(catchError(() => of(0)));
   }
 
-  terminateChat(chatId: number, userId: number): Observable<any> {
-    return this.http.post(
-      `${this.apiUrl}/api/chat/terminate/${chatId}/${userId}`, {}
-    ).pipe(catchError(() => of(null)));
-  }
-
-  // ══════════════════════════════════════════════════════════════
   //  INIZIALIZZAZIONE REAL-TIME
   // ══════════════════════════════════════════════════════════════
 

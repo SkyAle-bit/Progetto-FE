@@ -152,11 +152,11 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     }
 
     if (myRole === 'CLIENT') {
-      return targetRole === 'PERSONAL_TRAINER' || targetRole === 'NUTRITIONIST' || targetRole === 'MODERATOR';
+      return targetRole === 'PERSONAL_TRAINER' || targetRole === 'NUTRITIONIST' || targetRole === 'MODERATOR' || targetRole === 'ADMIN';
     }
 
     if (myRole === 'PERSONAL_TRAINER' || myRole === 'NUTRITIONIST') {
-      return targetRole === 'CLIENT' || targetRole === 'MODERATOR';
+      return targetRole === 'CLIENT' || targetRole === 'MODERATOR' || targetRole === 'ADMIN';
     }
 
     return false;
@@ -481,19 +481,6 @@ export class ChatTabComponent implements OnInit, OnDestroy {
     this.loadConversations();
   }
 
-  terminateChat(conv: Conversation): void {
-    if (conv.chatId && confirm('Vuoi davvero terminare questa chat? Non sarà più visibile nella tua lista finché non aprirai una nuova conversazione.')) {
-      this.chatService.terminateChat(conv.chatId, this.currentUser.id).subscribe({
-        next: () => {
-          this.chatConversations = this.chatConversations.filter(c => c.otherUserId !== conv.otherUserId);
-          this.backToConversations();
-        },
-        error: (err) => {
-          console.error('Errore durante la terminazione della chat', err);
-        }
-      });
-    }
-  }
 
   isMyMessage(msg: ChatMessage): boolean { return msg.senderId === this.currentUser?.id; }
 
