@@ -55,16 +55,19 @@ export class ResetPasswordComponent {
     this.successMessage = '';
 
     this.authService.forgotPassword(this.email).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.loading = false;
-        this.successMessage = 'Se l\'email è registrata, riceverai un link per reimpostare la password. Verrai reindirizzato al login...';
+        this.successMessage = 'Link di reset inviato con successo alla tua email! Verrai reindirizzato al login...';
         setTimeout(() => this.router.navigate(['/login']), 3000);
       },
-      error: () => {
+      error: (err) => {
         this.loading = false;
-        // Per sicurezza, mostra lo stesso messaggio anche in caso di errore
-        this.successMessage = 'Se l\'email è registrata, riceverai un link per reimpostare la password. Verrai reindirizzato al login...';
-        setTimeout(() => this.router.navigate(['/login']), 3000);
+        const msg = err?.error?.message || err?.error?.error;
+        if (msg) {
+          this.errorMessage = msg;
+        } else {
+          this.errorMessage = 'Nessun account trovato con questa email. Riprova.';
+        }
       }
     });
   }
