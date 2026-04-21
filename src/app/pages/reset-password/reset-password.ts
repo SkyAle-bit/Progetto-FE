@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -15,6 +15,7 @@ export class ResetPasswordComponent {
   private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
 
   // Stato della vista: 'request' (inserisci email) oppure 'reset' (inserisci nuova password, con token)
   mode: 'request' | 'reset' = 'request';
@@ -58,6 +59,7 @@ export class ResetPasswordComponent {
       next: (res: any) => {
         this.loading = false;
         this.successMessage = 'Link di reset inviato con successo alla tua email! Verrai reindirizzato al login...';
+        this.cdr.detectChanges();
         setTimeout(() => this.router.navigate(['/login']), 3000);
       },
       error: (err) => {
@@ -68,6 +70,7 @@ export class ResetPasswordComponent {
         } else {
           this.errorMessage = 'Nessun account trovato con questa email. Riprova.';
         }
+        this.cdr.detectChanges();
       }
     });
   }
@@ -97,6 +100,7 @@ export class ResetPasswordComponent {
       next: () => {
         this.loading = false;
         this.successMessage = 'Password reimpostata con successo! Verrai reindirizzato al login...';
+        this.cdr.detectChanges();
         setTimeout(() => this.router.navigate(['/login']), 3000);
       },
       error: (err) => {
@@ -107,6 +111,7 @@ export class ResetPasswordComponent {
         } else {
           this.errorMessage = 'Errore durante il reset della password. Il link potrebbe essere scaduto o già utilizzato.';
         }
+        this.cdr.detectChanges();
       }
     });
   }
