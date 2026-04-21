@@ -57,12 +57,14 @@ export class ResetPasswordComponent {
     this.authService.forgotPassword(this.email).subscribe({
       next: () => {
         this.loading = false;
-        this.successMessage = 'Se l\'email è registrata, riceverai un link per reimpostare la password. Controlla la tua casella di posta.';
+        this.successMessage = 'Se l\'email è registrata, riceverai un link per reimpostare la password. Verrai reindirizzato al login...';
+        setTimeout(() => this.router.navigate(['/login']), 3000);
       },
       error: () => {
         this.loading = false;
         // Per sicurezza, mostra lo stesso messaggio anche in caso di errore
-        this.successMessage = 'Se l\'email è registrata, riceverai un link per reimpostare la password. Controlla la tua casella di posta.';
+        this.successMessage = 'Se l\'email è registrata, riceverai un link per reimpostare la password. Verrai reindirizzato al login...';
+        setTimeout(() => this.router.navigate(['/login']), 3000);
       }
     });
   }
