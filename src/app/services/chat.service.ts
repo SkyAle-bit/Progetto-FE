@@ -141,6 +141,12 @@ export class ChatService {
     this.socketService.disconnect();
     this.stopGlobalPolling();
     this.stopMessagePolling();
+    
+    // Pulisce lo stato in memoria altrimenti rimane per l'utente successivo (Bug "Chat mischiate")
+    this.conversationsSubject.next([]);
+    this.messagesSubject.next([]);
+    this.unreadCountSubject.next(0);
+    this._activeConversation = null;
   }
 
   // ══════════════════════════════════════════════════════════════
